@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataLayers", "DataLayers\Da
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Base.Common", "Base.Common\Base.Common.csproj", "{CF80B407-9D8C-4A85-A21A-3226C4859034}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthorizingAPIs", "AuthorizingAPIs\AuthorizingAPIs.csproj", "{412C5D19-ADE1-4777-96B6-C3E7F612C5CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NextTradeAPIs", "AuthorizingAPIs\NextTradeAPIs.csproj", "{412C5D19-ADE1-4777-96B6-C3E7F612C5CF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

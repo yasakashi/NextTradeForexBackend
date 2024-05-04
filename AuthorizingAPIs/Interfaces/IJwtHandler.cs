@@ -3,7 +3,7 @@
 using Entities.DBEntities;
 using System.IdentityModel.Tokens.Jwt;
 
-namespace AuthorizingAPIs.Interfaces
+namespace NextTradeAPIs.Interfaces
 {
     public interface IJwtHandler
     {

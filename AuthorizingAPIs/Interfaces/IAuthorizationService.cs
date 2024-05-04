@@ -3,7 +3,7 @@ using System.ServiceModel;
 using Entities.DBEntities;
 using Entities.Dtos;
 
-namespace AuthorizingAPIs.Interfaces
+namespace NextTradeAPIs.Interfaces
 {
     //[ServiceContract]
     public interface IAuthorizationService

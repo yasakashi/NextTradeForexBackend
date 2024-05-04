@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace AuthorizingAPIs
+namespace NextTradeAPIs
 {
     public class GlobalFunctions
     {

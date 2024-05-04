@@ -1,6 +1,6 @@
-﻿using AuthorizingAPIs.Dtos;
-using AuthorizingAPIs.Interfaces;
-using AuthorizingAPIs.Services;
+﻿using NextTradeAPIs.Dtos;
+using NextTradeAPIs.Interfaces;
+using NextTradeAPIs.Services;
 using Base.Common.Enums;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Entities;
@@ -16,7 +16,7 @@ using System.Net;
 using System.Reflection.Emit;
 using System.Text;
 
-namespace AuthorizingAPIs.Controllers
+namespace NextTradeAPIs.Controllers
 {
     /// <summary>
     /// مدیریت کاربران
@@ -30,13 +30,11 @@ namespace AuthorizingAPIs.Controllers
         private IHttpContextAccessor _HttpContextAccessor;
         UserServices _userServices;
         SystemLogServices _systemLogServices;
-        WalletServices _walletService;
         PeopleServices _peopleService;
 
         public UserController(AuthorizationService authorizationService,
                                        IHttpContextAccessor httpContextAccessor,
                                        SystemLogServices systemLogServices,
-                                       WalletServices walletServices,
                                        PeopleServices peopleServices,
                                        UserServices userServices)
         {
@@ -44,7 +42,6 @@ namespace AuthorizingAPIs.Controllers
             _userServices = userServices;
             _HttpContextAccessor = httpContextAccessor;
             _systemLogServices = systemLogServices;
-            _walletService = walletServices;
             _peopleService = peopleServices;
         }
 
@@ -492,63 +489,6 @@ namespace AuthorizingAPIs.Controllers
             }
         }
 
-
-        [HttpPost]
-        [Route("/api/users/getactivationcode")]
-        public async Task<IActionResult> GetActivationCode(SMSDto model)
-        {
-            StackTrace stackTrace = new StackTrace();
-            string processId = Guid.NewGuid().ToString();
-            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
-            string _bearer_token = string.Empty;
-            string clientip = string.Empty;
-            string hosturl = string.Empty;
-            string hostname = string.Empty;
-            SystemMessageModel message = new SystemMessageModel();
-            long ApiCode = 8000;
-
-            try
-            {
-                _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
-                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
-                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
-
-                try
-                {
-                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
-                }
-                catch
-                {
-                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
-                }
-
-                string clientmac = NetworkFunctions.GetClientMAC(clientip);
-
-                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
-
-                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}','LogDescription':'{JsonConvert.SerializeObject(model)}'";
-
-
-                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
-
-
-                message = await _userServices.CreateAndSendActiveCode(model.distinationnumber, processId);
-
-                if (message.MessageCode < 0)
-                    return BadRequest(message);
-
-
-                return Ok(message);
-            }
-            catch (Exception ex)
-            {
-                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "خطا در انجام درخواست", MessageData = ex.Message };
-                string log = $"'ApiCode':{ApiCode},'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
-                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, (long)LogTypes.TokenError);
-                return BadRequest(message);
-            }
-        }
-
         #region Activate Account
         /// <summary>
         /// بررسی کد فعال سازی ارسال شده
@@ -624,10 +564,6 @@ namespace AuthorizingAPIs.Controllers
                     }
 
                     message = await _userServices.ActiveAccount(user.UserId, processId);
-                    if (message.MessageCode > 0)
-                    {
-                        message = await _walletService.ActionManagment(model.mobile, "", "", processId, null, tokenmessage.MessageData.ToString());
-                    }
                     if (message.MessageCode > 0)
                     {
                         return Ok(tokenmessage);
@@ -727,7 +663,6 @@ namespace AuthorizingAPIs.Controllers
 
                     tokenmessage = await GenerateToken(user, contex, clientip, processId, hosturl);
 
-                    message = await _walletService.ActionManagment(model.username, "", "", processId, null, tokenmessage.MessageData.ToString());
 
                     return Ok(message);
                 }
@@ -824,7 +759,10 @@ namespace AuthorizingAPIs.Controllers
             long ApiCode = 12000;
             try
             {
-                message = await _userServices.InsertLoginLog(new UserModel() {userid = user.UserId, username = user.Username, IsActive = user.IsActive, iskyc = user.IsKYCAccepted, fname = user.Fname, lname = user.Lname, nationalcode= user.Nationalcode, UserTypeId = (long)user.UserTypeId, ParentUserId = user.ParentUserId }, clientip, contex, processId, hosturl);
+                message = await _userServices.InsertLoginLog(new UserModel() {
+                        userid = user.UserId, username = user.Username, 
+                        IsActive = user.IsActive, UserTypeId= (user.UserTypeId!= null)?2 :(long)user.UserTypeId, 
+                        ParentUserId = user.ParentUserId }, clientip, contex, processId, hosturl);
 
                 if (message.MessageCode < 0)
                     return message;

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "mI9mMv08cQ9cCOdsJL7TRkZyTXkvuMYjSukUtw9pkb8+sFcArO0hPo78l/RCzDg+mMxXhwwEk03p3Y8iDfjYzw==",
+  "dgSpecHash": "710BqYfjS0cwJfww/7gvuqBmKGTQPpaMCp2BtuEbPCh0HOgSXPf63oQIC0bGJ3eUHYCZoiqu11GwysceGvZsWQ==",
   "success": true,
-  "projectFilePath": "E:\\Programming\\NextTradeForexBackend\\AuthorizingAPIs\\AuthorizingAPIs.csproj",
+  "projectFilePath": "E:\\Programming\\NextTradeForexBackend\\AuthorizingAPIs\\NextTradeAPIs.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Yasa\\.nuget\\packages\\azure.core\\1.24.0\\azure.core.1.24.0.nupkg.sha512",
     "C:\\Users\\Yasa\\.nuget\\packages\\azure.identity\\1.6.0\\azure.identity.1.6.0.nupkg.sha512",

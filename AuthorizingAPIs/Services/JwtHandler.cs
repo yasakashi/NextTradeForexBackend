@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
-using AuthorizingAPIs.Interfaces;
+using NextTradeAPIs.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -10,9 +10,9 @@ using System.Text;
 using DataLayers;
 using Entities.DBEntities;
 
-namespace AuthorizingAPIs.Services
+namespace NextTradeAPIs.Services
 {
-    public class JwtHandler : AuthorizingAPIs.Interfaces.IJwtHandler
+    public class JwtHandler : NextTradeAPIs.Interfaces.IJwtHandler
     {
         private readonly SBbContext _context;
         private readonly IConfiguration _config;

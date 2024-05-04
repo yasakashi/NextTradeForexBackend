@@ -1,4 +1,4 @@
-﻿namespace AuthorizingAPIs.Services
+﻿namespace NextTradeAPIs.Services
 {
     public class Jwt
     {

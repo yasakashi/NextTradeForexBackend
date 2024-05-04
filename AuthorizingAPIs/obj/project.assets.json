@@ -11839,9 +11839,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\Programming\\NextTradeForexBackend\\AuthorizingAPIs\\AuthorizingAPIs.csproj",
-      "projectName": "AuthorizingAPIs",
-      "projectPath": "E:\\Programming\\NextTradeForexBackend\\AuthorizingAPIs\\AuthorizingAPIs.csproj",
+      "projectUniqueName": "E:\\Programming\\NextTradeForexBackend\\AuthorizingAPIs\\NextTradeAPIs.csproj",
+      "projectName": "NextTradeAPIs",
+      "projectPath": "E:\\Programming\\NextTradeForexBackend\\AuthorizingAPIs\\NextTradeAPIs.csproj",
       "packagesPath": "C:\\Users\\Yasa\\.nuget\\packages\\",
       "outputPath": "E:\\Programming\\NextTradeForexBackend\\AuthorizingAPIs\\obj\\",
       "projectStyle": "PackageReference",

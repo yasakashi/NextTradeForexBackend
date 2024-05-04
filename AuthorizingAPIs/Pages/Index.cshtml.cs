@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace AuthorizingAPIs.Pages
+namespace NextTradeAPIs.Pages
 {
     public class IndexModel : PageModel
     {

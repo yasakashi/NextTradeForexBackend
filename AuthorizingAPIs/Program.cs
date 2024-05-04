@@ -1,6 +1,5 @@
-using AtlasCoreAPI.Services;
-using AuthorizingAPIs.Interfaces;
-using AuthorizingAPIs.Services;
+using NextTradeAPIs.Interfaces;
+using NextTradeAPIs.Services;
 using Base.Common.Convertors;
 using Base.Common.Encryption;
 using DataLayers;
@@ -145,8 +144,6 @@ builder.Services.AddScoped<IJwtHandler, JwtHandler>();
 
 builder.Services.AddTransient<UserServices, UserServices>();
 builder.Services.AddTransient<SystemLogServices, SystemLogServices>();
-builder.Services.AddTransient<SMSServices, SMSServices>();
-builder.Services.AddTransient<WalletServices, WalletServices>();
 builder.Services.AddTransient<PeopleServices, PeopleServices>();
 builder.Services.AddTransient<BlockedIPServices, BlockedIPServices>();
 

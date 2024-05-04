@@ -1,5 +1,4 @@
-﻿using AtlasCoreAPI.Services;
-using AuthorizingAPIs.Dtos;
+﻿using NextTradeAPIs.Dtos;
 using Base.Common.Enums;
 using DataLayers;
 using Entities.DBEntities;
@@ -8,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Diagnostics;
 
-namespace AuthorizingAPIs.Services
+namespace NextTradeAPIs.Services
 {
     /// <summary>
     /// سرویس های مربوطه برای بسته بودن

@@ -7,7 +7,7 @@ using Entities.Dtos;
 using Microsoft.Extensions.Configuration;
 using Base.Common.Enums;
 using System.Collections.Generic;
-using AuthorizingAPIs.Dtos;
+using NextTradeAPIs.Dtos;
 using RestSharp;
 using System.Net;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -15,11 +15,11 @@ using Entities.DBEntities;
 using System.Net.Sockets;
 using DocumentFormat.OpenXml.InkML;
 using Entities.Systems;
-using AtlasCoreAPI.Services;
+using NextTradeAPIs.Services;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System.Reflection.Metadata.Ecma335;
 
-namespace AuthorizingAPIs.Services
+namespace NextTradeAPIs.Services
 {
     public class UserServices
     {
@@ -27,14 +27,12 @@ namespace AuthorizingAPIs.Services
         LogSBbContext _LogContext { get; set; }
         SystemLogServices _systemLogServices;
         private readonly IConfiguration _config;
-        private SMSServices _sMSService;
-        public UserServices(SBbContext context, LogSBbContext logcontext, IConfiguration config, SystemLogServices systemLogServices, SMSServices sMSService)
+        public UserServices(SBbContext context, LogSBbContext logcontext, IConfiguration config, SystemLogServices systemLogServices)
         {
             _Context = context;
             _LogContext = logcontext;
             _config = config;
             _systemLogServices = systemLogServices;
-            _sMSService = sMSService;
         }
 
         /// <summary>
@@ -54,7 +52,6 @@ namespace AuthorizingAPIs.Services
                 UserModel user = await _Context.Users.Where(x => x.Username == username && x.Password == password).Select(x=> new UserModel() { 
                     userid = x.UserId,
                     username = x.Username,
-                    iskyc = x.IsKYCAccepted,
                     fname = x.Fname,
                     lname = x.Lname,
                     IsActive = x.IsActive
@@ -179,12 +176,9 @@ namespace AuthorizingAPIs.Services
                     Email = model.Email,
                     Fname = model.Fname,
                     Lname = model.Lname,
-                    Nationalcode = model.Nationalcode,
                     IsActive = true,
                     IsDelete = false,
                     IsAccepted = false,
-                    IsKYCAccepted = false,
-                    IsShahinKYCAccepted = false,
                     registerDate = DateTime.Now,
                     PersonId = person.PersonId,
                     Mobile = model.Mobile,
@@ -263,12 +257,9 @@ namespace AuthorizingAPIs.Services
                     Email = model.Email,
                     Fname = model.Fname,
                     Lname = model.Lname,
-                    Nationalcode = model.Nationalcode,
                     IsActive = true,
                     IsDelete = false,
                     IsAccepted = false,
-                    IsKYCAccepted = false,
-                    IsShahinKYCAccepted = false,
                     registerDate = DateTime.Now,
                     PersonId = person.PersonId,
                     Mobile = model.Mobile,
@@ -337,12 +328,9 @@ namespace AuthorizingAPIs.Services
                     Email = null,
                     Fname = null,
                     Lname = null,
-                    Nationalcode = null,
                     IsActive = true,
                     IsDelete = false,
                     IsAccepted = false,
-                    IsKYCAccepted = false,
-                    IsShahinKYCAccepted = false,
                     registerDate = DateTime.Now,
                     PersonId = person.PersonId,
                     Mobile = mobile,
@@ -394,9 +382,6 @@ namespace AuthorizingAPIs.Services
                 if (data != null)
                 {
                     data.IsAccepted = true;
-                    data.IsKYCAccepted = true;
-                    data.IsShahinKYCAccepted = true;
-
                     _Context.Users.Add(data);
 
                     await _Context.SaveChangesAsync();
@@ -566,8 +551,6 @@ namespace AuthorizingAPIs.Services
                 if (!string.IsNullOrEmpty(filter.mobile))
                     query = query.Where(x => x.Mobile == filter.mobile);
 
-                if (!string.IsNullOrEmpty(filter.nationalcode))
-                    query = query.Where(x => x.Nationalcode == filter.nationalcode);
 
                 if (!string.IsNullOrEmpty(filter.fname))
                     query = query.Where(x => x.Fname.StartsWith(filter.fname));
@@ -581,7 +564,6 @@ namespace AuthorizingAPIs.Services
                     username = x.Username,
                     fname = x.Fname,
                     lname = x.Lname,
-                    iskyc = x.IsKYCAccepted,
                 }).ToListAsync();
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = datas };
@@ -623,9 +605,7 @@ namespace AuthorizingAPIs.Services
                     UserPersonModel userModel = new UserPersonModel()
                     {
                         fname = person.FName,
-                        iskyc = user.IsShahinKYCAccepted || user.IsKYCAccepted,
                         lname = person.LName,
-                        nationalcode = user.Nationalcode,
                         username = user.Username,
                         userid = user.UserId,
                         BirthDate = person.BirthDate,
@@ -668,7 +648,7 @@ namespace AuthorizingAPIs.Services
                 }
                 else
                 {
-                    if (user.Nationalcode == model.nationalcode && user.IsActive)
+                    if (user.IsActive)
                         message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = user };
                     else
                     {
@@ -769,9 +749,6 @@ namespace AuthorizingAPIs.Services
                         {
                             if (user != null && identityResult.isValid)
                             {
-                                user.IsShahinKYCAccepted = true;
-                                user.IsKYCAccepted = true;
-                                user.Nationalcode = model.nationalcode;
                                 _Context.Users.Update(user);
 
                                 await _Context.SaveChangesAsync();
@@ -845,18 +822,18 @@ namespace AuthorizingAPIs.Services
                     await _Context.SaveChangesAsync();
 
 
-                    SMSDto smsmodel = new SMSDto()
-                    {
-                        sourcenumber = string.Empty,
-                        distinationnumber = data.Mobile,
-                        //smsbody = " your activationcode for atlas ewallet is : " + data.ActiveCode,
-                        smsbody = data.ActiveCode,
-                    };
+                    //SMSDto smsmodel = new SMSDto()
+                    //{
+                    //    sourcenumber = string.Empty,
+                    //    distinationnumber = data.Mobile,
+                    //    //smsbody = " your activationcode for atlas ewallet is : " + data.ActiveCode,
+                    //    smsbody = data.ActiveCode,
+                    //};
 
-                    return await _sMSService.ActionManagment(smsmodel, 1, "", "", processId, null, "");
+                    //return await _sMSService.ActionManagment(smsmodel, 1, "", "", processId, null, "");
 
                     //return new SystemMessage() { returncode = 1, returndescription = "درخواست با موفقیت انجام شد", returnvalue = data.ActiveCode };
-
+                    return null;
                 }
             }
             catch (Exception ex)
@@ -966,7 +943,7 @@ namespace AuthorizingAPIs.Services
                 else
                 {
                     Person _pseron = _Context.People.SingleOrDefault(x => x.PersonId == data.PersonId);
-                    if (string.IsNullOrEmpty(data.Mobile) || string.IsNullOrEmpty(data.Nationalcode) || _pseron.BirthDate == null)
+                    if (string.IsNullOrEmpty(data.Mobile) || _pseron.BirthDate == null)
                     {
                         return new SystemMessageModel() { MessageCode = -221, MessageDescription = "به علت ناقص بودن اطلاعات کاربر امکان تایید وجود ندارد", MessageData = new { username = username } };
                     }
@@ -974,7 +951,6 @@ namespace AuthorizingAPIs.Services
                     data.ActiveCode = string.Empty;
                     data.IsActive = true;
                     data.IsAccepted = true;
-                    data.IsKYCAccepted = true;
 
                     _Context.Users.Update(data);
                     await _Context.SaveChangesAsync();

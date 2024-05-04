@@ -9,12 +9,12 @@ using System.Text;
 using DataLayers;
 using Entities.Dtos;
 
-using AuthorizingAPIs.Interfaces;
-using AuthorizingAPIs.Dtos;
+using NextTradeAPIs.Interfaces;
+using NextTradeAPIs.Dtos;
 using Base.Common.Enums;
 using Entities.DBEntities;
 
-namespace AuthorizingAPIs.Services
+namespace NextTradeAPIs.Services
 {
     public class AuthorizationService //: IOghafAuthorizationService
     {

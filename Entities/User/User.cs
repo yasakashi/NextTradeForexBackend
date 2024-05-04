@@ -93,14 +93,6 @@ namespace Entities.DBEntities
         [Encrypted]
         public string? Mobile { get; set; }
         /// <summary>
-        /// کد ملی کاربر
-        /// </summary>
-        [Display(Name = "کد ملی")]
-        // [Required(ErrorMessage = "لطفا {0} را وارد کنید")]
-        [MaxLength(2000, ErrorMessage = "{0} نمی تواند بیشتر از {1} کاراکتر باشد .")]
-        [Encrypted]
-        public string? Nationalcode { get; set; }
-        /// <summary>
         /// نام کاربر
         /// </summary>
         [Display(Name = "نام")]
@@ -114,20 +106,6 @@ namespace Entities.DBEntities
         [MaxLength(2000, ErrorMessage = "{0} نمی تواند بیشتر از {1} کاراکتر باشد .")]
         [Encrypted] 
         public string? Lname { get; set; }
-
-        /// <summary>
-        /// وضعیت تایید صلاحت هویت توسط شاهین
-        /// </summary>
-
-        [Display(Name = "تایید صلاحت هویت توسط شاهین")]
-        public bool IsShahinKYCAccepted { get; set; }
-
-        /// <summary>
-        /// وضعیت تایید اهراز هویت
-        /// </summary>
-        [Display(Name = "تایید اهراز هویت")]
-        public bool IsKYCAccepted { get; set; }
-
         /// <summary>
         /// عکس یا لگوی کاربر
         /// </summary>

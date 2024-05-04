@@ -7,7 +7,7 @@ using Entities.Dtos;
 using Microsoft.Extensions.Configuration;
 using Base.Common.Enums;
 using System.Collections.Generic;
-using AuthorizingAPIs.Dtos;
+using NextTradeAPIs.Dtos;
 using RestSharp;
 using System.Net;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -15,9 +15,9 @@ using Entities.DBEntities;
 using System.Net.Sockets;
 using DocumentFormat.OpenXml.InkML;
 using Entities.Systems;
-using AtlasCoreAPI.Services;
+using NextTradeAPIs.Services;
 
-namespace AuthorizingAPIs.Services
+namespace NextTradeAPIs.Services
 {
     public class PeopleServices
     {

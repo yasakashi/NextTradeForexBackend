@@ -22,9 +22,6 @@ namespace DataLayers
         public DbSet<SystemMessage> SystemMessages { get; set; }
         public DbSet<LogType> LogTypes { get; set; }
         //public DbSet<SystemLog> SystemLogs { get; set; }
-        public DbSet<OutSystem> OutSystems { get; set; }
-        public DbSet<OutRelationWallet> OutRelationWallets { get; set; }
-
         public DbSet<User> Users { get; set; }
         public DbSet<UserType> UserTypes { get; set; }        
         //public DbSet<LoginLog> LoginLogs { get; set; }

@@ -2,7 +2,7 @@
 using DataLayers;
 using Entities.Systems;
 
-namespace AuthorizingAPIs.Services
+namespace NextTradeAPIs.Services
 {
     /// <summary>
     /// ثبت لاگ در سیستم

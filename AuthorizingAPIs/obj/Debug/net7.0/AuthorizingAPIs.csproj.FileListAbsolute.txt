@@ -350,3 +350,15 @@ E:\Programming\Atlas\Atlas2\AuthorizingSystem\AuthorizingAPIs\obj\Debug\net7.0\r
 E:\Programming\Atlas\Atlas2\AuthorizingSystem\AuthorizingAPIs\obj\Debug\net7.0\AuthorizingAPIs.pdb
 E:\Programming\Atlas\Atlas2\AuthorizingSystem\AuthorizingAPIs\obj\Debug\net7.0\AuthorizingAPIs.genruntimeconfig.cache
 E:\Programming\Atlas\Atlas2\AuthorizingSystem\AuthorizingAPIs\obj\Debug\net7.0\ref\AuthorizingAPIs.dll
+E:\Programming\NextTradeForexBackend\AuthorizingAPIs\obj\Debug\net7.0\AuthorizingAPIs.csproj.AssemblyReference.cache
+E:\Programming\NextTradeForexBackend\AuthorizingAPIs\obj\Debug\net7.0\AuthorizingAPIs.GeneratedMSBuildEditorConfig.editorconfig
+E:\Programming\NextTradeForexBackend\AuthorizingAPIs\obj\Debug\net7.0\AuthorizingAPIs.AssemblyInfoInputs.cache
+E:\Programming\NextTradeForexBackend\AuthorizingAPIs\obj\Debug\net7.0\AuthorizingAPIs.AssemblyInfo.cs
+E:\Programming\NextTradeForexBackend\AuthorizingAPIs\obj\Debug\net7.0\AuthorizingAPIs.csproj.CoreCompileInputs.cache
+E:\Programming\NextTradeForexBackend\AuthorizingAPIs\obj\Debug\net7.0\AuthorizingAPIs.MvcApplicationPartsAssemblyInfo.cs
+E:\Programming\NextTradeForexBackend\AuthorizingAPIs\obj\Debug\net7.0\AuthorizingAPIs.MvcApplicationPartsAssemblyInfo.cache
+E:\Programming\NextTradeForexBackend\AuthorizingAPIs\obj\Debug\net7.0\AuthorizingAPIs.RazorAssemblyInfo.cache
+E:\Programming\NextTradeForexBackend\AuthorizingAPIs\obj\Debug\net7.0\AuthorizingAPIs.RazorAssemblyInfo.cs
+E:\Programming\NextTradeForexBackend\AuthorizingAPIs\obj\Debug\net7.0\AuthorizingAPIs.dll
+E:\Programming\NextTradeForexBackend\AuthorizingAPIs\obj\Debug\net7.0\refint\AuthorizingAPIs.dll
+E:\Programming\NextTradeForexBackend\AuthorizingAPIs\obj\Debug\net7.0\AuthorizingAPIs.pdb

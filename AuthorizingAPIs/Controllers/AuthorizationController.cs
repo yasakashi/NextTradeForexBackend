@@ -1,5 +1,5 @@
-﻿using AuthorizingAPIs.Dtos;
-using AuthorizingAPIs.Services;
+﻿using NextTradeAPIs.Dtos;
+using NextTradeAPIs.Services;
 using Azure.Core;
 using Base.Common.Enums;
 using Entities.DBEntities;
@@ -18,7 +18,7 @@ using System.Reflection.Emit;
 using System.ServiceModel;
 using System.Text;
 
-namespace AuthorizingAPIs
+namespace NextTradeAPIs
 {
     /// <summary>
     /// ایجاد و بررسی توکن برای مدیریت دسترسی به سیستم

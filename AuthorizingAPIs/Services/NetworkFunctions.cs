@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace AuthorizingAPIs
+namespace NextTradeAPIs
 {
     public class NetworkFunctions
     {

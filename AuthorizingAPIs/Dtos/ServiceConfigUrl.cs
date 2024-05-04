@@ -1,4 +1,4 @@
-﻿namespace AuthorizingAPIs.Dtos
+﻿namespace NextTradeAPIs.Dtos
 {
     public static class ServiceUrlConfig
     {
