@@ -27,6 +27,5 @@ namespace Entities.Dtos
         public string? companyregisterdate { get; set; }
         public string? postalcode { get; set; }
         public string? address { get; set; }
-        public bool iskyc { get; set; }
     }
 }
