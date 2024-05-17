@@ -1,42 +1,47 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Programming\\NextTradeForexBackend\\AuthorizingAPIs\\NextTradeAPIs.csproj": {}
+    "D:\\NextTrade\\NextTradeForexBackend\\AuthorizingAPIs\\NextTradeAPIs.csproj": {}
   },
   "projects": {
-    "E:\\Programming\\NextTradeForexBackend\\AuthorizingAPIs\\NextTradeAPIs.csproj": {
+    "D:\\NextTrade\\NextTradeForexBackend\\AuthorizingAPIs\\NextTradeAPIs.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Programming\\NextTradeForexBackend\\AuthorizingAPIs\\NextTradeAPIs.csproj",
+        "projectUniqueName": "D:\\NextTrade\\NextTradeForexBackend\\AuthorizingAPIs\\NextTradeAPIs.csproj",
         "projectName": "NextTradeAPIs",
-        "projectPath": "E:\\Programming\\NextTradeForexBackend\\AuthorizingAPIs\\NextTradeAPIs.csproj",
-        "packagesPath": "C:\\Users\\Yasa\\.nuget\\packages\\",
-        "outputPath": "E:\\Programming\\NextTradeForexBackend\\AuthorizingAPIs\\obj\\",
+        "projectPath": "D:\\NextTrade\\NextTradeForexBackend\\AuthorizingAPIs\\NextTradeAPIs.csproj",
+        "packagesPath": "C:\\Users\\Ali\\.nuget\\packages\\",
+        "outputPath": "D:\\NextTrade\\NextTradeForexBackend\\AuthorizingAPIs\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
         "configFilePaths": [
-          "C:\\Users\\Yasa\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Ali\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "net7.0"
+          "net8.0"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\sdk\\7.0.306\\Sdks\\Microsoft.NET.Sdk.Web\\library-packs": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net7.0": {
-            "targetAlias": "net7.0",
+          "net8.0": {
+            "targetAlias": "net8.0",
             "projectReferences": {
-              "E:\\Programming\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj": {
-                "projectPath": "E:\\Programming\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj"
+              "D:\\NextTrade\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj": {
+                "projectPath": "D:\\NextTrade\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj"
               },
-              "E:\\Programming\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj": {
-                "projectPath": "E:\\Programming\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj"
+              "D:\\NextTrade\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj": {
+                "projectPath": "D:\\NextTrade\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj"
               },
-              "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj": {
-                "projectPath": "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj"
+              "D:\\NextTrade\\NextTradeForexBackend\\Entities\\Entities.csproj": {
+                "projectPath": "D:\\NextTrade\\NextTradeForexBackend\\Entities\\Entities.csproj"
               }
             }
           }
@@ -45,19 +50,36 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
-        "net7.0": {
-          "targetAlias": "net7.0",
+        "net8.0": {
+          "targetAlias": "net8.0",
           "dependencies": {
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
-              "version": "[7.0.4, )"
+              "version": "[8.0.5, )"
             },
             "Microsoft.AspNetCore.Cors": {
               "target": "Package",
               "version": "[2.2.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.5, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.5, )"
             },
             "Newtonsoft.Json": {
               "target": "Package",
@@ -65,19 +87,19 @@
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
-              "version": "[6.5.0, )"
+              "version": "[6.6.1, )"
             },
             "Swashbuckle.AspNetCore.Annotations": {
               "target": "Package",
-              "version": "[6.5.0, )"
+              "version": "[6.6.1, )"
             },
             "Swashbuckle.AspNetCore.Filters": {
               "target": "Package",
-              "version": "[7.0.6, )"
+              "version": "[8.0.2, )"
             },
             "Swashbuckle.AspNetCore.Filters.Abstractions": {
               "target": "Package",
-              "version": "[7.0.6, )"
+              "version": "[8.0.2, )"
             }
           },
           "imports": [
@@ -99,33 +121,39 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.205/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "E:\\Programming\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj": {
+    "D:\\NextTrade\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Programming\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj",
+        "projectUniqueName": "D:\\NextTrade\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj",
         "projectName": "Base.Common",
-        "projectPath": "E:\\Programming\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj",
-        "packagesPath": "C:\\Users\\Yasa\\.nuget\\packages\\",
-        "outputPath": "E:\\Programming\\NextTradeForexBackend\\Base.Common\\obj\\",
+        "projectPath": "D:\\NextTrade\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj",
+        "packagesPath": "C:\\Users\\Ali\\.nuget\\packages\\",
+        "outputPath": "D:\\NextTrade\\NextTradeForexBackend\\Base.Common\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
         "configFilePaths": [
-          "C:\\Users\\Yasa\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Ali\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "net7.0"
+          "net8.0"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net7.0": {
-            "targetAlias": "net7.0",
+          "net8.0": {
+            "targetAlias": "net8.0",
             "projectReferences": {}
           }
         },
@@ -133,19 +161,24 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
-        "net7.0": {
-          "targetAlias": "net7.0",
+        "net8.0": {
+          "targetAlias": "net8.0",
           "dependencies": {
             "ClosedXML": {
               "target": "Package",
-              "version": "[0.95.4, )"
+              "version": "[0.102.2, )"
             },
             "Microsoft.AspNet.WebApi.Client": {
               "target": "Package",
-              "version": "[5.2.9, )"
+              "version": "[6.0.0, )"
             },
             "Microsoft.AspNetCore": {
               "target": "Package",
@@ -157,31 +190,31 @@
             },
             "Microsoft.IdentityModel.Tokens": {
               "target": "Package",
-              "version": "[6.27.0, )"
+              "version": "[7.5.2, )"
             },
             "QRCoder": {
               "target": "Package",
-              "version": "[1.4.3, )"
+              "version": "[1.5.1, )"
             },
             "System.Data.SqlClient": {
               "target": "Package",
-              "version": "[4.8.5, )"
+              "version": "[4.8.6, )"
             },
             "System.Drawing.Common": {
               "target": "Package",
-              "version": "[7.0.0, )"
+              "version": "[8.0.5, )"
             },
             "System.IdentityModel.Tokens.Jwt": {
               "target": "Package",
-              "version": "[6.27.0, )"
+              "version": "[7.5.2, )"
             },
             "System.Text.Encoding.CodePages": {
               "target": "Package",
-              "version": "[7.0.0, )"
+              "version": "[8.0.0, )"
             },
             "libphonenumber-csharp": {
               "target": "Package",
-              "version": "[8.12.34, )"
+              "version": "[8.13.36, )"
             }
           },
           "imports": [
@@ -200,36 +233,42 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.205/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "E:\\Programming\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj": {
+    "D:\\NextTrade\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Programming\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj",
+        "projectUniqueName": "D:\\NextTrade\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj",
         "projectName": "DataLayers",
-        "projectPath": "E:\\Programming\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj",
-        "packagesPath": "C:\\Users\\Yasa\\.nuget\\packages\\",
-        "outputPath": "E:\\Programming\\NextTradeForexBackend\\DataLayers\\obj\\",
+        "projectPath": "D:\\NextTrade\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj",
+        "packagesPath": "C:\\Users\\Ali\\.nuget\\packages\\",
+        "outputPath": "D:\\NextTrade\\NextTradeForexBackend\\DataLayers\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
         "configFilePaths": [
-          "C:\\Users\\Yasa\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Ali\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "net7.0"
+          "net8.0"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net7.0": {
-            "targetAlias": "net7.0",
+          "net8.0": {
+            "targetAlias": "net8.0",
             "projectReferences": {
-              "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj": {
-                "projectPath": "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj"
+              "D:\\NextTrade\\NextTradeForexBackend\\Entities\\Entities.csproj": {
+                "projectPath": "D:\\NextTrade\\NextTradeForexBackend\\Entities\\Entities.csproj"
               }
             }
           }
@@ -238,11 +277,16 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
-        "net7.0": {
-          "targetAlias": "net7.0",
+        "net8.0": {
+          "targetAlias": "net8.0",
           "dependencies": {
             "EntityFrameworkCore.DataEncryption": {
               "target": "Package",
@@ -274,7 +318,7 @@
             },
             "System.Data.SqlClient": {
               "target": "Package",
-              "version": "[4.8.5, )"
+              "version": "[4.8.6, )"
             }
           },
           "imports": [
@@ -293,33 +337,39 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.205/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj": {
+    "D:\\NextTrade\\NextTradeForexBackend\\Entities\\Entities.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj",
+        "projectUniqueName": "D:\\NextTrade\\NextTradeForexBackend\\Entities\\Entities.csproj",
         "projectName": "Entities",
-        "projectPath": "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj",
-        "packagesPath": "C:\\Users\\Yasa\\.nuget\\packages\\",
-        "outputPath": "E:\\Programming\\NextTradeForexBackend\\Entities\\obj\\",
+        "projectPath": "D:\\NextTrade\\NextTradeForexBackend\\Entities\\Entities.csproj",
+        "packagesPath": "C:\\Users\\Ali\\.nuget\\packages\\",
+        "outputPath": "D:\\NextTrade\\NextTradeForexBackend\\Entities\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
         "configFilePaths": [
-          "C:\\Users\\Yasa\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Ali\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "net7.0"
+          "net8.0"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net7.0": {
-            "targetAlias": "net7.0",
+          "net8.0": {
+            "targetAlias": "net8.0",
             "projectReferences": {}
           }
         },
@@ -327,11 +377,16 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
-        "net7.0": {
-          "targetAlias": "net7.0",
+        "net8.0": {
+          "targetAlias": "net8.0",
           "dependencies": {
             "EntityFrameworkCore.DataEncryption": {
               "target": "Package",
@@ -368,7 +423,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.205/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

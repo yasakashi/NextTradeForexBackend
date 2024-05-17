@@ -9,37 +9,39 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = NextTradeAPIs
 build_property.RootNamespace = NextTradeAPIs
-build_property.ProjectDir = E:\Programming\NextTradeForexBackend\AuthorizingAPIs\
+build_property.ProjectDir = D:\NextTrade\NextTradeForexBackend\AuthorizingAPIs\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 7.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = E:\Programming\NextTradeForexBackend\AuthorizingAPIs
+build_property.MSBuildProjectDirectory = D:\NextTrade\NextTradeForexBackend\AuthorizingAPIs
 build_property._RazorSourceGeneratorDebug = 
 
-[E:/Programming/NextTradeForexBackend/AuthorizingAPIs/Pages/Error.cshtml]
+[D:/NextTrade/NextTradeForexBackend/AuthorizingAPIs/Pages/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/Programming/NextTradeForexBackend/AuthorizingAPIs/Pages/Index.cshtml]
+[D:/NextTrade/NextTradeForexBackend/AuthorizingAPIs/Pages/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/Programming/NextTradeForexBackend/AuthorizingAPIs/Pages/Privacy.cshtml]
+[D:/NextTrade/NextTradeForexBackend/AuthorizingAPIs/Pages/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJpdmFjeS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/Programming/NextTradeForexBackend/AuthorizingAPIs/Pages/Shared/_ValidationScriptsPartial.cshtml]
+[D:/NextTrade/NextTradeForexBackend/AuthorizingAPIs/Pages/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/Programming/NextTradeForexBackend/AuthorizingAPIs/Pages/_ViewImports.cshtml]
+[D:/NextTrade/NextTradeForexBackend/AuthorizingAPIs/Pages/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/Programming/NextTradeForexBackend/AuthorizingAPIs/Pages/_ViewStart.cshtml]
+[D:/NextTrade/NextTradeForexBackend/AuthorizingAPIs/Pages/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[E:/Programming/NextTradeForexBackend/AuthorizingAPIs/Pages/Shared/_Layout.cshtml]
+[D:/NextTrade/NextTradeForexBackend/AuthorizingAPIs/Pages/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-u4l0b3vzh2

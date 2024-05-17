@@ -46,3 +46,16 @@ E:\Programming\NextTradeForexBackend\Base.Common\obj\Debug\net7.0\Base.Common.dl
 E:\Programming\NextTradeForexBackend\Base.Common\obj\Debug\net7.0\refint\Base.Common.dll
 E:\Programming\NextTradeForexBackend\Base.Common\obj\Debug\net7.0\Base.Common.pdb
 E:\Programming\NextTradeForexBackend\Base.Common\obj\Debug\net7.0\ref\Base.Common.dll
+D:\NextTrade\NextTradeForexBackend\Base.Common\bin\Debug\net7.0\Base.Common.deps.json
+D:\NextTrade\NextTradeForexBackend\Base.Common\bin\Debug\net7.0\Base.Common.dll
+D:\NextTrade\NextTradeForexBackend\Base.Common\bin\Debug\net7.0\Base.Common.pdb
+D:\NextTrade\NextTradeForexBackend\Base.Common\obj\Debug\net7.0\Base.Common.csproj.AssemblyReference.cache
+D:\NextTrade\NextTradeForexBackend\Base.Common\obj\Debug\net7.0\Base.Common.GeneratedMSBuildEditorConfig.editorconfig
+D:\NextTrade\NextTradeForexBackend\Base.Common\obj\Debug\net7.0\Base.Common.AssemblyInfoInputs.cache
+D:\NextTrade\NextTradeForexBackend\Base.Common\obj\Debug\net7.0\Base.Common.AssemblyInfo.cs
+D:\NextTrade\NextTradeForexBackend\Base.Common\obj\Debug\net7.0\Base.Common.csproj.CoreCompileInputs.cache
+D:\NextTrade\NextTradeForexBackend\Base.Common\obj\Debug\net7.0\Base.Common.sourcelink.json
+D:\NextTrade\NextTradeForexBackend\Base.Common\obj\Debug\net7.0\Base.Common.dll
+D:\NextTrade\NextTradeForexBackend\Base.Common\obj\Debug\net7.0\refint\Base.Common.dll
+D:\NextTrade\NextTradeForexBackend\Base.Common\obj\Debug\net7.0\Base.Common.pdb
+D:\NextTrade\NextTradeForexBackend\Base.Common\obj\Debug\net7.0\ref\Base.Common.dll

@@ -46,3 +46,16 @@ E:\Programming\NextTradeForexBackend\Entities\obj\Debug\net7.0\Entities.dll
 E:\Programming\NextTradeForexBackend\Entities\obj\Debug\net7.0\refint\Entities.dll
 E:\Programming\NextTradeForexBackend\Entities\obj\Debug\net7.0\Entities.pdb
 E:\Programming\NextTradeForexBackend\Entities\obj\Debug\net7.0\ref\Entities.dll
+D:\NextTrade\NextTradeForexBackend\Entities\bin\Debug\net7.0\Entities.deps.json
+D:\NextTrade\NextTradeForexBackend\Entities\bin\Debug\net7.0\Entities.dll
+D:\NextTrade\NextTradeForexBackend\Entities\bin\Debug\net7.0\Entities.pdb
+D:\NextTrade\NextTradeForexBackend\Entities\obj\Debug\net7.0\Entities.csproj.AssemblyReference.cache
+D:\NextTrade\NextTradeForexBackend\Entities\obj\Debug\net7.0\Entities.GeneratedMSBuildEditorConfig.editorconfig
+D:\NextTrade\NextTradeForexBackend\Entities\obj\Debug\net7.0\Entities.AssemblyInfoInputs.cache
+D:\NextTrade\NextTradeForexBackend\Entities\obj\Debug\net7.0\Entities.AssemblyInfo.cs
+D:\NextTrade\NextTradeForexBackend\Entities\obj\Debug\net7.0\Entities.csproj.CoreCompileInputs.cache
+D:\NextTrade\NextTradeForexBackend\Entities\obj\Debug\net7.0\Entities.sourcelink.json
+D:\NextTrade\NextTradeForexBackend\Entities\obj\Debug\net7.0\Entities.dll
+D:\NextTrade\NextTradeForexBackend\Entities\obj\Debug\net7.0\refint\Entities.dll
+D:\NextTrade\NextTradeForexBackend\Entities\obj\Debug\net7.0\Entities.pdb
+D:\NextTrade\NextTradeForexBackend\Entities\obj\Debug\net7.0\ref\Entities.dll
