@@ -56,17 +56,17 @@ builder.Services.AddDbContext<LogSBbContext>(options =>
         ), ServiceLifetime.Transient);
 
 
-fpath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\DotnetFrameworkKey.dll";
-if (System.IO.File.Exists(fpath))
-{
-    FKeyInfo keyInfo = JsonConvert.DeserializeObject<FKeyInfo>(Base.Common.Encryption.Encryption.DecryptString(File.ReadAllText(fpath)).Replace("\r", "").Replace("\n", "").Trim());
-    _keyInfo = new Base.Common.Encryption.KeyInfo(keyInfo.Key, keyInfo.Iv);
-}
-else
-{
+//fpath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\DotnetFrameworkKey.dll";
+//if (System.IO.File.Exists(fpath))
+//{
+//    FKeyInfo keyInfo = JsonConvert.DeserializeObject<FKeyInfo>(Base.Common.Encryption.Encryption.DecryptString(File.ReadAllText(fpath)).Replace("\r", "").Replace("\n", "").Trim());
+//    _keyInfo = new Base.Common.Encryption.KeyInfo(keyInfo.Key, keyInfo.Iv);
+//}
+//else
+//{
     _keyInfo = new Base.Common.Encryption.KeyInfo("15KLO2soJhvBwz09kBrMlShkaL40vUSGaqr/WBu3+Va=",
                             "kh3fn+orShicGDMLksabAQ==");
-}
+//}
 var encryptionProvider = new AesProvider(_keyInfo.Key, _keyInfo.Iv);
 
 
