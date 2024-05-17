@@ -34,7 +34,8 @@ namespace DataLayers
         #region OnModelCreating
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.UseEncryption(_provider);
+            // ToDo : To Be Fixed Later...
+            //builder.UseEncryption(_provider);
 
 
             /*
