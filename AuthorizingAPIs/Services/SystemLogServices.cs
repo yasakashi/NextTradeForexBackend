@@ -103,6 +103,9 @@ namespace NextTradeAPIs.Services
             }
             catch (Exception ex)
             {
+                if(!Directory.Exists(_LogPath))
+                    Directory.CreateDirectory(_LogPath);    
+
                 /// در صورت وقوع خطا و عدم دسترسی به دیتا بیس لاگ در فایل ذخیره می شود
                 string logPath = _LogPath + GlobalFunctions._GenerateRequestID() + ".txt";
 
