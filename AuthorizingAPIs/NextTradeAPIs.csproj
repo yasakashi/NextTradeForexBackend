@@ -42,4 +42,6 @@
 		<DebugType>None</DebugType>
 		<DebugSymbols>false</DebugSymbols>
 	</PropertyGroup>
+
+	<ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="6" /></VisualStudio></ProjectExtensions>
 </Project>

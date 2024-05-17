@@ -70,7 +70,7 @@
           "lib/netstandard1.6/Irony.dll": {}
         }
       },
-      "libphonenumber-csharp/8.13.36": {
+      "libphonenumber-csharp/8.13.37": {
         "type": "package",
         "compile": {
           "lib/net7.0/PhoneNumbers.dll": {
@@ -3788,10 +3788,10 @@
         "lib/netstandard1.6/Irony.dll"
       ]
     },
-    "libphonenumber-csharp/8.13.36": {
-      "sha512": "8tu/bd9qHkhUCXA6MxGSqqdKQjPdo6YbZU9mZhbLl++WKVWujtXDfubD+P3RDkBrHJ7wg9wsdcEkjngJzfvMZQ==",
+    "libphonenumber-csharp/8.13.37": {
+      "sha512": "/XsqKMfCgeSzl/ZhOeV1frhLVizj08gJDZgCzlSzUxj63ZWMv7ZIRQP2MBUw7Bd6Mb9GAe+S4dQEo0OMQM+Tfg==",
       "type": "package",
-      "path": "libphonenumber-csharp/8.13.36",
+      "path": "libphonenumber-csharp/8.13.37",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -3803,7 +3803,7 @@
         "lib/net7.0/PhoneNumbers.xml",
         "lib/netstandard2.0/PhoneNumbers.dll",
         "lib/netstandard2.0/PhoneNumbers.xml",
-        "libphonenumber-csharp.8.13.36.nupkg.sha512",
+        "libphonenumber-csharp.8.13.37.nupkg.sha512",
         "libphonenumber-csharp.nuspec"
       ]
     },
@@ -9817,30 +9817,23 @@
       "System.Drawing.Common >= 8.0.5",
       "System.IdentityModel.Tokens.Jwt >= 7.5.2",
       "System.Text.Encoding.CodePages >= 8.0.0",
-      "libphonenumber-csharp >= 8.13.36"
+      "libphonenumber-csharp >= 8.13.37"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Ali\\.nuget\\packages\\": {},
-    "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "C:\\Users\\Asus\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\NextTrade\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj",
+      "projectUniqueName": "D:\\NextTradeSource\\Base.Common\\Base.Common.csproj",
       "projectName": "Base.Common",
-      "projectPath": "D:\\NextTrade\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj",
-      "packagesPath": "C:\\Users\\Ali\\.nuget\\packages\\",
-      "outputPath": "D:\\NextTrade\\NextTradeForexBackend\\Base.Common\\obj\\",
+      "projectPath": "D:\\NextTradeSource\\Base.Common\\Base.Common.csproj",
+      "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
+      "outputPath": "D:\\NextTradeSource\\Base.Common\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-      ],
       "configFilePaths": [
-        "C:\\Users\\Ali\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -9848,7 +9841,6 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -9914,7 +9906,7 @@
           },
           "libphonenumber-csharp": {
             "target": "Package",
-            "version": "[8.13.36, )"
+            "version": "[8.13.37, )"
           }
         },
         "imports": [
@@ -9933,7 +9925,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.205/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.300/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

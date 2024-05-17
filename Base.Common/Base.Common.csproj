@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.102.2" />
-    <PackageReference Include="libphonenumber-csharp" Version="8.13.36" />
+    <PackageReference Include="libphonenumber-csharp" Version="8.13.37" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="6.0.0" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />

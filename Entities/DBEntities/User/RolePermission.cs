@@ -6,8 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Entities
-{
+namespace Entities.DBEntities;
+
     [Table("tblRolePermissions")]
     public class RolePermission
     {
@@ -20,4 +20,4 @@ namespace Entities
         public long PermissionId { get; set; }
         public bool IsActived { get; set; }
     }
-}
+
