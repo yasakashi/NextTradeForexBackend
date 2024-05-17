@@ -1,25 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\NextTrade\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj": {}
+    "D:\\NextTradeSource\\DataLayers\\DataLayers.csproj": {}
   },
   "projects": {
-    "D:\\NextTrade\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj": {
+    "D:\\NextTradeSource\\DataLayers\\DataLayers.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\NextTrade\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj",
+        "projectUniqueName": "D:\\NextTradeSource\\DataLayers\\DataLayers.csproj",
         "projectName": "DataLayers",
-        "projectPath": "D:\\NextTrade\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj",
-        "packagesPath": "C:\\Users\\Ali\\.nuget\\packages\\",
-        "outputPath": "D:\\NextTrade\\NextTradeForexBackend\\DataLayers\\obj\\",
+        "projectPath": "D:\\NextTradeSource\\DataLayers\\DataLayers.csproj",
+        "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
+        "outputPath": "D:\\NextTradeSource\\DataLayers\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\Ali\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -27,15 +22,14 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\NextTrade\\NextTradeForexBackend\\Entities\\Entities.csproj": {
-                "projectPath": "D:\\NextTrade\\NextTradeForexBackend\\Entities\\Entities.csproj"
+              "D:\\NextTradeSource\\Entities\\Entities.csproj": {
+                "projectPath": "D:\\NextTradeSource\\Entities\\Entities.csproj"
               }
             }
           }
@@ -108,22 +102,17 @@
         }
       }
     },
-    "D:\\NextTrade\\NextTradeForexBackend\\Entities\\Entities.csproj": {
+    "D:\\NextTradeSource\\Entities\\Entities.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\NextTrade\\NextTradeForexBackend\\Entities\\Entities.csproj",
+        "projectUniqueName": "D:\\NextTradeSource\\Entities\\Entities.csproj",
         "projectName": "Entities",
-        "projectPath": "D:\\NextTrade\\NextTradeForexBackend\\Entities\\Entities.csproj",
-        "packagesPath": "C:\\Users\\Ali\\.nuget\\packages\\",
-        "outputPath": "D:\\NextTrade\\NextTradeForexBackend\\Entities\\obj\\",
+        "projectPath": "D:\\NextTradeSource\\Entities\\Entities.csproj",
+        "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
+        "outputPath": "D:\\NextTradeSource\\Entities\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\Ali\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -131,7 +120,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {

@@ -1220,26 +1220,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Ali\\.nuget\\packages\\": {},
-    "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "C:\\Users\\Asus\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\NextTrade\\NextTradeForexBackend\\Entities\\Entities.csproj",
+      "projectUniqueName": "D:\\NextTradeSource\\Entities\\Entities.csproj",
       "projectName": "Entities",
-      "projectPath": "D:\\NextTrade\\NextTradeForexBackend\\Entities\\Entities.csproj",
-      "packagesPath": "C:\\Users\\Ali\\.nuget\\packages\\",
-      "outputPath": "D:\\NextTrade\\NextTradeForexBackend\\Entities\\obj\\",
+      "projectPath": "D:\\NextTradeSource\\Entities\\Entities.csproj",
+      "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
+      "outputPath": "D:\\NextTradeSource\\Entities\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-      ],
       "configFilePaths": [
-        "C:\\Users\\Ali\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -1247,7 +1240,6 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {

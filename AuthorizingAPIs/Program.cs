@@ -31,10 +31,10 @@ builder.Services.AddControllers();
 builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
 builder.Configuration.SetBasePath(Directory.GetCurrentDirectory());
 
-fpath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\DotnetFrameworkAdo.dll";
-if (System.IO.File.Exists(fpath))
-    ConnStr = Base.Common.Encryption.Encryption.DecryptString(File.ReadAllText(fpath)).Replace("\r", "").Replace("\n", "").Trim();
-else
+//fpath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\DotnetFrameworkAdo.dll";
+//if (System.IO.File.Exists(fpath))
+//    ConnStr = Base.Common.Encryption.Encryption.DecryptString(File.ReadAllText(fpath)).Replace("\r", "").Replace("\n", "").Trim();
+//else
     ConnStr = configuration.GetConnectionString("ConnStr");
 
 builder.Services.AddDbContext<SBbContext>(options =>
@@ -43,10 +43,10 @@ builder.Services.AddDbContext<SBbContext>(options =>
         b => b.MigrationsAssembly(typeof(SBbContext).Assembly.FullName)
         ), ServiceLifetime.Transient);
 
-fpath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\DotnetFrameworkLAdo.dll";
-if (System.IO.File.Exists(fpath))
-    LogConnStr = Base.Common.Encryption.Encryption.DecryptString(File.ReadAllText(fpath)).Replace("\r", "").Replace("\n", "").Trim();
-else
+//fpath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\DotnetFrameworkLAdo.dll";
+//if (System.IO.File.Exists(fpath))
+//    LogConnStr = Base.Common.Encryption.Encryption.DecryptString(File.ReadAllText(fpath)).Replace("\r", "").Replace("\n", "").Trim();
+//else
     LogConnStr = configuration.GetConnectionString("LConnStr");
 
 builder.Services.AddDbContext<LogSBbContext>(options =>
@@ -146,6 +146,8 @@ builder.Services.AddTransient<UserServices, UserServices>();
 builder.Services.AddTransient<SystemLogServices, SystemLogServices>();
 builder.Services.AddTransient<PeopleServices, PeopleServices>();
 builder.Services.AddTransient<BlockedIPServices, BlockedIPServices>();
+
+builder.Services.AddTransient<UserTypeServices, UserTypeServices>();
 
 #endregion
 
