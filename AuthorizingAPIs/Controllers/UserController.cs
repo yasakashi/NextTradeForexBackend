@@ -4,7 +4,6 @@ using NextTradeAPIs.Services;
 using Base.Common.Enums;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Entities;
-using Entities.DBEntities;
 using Entities.Dtos;
 using Entities.Systems;
 using Microsoft.AspNetCore.Authorization;
@@ -15,6 +14,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Reflection.Emit;
 using System.Text;
+using Entities.DBEntities;
 
 namespace NextTradeAPIs.Controllers
 {
@@ -29,6 +29,7 @@ namespace NextTradeAPIs.Controllers
         AuthorizationService _authorizationService;
         private IHttpContextAccessor _HttpContextAccessor;
         UserServices _userServices;
+        UserTypeServices _userTypeService;
         SystemLogServices _systemLogServices;
         PeopleServices _peopleService;
 

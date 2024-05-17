@@ -2,7 +2,6 @@
 using NextTradeAPIs.Services;
 using Azure.Core;
 using Base.Common.Enums;
-using Entities.DBEntities;
 using Entities.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -17,6 +16,7 @@ using System.Net;
 using System.Reflection.Emit;
 using System.ServiceModel;
 using System.Text;
+using Entities.DBEntities;
 
 namespace NextTradeAPIs
 {

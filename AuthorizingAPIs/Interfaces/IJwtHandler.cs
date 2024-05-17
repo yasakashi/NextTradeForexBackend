@@ -1,6 +1,4 @@
-﻿
-
-using Entities.DBEntities;
+﻿using Entities.DBEntities;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace NextTradeAPIs.Interfaces
