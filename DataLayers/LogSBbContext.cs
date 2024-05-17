@@ -1,10 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
-using System.Data.SqlClient;
-using Microsoft.EntityFrameworkCore.DataEncryption.Providers;
-using Microsoft.EntityFrameworkCore.DataEncryption;
 using Entities.Systems;
 using Entities.DBEntities;
+using System.Data.SqlClient;
 
 namespace DataLayers
 {

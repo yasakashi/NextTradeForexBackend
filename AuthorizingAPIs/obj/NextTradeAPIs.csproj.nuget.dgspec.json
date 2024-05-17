@@ -1,20 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "D:\\NextTradeSource\\AuthorizingAPIs\\NextTradeAPIs.csproj": {}
+    "D:\\NextTrade\\NextTradeForexBackend\\AuthorizingAPIs\\NextTradeAPIs.csproj": {}
   },
   "projects": {
-    "D:\\NextTradeSource\\AuthorizingAPIs\\NextTradeAPIs.csproj": {
+    "D:\\NextTrade\\NextTradeForexBackend\\AuthorizingAPIs\\NextTradeAPIs.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\NextTradeSource\\AuthorizingAPIs\\NextTradeAPIs.csproj",
+        "projectUniqueName": "D:\\NextTrade\\NextTradeForexBackend\\AuthorizingAPIs\\NextTradeAPIs.csproj",
         "projectName": "NextTradeAPIs",
-        "projectPath": "D:\\NextTradeSource\\AuthorizingAPIs\\NextTradeAPIs.csproj",
-        "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
-        "outputPath": "D:\\NextTradeSource\\AuthorizingAPIs\\obj\\",
+        "projectPath": "D:\\NextTrade\\NextTradeForexBackend\\AuthorizingAPIs\\NextTradeAPIs.csproj",
+        "packagesPath": "C:\\Users\\Ali\\.nuget\\packages\\",
+        "outputPath": "D:\\NextTrade\\NextTradeForexBackend\\AuthorizingAPIs\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
         "configFilePaths": [
-          "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Ali\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -22,20 +27,21 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\NextTradeSource\\Base.Common\\Base.Common.csproj": {
-                "projectPath": "D:\\NextTradeSource\\Base.Common\\Base.Common.csproj"
+              "D:\\NextTrade\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj": {
+                "projectPath": "D:\\NextTrade\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj"
               },
-              "D:\\NextTradeSource\\DataLayers\\DataLayers.csproj": {
-                "projectPath": "D:\\NextTradeSource\\DataLayers\\DataLayers.csproj"
+              "D:\\NextTrade\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj": {
+                "projectPath": "D:\\NextTrade\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj"
               },
-              "D:\\NextTradeSource\\Entities\\Entities.csproj": {
-                "projectPath": "D:\\NextTradeSource\\Entities\\Entities.csproj"
+              "D:\\NextTrade\\NextTradeForexBackend\\Entities\\Entities.csproj": {
+                "projectPath": "D:\\NextTrade\\NextTradeForexBackend\\Entities\\Entities.csproj"
               }
             }
           }
@@ -63,9 +69,21 @@
               "target": "Package",
               "version": "[2.2.0, )"
             },
+            "Microsoft.AspNetCore.Mvc.Analyzers": {
+              "target": "Package",
+              "version": "[2.2.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Analyzers": {
+              "target": "Package",
+              "version": "[8.0.5, )"
+            },
             "Microsoft.EntityFrameworkCore.Design": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.5, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
               "version": "[8.0.5, )"
             },
@@ -115,21 +133,26 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.300/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.205/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\NextTradeSource\\Base.Common\\Base.Common.csproj": {
+    "D:\\NextTrade\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\NextTradeSource\\Base.Common\\Base.Common.csproj",
+        "projectUniqueName": "D:\\NextTrade\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj",
         "projectName": "Base.Common",
-        "projectPath": "D:\\NextTradeSource\\Base.Common\\Base.Common.csproj",
-        "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
-        "outputPath": "D:\\NextTradeSource\\Base.Common\\obj\\",
+        "projectPath": "D:\\NextTrade\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj",
+        "packagesPath": "C:\\Users\\Ali\\.nuget\\packages\\",
+        "outputPath": "D:\\NextTrade\\NextTradeForexBackend\\Base.Common\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
         "configFilePaths": [
-          "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Ali\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -137,6 +160,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -180,6 +204,10 @@
               "target": "Package",
               "version": "[7.5.2, )"
             },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
+            },
             "QRCoder": {
               "target": "Package",
               "version": "[1.5.1, )"
@@ -202,7 +230,7 @@
             },
             "libphonenumber-csharp": {
               "target": "Package",
-              "version": "[8.13.36, )"
+              "version": "[8.13.37, )"
             }
           },
           "imports": [
@@ -221,21 +249,26 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.300/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.205/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\NextTradeSource\\DataLayers\\DataLayers.csproj": {
+    "D:\\NextTrade\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\NextTradeSource\\DataLayers\\DataLayers.csproj",
+        "projectUniqueName": "D:\\NextTrade\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj",
         "projectName": "DataLayers",
-        "projectPath": "D:\\NextTradeSource\\DataLayers\\DataLayers.csproj",
-        "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
-        "outputPath": "D:\\NextTradeSource\\DataLayers\\obj\\",
+        "projectPath": "D:\\NextTrade\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj",
+        "packagesPath": "C:\\Users\\Ali\\.nuget\\packages\\",
+        "outputPath": "D:\\NextTrade\\NextTradeForexBackend\\DataLayers\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
         "configFilePaths": [
-          "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Ali\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -243,14 +276,15 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\NextTradeSource\\Entities\\Entities.csproj": {
-                "projectPath": "D:\\NextTradeSource\\Entities\\Entities.csproj"
+              "D:\\NextTrade\\NextTradeForexBackend\\Entities\\Entities.csproj": {
+                "projectPath": "D:\\NextTrade\\NextTradeForexBackend\\Entities\\Entities.csproj"
               }
             }
           }
@@ -279,6 +313,10 @@
               "version": "[8.0.5, )"
             },
             "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.5, )"
+            },
+            "Microsoft.EntityFrameworkCore.Analyzers": {
               "target": "Package",
               "version": "[8.0.5, )"
             },
@@ -319,21 +357,26 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.300/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.205/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\NextTradeSource\\Entities\\Entities.csproj": {
+    "D:\\NextTrade\\NextTradeForexBackend\\Entities\\Entities.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\NextTradeSource\\Entities\\Entities.csproj",
+        "projectUniqueName": "D:\\NextTrade\\NextTradeForexBackend\\Entities\\Entities.csproj",
         "projectName": "Entities",
-        "projectPath": "D:\\NextTradeSource\\Entities\\Entities.csproj",
-        "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
-        "outputPath": "D:\\NextTradeSource\\Entities\\obj\\",
+        "projectPath": "D:\\NextTrade\\NextTradeForexBackend\\Entities\\Entities.csproj",
+        "packagesPath": "C:\\Users\\Ali\\.nuget\\packages\\",
+        "outputPath": "D:\\NextTrade\\NextTradeForexBackend\\Entities\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
         "configFilePaths": [
-          "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Ali\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -341,6 +384,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -399,7 +443,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.300/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.205/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

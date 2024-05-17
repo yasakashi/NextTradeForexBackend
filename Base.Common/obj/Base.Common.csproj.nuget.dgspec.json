@@ -1,20 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "D:\\NextTradeSource\\Base.Common\\Base.Common.csproj": {}
+    "D:\\NextTrade\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj": {}
   },
   "projects": {
-    "D:\\NextTradeSource\\Base.Common\\Base.Common.csproj": {
+    "D:\\NextTrade\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\NextTradeSource\\Base.Common\\Base.Common.csproj",
+        "projectUniqueName": "D:\\NextTrade\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj",
         "projectName": "Base.Common",
-        "projectPath": "D:\\NextTradeSource\\Base.Common\\Base.Common.csproj",
-        "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
-        "outputPath": "D:\\NextTradeSource\\Base.Common\\obj\\",
+        "projectPath": "D:\\NextTrade\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj",
+        "packagesPath": "C:\\Users\\Ali\\.nuget\\packages\\",
+        "outputPath": "D:\\NextTrade\\NextTradeForexBackend\\Base.Common\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
         "configFilePaths": [
-          "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Ali\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -22,6 +27,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -65,6 +71,10 @@
               "target": "Package",
               "version": "[7.5.2, )"
             },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
+            },
             "QRCoder": {
               "target": "Package",
               "version": "[1.5.1, )"
@@ -106,7 +116,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.300/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.205/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
