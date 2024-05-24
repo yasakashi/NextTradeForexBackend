@@ -1263,19 +1263,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Yasa\\.nuget\\packages\\": {}
+    "C:\\Users\\h\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj",
+      "projectUniqueName": "C:\\Users\\h\\Source\\Repos\\NextTradeForexBackend\\Entities\\Entities.csproj",
       "projectName": "Entities",
-      "projectPath": "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj",
-      "packagesPath": "C:\\Users\\Yasa\\.nuget\\packages\\",
-      "outputPath": "E:\\Programming\\NextTradeForexBackend\\Entities\\obj\\",
+      "projectPath": "C:\\Users\\h\\Source\\Repos\\NextTradeForexBackend\\Entities\\Entities.csproj",
+      "packagesPath": "C:\\Users\\h\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\h\\Source\\Repos\\NextTradeForexBackend\\Entities\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Yasa\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\h\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -1283,6 +1283,7 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {

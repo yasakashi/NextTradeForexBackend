@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Programming\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj": {}
+    "C:\\Users\\h\\Source\\Repos\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj": {}
   },
   "projects": {
-    "E:\\Programming\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj": {
+    "C:\\Users\\h\\Source\\Repos\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Programming\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj",
+        "projectUniqueName": "C:\\Users\\h\\Source\\Repos\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj",
         "projectName": "Base.Common",
-        "projectPath": "E:\\Programming\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj",
-        "packagesPath": "C:\\Users\\Yasa\\.nuget\\packages\\",
-        "outputPath": "E:\\Programming\\NextTradeForexBackend\\Base.Common\\obj\\",
+        "projectPath": "C:\\Users\\h\\Source\\Repos\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj",
+        "packagesPath": "C:\\Users\\h\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\h\\Source\\Repos\\NextTradeForexBackend\\Base.Common\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Yasa\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\h\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -22,6 +22,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {

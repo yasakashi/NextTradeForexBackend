@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Programming\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj": {}
+    "C:\\Users\\h\\Source\\Repos\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj": {}
   },
   "projects": {
-    "E:\\Programming\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj": {
+    "C:\\Users\\h\\Source\\Repos\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Programming\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj",
+        "projectUniqueName": "C:\\Users\\h\\Source\\Repos\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj",
         "projectName": "DataLayers",
-        "projectPath": "E:\\Programming\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj",
-        "packagesPath": "C:\\Users\\Yasa\\.nuget\\packages\\",
-        "outputPath": "E:\\Programming\\NextTradeForexBackend\\DataLayers\\obj\\",
+        "projectPath": "C:\\Users\\h\\Source\\Repos\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj",
+        "packagesPath": "C:\\Users\\h\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\h\\Source\\Repos\\NextTradeForexBackend\\DataLayers\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Yasa\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\h\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -22,14 +22,15 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj": {
-                "projectPath": "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj"
+              "C:\\Users\\h\\Source\\Repos\\NextTradeForexBackend\\Entities\\Entities.csproj": {
+                "projectPath": "C:\\Users\\h\\Source\\Repos\\NextTradeForexBackend\\Entities\\Entities.csproj"
               }
             }
           }
@@ -106,17 +107,17 @@
         }
       }
     },
-    "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj": {
+    "C:\\Users\\h\\Source\\Repos\\NextTradeForexBackend\\Entities\\Entities.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj",
+        "projectUniqueName": "C:\\Users\\h\\Source\\Repos\\NextTradeForexBackend\\Entities\\Entities.csproj",
         "projectName": "Entities",
-        "projectPath": "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj",
-        "packagesPath": "C:\\Users\\Yasa\\.nuget\\packages\\",
-        "outputPath": "E:\\Programming\\NextTradeForexBackend\\Entities\\obj\\",
+        "projectPath": "C:\\Users\\h\\Source\\Repos\\NextTradeForexBackend\\Entities\\Entities.csproj",
+        "packagesPath": "C:\\Users\\h\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\h\\Source\\Repos\\NextTradeForexBackend\\Entities\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Yasa\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\h\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -124,6 +125,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
