@@ -1268,11 +1268,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\h\\Source\\Repos\\NextTradeForexBackend\\Entities\\Entities.csproj",
+      "projectUniqueName": "C:\\Users\\h\\source\\repos\\NextTradeForexBackend\\Entities\\Entities.csproj",
       "projectName": "Entities",
-      "projectPath": "C:\\Users\\h\\Source\\Repos\\NextTradeForexBackend\\Entities\\Entities.csproj",
+      "projectPath": "C:\\Users\\h\\source\\repos\\NextTradeForexBackend\\Entities\\Entities.csproj",
       "packagesPath": "C:\\Users\\h\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\h\\Source\\Repos\\NextTradeForexBackend\\Entities\\obj\\",
+      "outputPath": "C:\\Users\\h\\source\\repos\\NextTradeForexBackend\\Entities\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\h\\AppData\\Roaming\\NuGet\\NuGet.Config",

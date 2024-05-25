@@ -106,6 +106,12 @@ namespace Entities.Dtos
         ///</Summery>
         [Display(Name = "نوع شخص")]
         public long PersonTypeId { get; set; }
+        ///<Summery>
+        /// 1 : اشخاص حقیقی
+        /// 2 : اشخاص حقوقی
+        ///</Summery>
+        [Display(Name = "نوع کاربر")]
+        public long UserTypeId { get; set; }
 
         /// <summary>
         /// عکس یا لگوی کاربر

@@ -150,7 +150,6 @@ namespace NextTradeAPIs.Services
                     PersonTypeId = model.PersonTypeId,
                     FName = model.Fname,
                     LName = model.Lname,
-                    Nationalcode = model.Nationalcode,
                     Sex = model.Sex ?? 1,
                     Fathername = model.fathername ?? "",
                     MarriedStatusId = model.marriedstatusid,
@@ -230,7 +229,6 @@ namespace NextTradeAPIs.Services
                     PersonTypeId = model.PersonTypeId,
                     FName = model.Fname,
                     LName = model.Lname,
-                    Nationalcode = model.Nationalcode,
                     Sex = model.Sex ?? 1,
                     Fathername = model.fathername,
                     MarriedStatusId = model.marriedstatusid,
@@ -263,7 +261,7 @@ namespace NextTradeAPIs.Services
                     registerDate = DateTime.Now,
                     PersonId = person.PersonId,
                     Mobile = model.Mobile,
-                    UserTypeId = (long)UserTypes.NormalUser
+                    UserTypeId = (model.UserTypeId != null)? model.UserTypeId :(long)UserTypes.NormalUser
                 };
 
                 _Context.Users.Add(data);
@@ -302,7 +300,6 @@ namespace NextTradeAPIs.Services
                     PersonTypeId = (long)PersonTypes.RealPerson,
                     FName = null,
                     LName = null,
-                    Nationalcode = null,
                     Sex = null,
                     Fathername = null,
                     MarriedStatusId = null,

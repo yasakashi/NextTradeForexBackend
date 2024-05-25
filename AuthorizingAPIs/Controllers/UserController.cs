@@ -152,10 +152,10 @@ namespace NextTradeAPIs.Controllers
 
                 _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
 
-                message = await _authorizationService.CheckToken(_bearer_token);
+                //message = await _authorizationService.CheckToken(_bearer_token);
 
-                if (message.MessageCode < 0)
-                    return Unauthorized(message);
+                //if (message.MessageCode < 0)
+                //    return Unauthorized(message);
 
                 UserModel userlogin = message.MessageData as UserModel;
 

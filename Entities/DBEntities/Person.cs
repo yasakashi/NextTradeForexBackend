@@ -26,11 +26,11 @@ namespace Entities.DBEntities
         public string? LName { get; set; }
         [Encrypted]
         public string? Fathername { get; set; }
-        [Display(Name = "کد ملی")]
-        // [Required(ErrorMessage = "لطفا {0} را وارد کنید")]
-        [MaxLength(2000, ErrorMessage = "{0} نمی تواند بیشتر از {1} کاراکتر باشد .")]
-        [Encrypted]
-        public string? Nationalcode { get; set; }
+        //[Display(Name = "کد ملی")]
+        //// [Required(ErrorMessage = "لطفا {0} را وارد کنید")]
+        //[MaxLength(2000, ErrorMessage = "{0} نمی تواند بیشتر از {1} کاراکتر باشد .")]
+        //[Encrypted]
+        //public string? Nationalcode { get; set; }
         ///<Summery>
         /// 1 : اشخاص حقیقی
         /// 2 : اشخاص حقوقی
