@@ -31,8 +31,13 @@ namespace DataLayers
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<Person> People { get; set; }
 
-        #region OnModelCreating
-        protected override void OnModelCreating(ModelBuilder builder)
+
+        public DbSet<SubCategory> SubCategories{ get; set; }
+    public DbSet<Category> Categories{ get; set; }
+public DbSet<ForumMessage> ForumMessages{ get; set; }
+
+#region OnModelCreating
+protected override void OnModelCreating(ModelBuilder builder)
         {
             // ToDo : To Be Fixed Later...
             //builder.UseEncryption(_provider);
