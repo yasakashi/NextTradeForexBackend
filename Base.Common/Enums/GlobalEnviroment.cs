@@ -22,19 +22,19 @@
         /// <summary>
         /// کاربر مدیر
         /// </summary>
-        Admin = 1,
+        SuperAdmin = 1,
         /// <summary>
         /// کاربر مدیریت هر اپ موبایل
         /// </summary>
-        MobileAppParentUser =2,
+        Admin =2,
         /// <summary>
         /// کاربر اصلی مشتری سرویس خارجی
         /// </summary>
-        ServiceParentUser = 3,
+        Master = 3,
         /// <summary>
         /// کاربر عادی
         /// </summary>
-        NormalUser = 4
+        Student = 4
     }
     public class GlobalEnviroment
     {

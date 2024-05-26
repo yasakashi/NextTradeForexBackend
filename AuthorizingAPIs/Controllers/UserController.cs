@@ -287,8 +287,11 @@ namespace NextTradeAPIs.Controllers
 
                 UserModel userlogin = message.MessageData as UserModel;
 
-                message = await _userServices.GetUsers(model, userlogin, processId, clientip, hosturl);
+                if((userlogin.UserTypeId == (long)UserTypes.Admin)|| (userlogin.UserTypeId == (long)UserTypes.SuperAdmin))
 
+                message = await _userServices.GetUsers(model, userlogin, processId, clientip, hosturl);
+                else
+                    return Unauthorized(new SystemMessageModel() {MessageCode =-403,MessageDescription="You do not have permissim for this service" });
                 if (message.MessageCode < 0)
                     return BadRequest(message);
 
