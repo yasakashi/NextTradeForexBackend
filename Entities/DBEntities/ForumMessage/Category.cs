@@ -17,4 +17,7 @@ public class Category
 
 
     public virtual List<SubCategory> SubCategories { get; set; }
+    public virtual List<ForumMessage> ForumMessages { get; set; }
+
 }
+

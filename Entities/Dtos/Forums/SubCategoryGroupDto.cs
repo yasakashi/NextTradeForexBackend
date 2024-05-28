@@ -4,13 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Entities.Dtos.Forums
+namespace Entities.Dtos;
+
+public class SubCategoryGroupDto
 {
-    public class SubCategoryGroupDto
-    {
-        public long? Id { get; set; }
-        public string name { get; set; }
-        public long categotyId { get; set; }
-        public long subcategotyId { get; set; }
-    }
+    public long? Id { get; set; }
+    public string name { get; set; }
+    public long categotyId { get; set; }
+    public long subcategotyId { get; set; }
 }

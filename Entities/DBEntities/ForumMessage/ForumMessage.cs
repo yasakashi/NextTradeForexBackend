@@ -13,13 +13,17 @@ public class ForumMessage
 {
     [Key]
     public Guid Id { get; set; }
-    public Guid parentId { get; set; }
+    public Guid? parentId { get; set; }
+    public long creatoruserid { get; set; }
     public long categoryid { get; set; }
     public long subcategoryid { get; set; }
     public long subcategorygroupid { get; set; }
 
     public string title { get; set; }
     public string messagebody { get; set; }
+    public DateTime registerdatetime { get; set; }
     public virtual List<MessageAttachement> sttachements { get; set; }
-    public Category category { get; set; }
+    public virtual Category category { get; set; }
+    public virtual SubCategory subcategory { get; set; }
+    public virtual SubCategoryGroup subcategorygroup { get; set; }
 }

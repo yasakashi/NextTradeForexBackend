@@ -17,4 +17,7 @@ public class SubCategory
     public long categotyId { get; set; }
 
     public virtual Category category { get; set; }
+    public virtual List<SubCategoryGroup> SubCategoryGroups { get; set; }
+    public virtual List<ForumMessage> ForumMessages { get; set; }
+
 }

@@ -149,6 +149,8 @@ builder.Services.AddTransient<BlockedIPServices, BlockedIPServices>();
 
 builder.Services.AddTransient<UserTypeServices, UserTypeServices>();
 
+builder.Services.AddTransient<ForumsServices, ForumsServices>();
+
 #endregion
 
 builder.Services.AddSwaggerGen();
