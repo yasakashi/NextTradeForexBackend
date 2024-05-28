@@ -155,7 +155,6 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
 if (app.Environment.IsDevelopment())
 {
@@ -166,8 +165,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atlas API Call v1");
-        //c.RoutePrefix = "AtlasAPI/swagger";
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Next Trade Forex API Call v1");
     });
     app.UseDeveloperExceptionPage();
     app.UseExceptionHandler("/Error");
@@ -176,6 +174,16 @@ if (app.Environment.IsDevelopment())
 
 
 app.UseHttpsRedirection();
+
+app.UseCors(x => x
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .AllowCredentials()
+    .SetIsOriginAllowed(origin => true)
+);
+
+app.UseAuthentication();
+
 app.UseStaticFiles();
 
 app.UseRouting();

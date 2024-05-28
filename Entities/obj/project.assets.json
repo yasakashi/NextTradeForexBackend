@@ -1263,19 +1263,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\h\\.nuget\\packages\\": {}
+    "C:\\Users\\Asus\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\h\\source\\repos\\NextTradeForexBackend\\Entities\\Entities.csproj",
+      "projectUniqueName": "D:\\New folder\\Entities\\Entities.csproj",
       "projectName": "Entities",
-      "projectPath": "C:\\Users\\h\\source\\repos\\NextTradeForexBackend\\Entities\\Entities.csproj",
-      "packagesPath": "C:\\Users\\h\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\h\\source\\repos\\NextTradeForexBackend\\Entities\\obj\\",
+      "projectPath": "D:\\New folder\\Entities\\Entities.csproj",
+      "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
+      "outputPath": "D:\\New folder\\Entities\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\h\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [

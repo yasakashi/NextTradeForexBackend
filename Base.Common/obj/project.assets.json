@@ -9826,19 +9826,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\h\\.nuget\\packages\\": {}
+    "C:\\Users\\Asus\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\h\\source\\repos\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj",
+      "projectUniqueName": "D:\\New folder\\Base.Common\\Base.Common.csproj",
       "projectName": "Base.Common",
-      "projectPath": "C:\\Users\\h\\source\\repos\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj",
-      "packagesPath": "C:\\Users\\h\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\h\\source\\repos\\NextTradeForexBackend\\Base.Common\\obj\\",
+      "projectPath": "D:\\New folder\\Base.Common\\Base.Common.csproj",
+      "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
+      "outputPath": "D:\\New folder\\Base.Common\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\h\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [

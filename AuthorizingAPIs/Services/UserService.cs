@@ -181,7 +181,7 @@ namespace NextTradeAPIs.Services
                     registerDate = DateTime.Now,
                     PersonId = person.PersonId,
                     Mobile = model.Mobile,
-                    UserTypeId = (long)UserTypes.NormalUser
+                    UserTypeId = (long)UserTypes.Student
                 };
 
                 _Context.Users.Add(data);
@@ -261,7 +261,7 @@ namespace NextTradeAPIs.Services
                     registerDate = DateTime.Now,
                     PersonId = person.PersonId,
                     Mobile = model.Mobile,
-                    UserTypeId = (model.UserTypeId != null)? model.UserTypeId :(long)UserTypes.NormalUser
+                    UserTypeId = (model.UserTypeId != null)? model.UserTypeId :(long)UserTypes.Student
                 };
 
                 _Context.Users.Add(data);
@@ -331,7 +331,7 @@ namespace NextTradeAPIs.Services
                     registerDate = DateTime.Now,
                     PersonId = person.PersonId,
                     Mobile = mobile,
-                    UserTypeId = (long)UserTypes.NormalUser
+                    UserTypeId = (long)UserTypes.Student
                 };
 
                 _Context.Users.Add(data);
@@ -415,7 +415,7 @@ namespace NextTradeAPIs.Services
                 {
                     List<LoginLog> ativetokens = await _LogContext.LoginLogs.Where(x => x.UserId == user.userid && x.LogoutDate == null).ToListAsync();
 
-                    if (user.ParentUserId != null && user.UserTypeId == (long)UserTypes.NormalUser)
+                    if (user.ParentUserId != null && user.UserTypeId == (long)UserTypes.Student)
                     {
                         foreach (LoginLog item in ativetokens) item.LogoutDate = DateTime.Now;
                         _LogContext.LoginLogs.UpdateRange(ativetokens);
