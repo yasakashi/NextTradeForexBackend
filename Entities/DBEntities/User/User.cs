@@ -119,7 +119,8 @@ public class User
     /// <summary>
     /// نوع کاربر
     /// </summary>
-    public long? UserTypeId { get; set; }
+    public long UserTypeId { get; set; }
+    public bool ispaied { get; set; }
 
     #region [ relations ]
     public UserType UserType { get; set; }

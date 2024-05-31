@@ -19,6 +19,8 @@ public class ForumMessageFilterDto
     public long subcategorygroupid { get; set; }
     public string title { get; set; }
     public string messagebody { get; set; }
+    public bool isneedpaid { get; set; }
+
 }
 public class ForumMessageDto
 {
@@ -37,4 +39,8 @@ public class ForumMessageDto
     public string subcategorygroupname { get; set; }
     public string title { get; set; }
     public string messagebody { get; set; }
+    public bool isneedpaid { get; set; }
+    public bool issignal { get; set; }
+    public bool allowtoshow { get; set; }
+
 }

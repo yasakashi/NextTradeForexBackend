@@ -13,6 +13,7 @@ public class Category
 {
     [Key]
     public long Id { get; set; }
+    public long? parentId { get; set; }
     public string name { get; set; }
 
 

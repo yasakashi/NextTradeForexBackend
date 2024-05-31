@@ -30,8 +30,9 @@ namespace DataLayers
         public DbSet<Role> Roles{ get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<Person> People { get; set; }
-        
+        public DbSet<CommunityGroup> CommunityGroups { get; set; }
 
+        
         public DbSet<MessageAttachement> MessageAttachements { get; set; }
         public DbSet<SubCategoryGroup> SubCategoryGroups { get; set; }
         public DbSet<SubCategory> SubCategories { get; set; }

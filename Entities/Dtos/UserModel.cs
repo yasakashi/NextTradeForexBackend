@@ -30,6 +30,7 @@ namespace Entities.Dtos
         public string lname { get; set; }
         public string nationalcode { get; set; }
         public bool iskyc { get; set; }
+        public bool ispaid { get; set; }
         public bool IsActive { get; set; }
         public long? ParentUserId { get; set; }
         public long UserTypeId { get; set; }

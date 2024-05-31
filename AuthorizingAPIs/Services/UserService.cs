@@ -54,7 +54,9 @@ namespace NextTradeAPIs.Services
                     username = x.Username,
                     fname = x.Fname,
                     lname = x.Lname,
-                    IsActive = x.IsActive
+                    IsActive = x.IsActive,
+                    ispaid=x.ispaied,
+                    UserTypeId = x.UserTypeId
                 }).FirstOrDefaultAsync();
 
                 if (user == null)
@@ -181,7 +183,7 @@ namespace NextTradeAPIs.Services
                     registerDate = DateTime.Now,
                     PersonId = person.PersonId,
                     Mobile = model.Mobile,
-                    UserTypeId = (long)UserTypes.Student
+                    UserTypeId = (model.UserTypeId != null) ? model.UserTypeId : (long)UserTypes.Student
                 };
 
                 _Context.Users.Add(data);
@@ -258,6 +260,7 @@ namespace NextTradeAPIs.Services
                     IsActive = true,
                     IsDelete = false,
                     IsAccepted = false,
+                    ispaied = false,                    
                     registerDate = DateTime.Now,
                     PersonId = person.PersonId,
                     Mobile = model.Mobile,
@@ -561,6 +564,9 @@ namespace NextTradeAPIs.Services
                     username = x.Username,
                     fname = x.Fname,
                     lname = x.Lname,
+                    UserTypeId = x.UserTypeId,
+                    IsActive = x.IsActive,
+                    ispaid=x.ispaied,
                 }).ToListAsync();
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = datas };

@@ -13,3 +13,9 @@ public class BaseInformationSearchFilterDto
     public long? subcategorygroupid { get; set; }
     public long? id { get; set; }
 }
+public class BaseInformationDto
+{
+    public string name { get; set; }
+    public long? id { get; set; }
+    public long? parentid { get; set; }
+}

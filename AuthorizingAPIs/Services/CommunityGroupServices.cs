@@ -9,13 +9,13 @@ using System.Diagnostics;
 
 namespace NextTradeAPIs.Services
 {
-    public class ForumsServices
+    public class CommunityGroupServices
     {
         SBbContext _Context { get; set; }
         LogSBbContext _LogContext { get; set; }
         SystemLogServices _systemLogServices;
         private readonly IConfiguration _config;
-        public ForumsServices(SBbContext context, LogSBbContext logcontext, IConfiguration config, SystemLogServices systemLogServices)
+        public CommunityGroupServices(SBbContext context, LogSBbContext logcontext, IConfiguration config, SystemLogServices systemLogServices)
         {
             _Context = context;
             _LogContext = logcontext;
@@ -23,7 +23,7 @@ namespace NextTradeAPIs.Services
             _systemLogServices = systemLogServices;
         }
 
-        public async Task<SystemMessageModel> CreateForumMessage(ForumMessageFilterDto model,UserModel? userlogin, string processId, string clientip, string hosturl)
+        public async Task<SystemMessageModel> CreateCommunityGroup(CommunityGroupDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
             SystemMessageModel message;
             StackTrace stackTrace = new StackTrace();
@@ -32,20 +32,16 @@ namespace NextTradeAPIs.Services
 
             try
             {
-                ForumMessage data  = new ForumMessage()
-                { 
+                CommunityGroup data = new CommunityGroup()
+                {
                     Id = Guid.NewGuid(),
-                    parentId= model.parentId,
                     categoryid = (long)model.categoryid,
-                    creatoruserid = userlogin.userid,
-                    registerdatetime = DateTime.Now,    
-                    messagebody = model.messagebody,    
-                    subcategorygroupid = model.subcategorygroupid,  
-                    subcategoryid = model.subcategoryid,    
+                    owneruserid = userlogin.userid,
+                    createdatetime = DateTime.Now,
                     title = model.title
                 };
 
-                _Context.ForumMessages.Add(data);
+                _Context.CommunityGroups.Add(data);
                 await _Context.SaveChangesAsync();
 
                 model.Id = data.Id;
@@ -62,7 +58,7 @@ namespace NextTradeAPIs.Services
         }
 
 
-        public async Task<SystemMessageModel> GetForumMessage(ForumMessageFilterDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        public async Task<SystemMessageModel> GetCommunityGroup(GroupSearchFilterDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
             SystemMessageModel message;
             StackTrace stackTrace = new StackTrace();
@@ -71,41 +67,21 @@ namespace NextTradeAPIs.Services
 
             try
             {
-                IQueryable <ForumMessage> query = _Context.ForumMessages;
-                if (model.parentId != null)
-                    query = query.Where(x => x.parentId == model.parentId);
+                IQueryable<CommunityGroup> query = _Context.CommunityGroups;
+                if (model.owneruserid != null)
+                    query = query.Where(x => x.owneruserid == model.owneruserid);
 
                 if (model.categoryid != null)
                     query = query.Where(x => x.categoryid == model.categoryid);
 
-                if (model.subcategoryid != null)
-                    query = query.Where(x => x.subcategoryid == model.subcategoryid);
-
-                if (model.subcategorygroupid != null)
-                    query = query.Where(x => x.subcategorygroupid == model.subcategorygroupid);
-
-                if (model.fromregisterdatetime != null)
-                    query = query.Where(x => x.registerdatetime >= model.fromregisterdatetime);
-
-                if (model.toregisterdatetime != null)
-                    query = query.Where(x => x.registerdatetime <= model.toregisterdatetime);
-
-                List<ForumMessageDto> datas = await query.Include(x=> x.category).Include(x => x.subcategory).Include(x=>x.subcategorygroup).Select(x=> new ForumMessageDto() { 
+                List<CommunityGroupDto> datas = await query.Include(x => x.category).Select(x => new CommunityGroupDto()
+                {
                     Id = x.Id,
-                    parentId = x.parentId,
+                    owneruserid = x.owneruserid,
                     categoryid = x.categoryid,
-                    creatoruserid = x.creatoruserid,
-                    registerdatetime = x.registerdatetime,
-                    messagebody = x.messagebody,
-                    subcategorygroupid = x.subcategorygroupid,
-                    subcategoryid = x.subcategoryid,
+                    createdatetime = x.createdatetime,
                     title = x.title,
-                    isneedpaid = x.isneedpaid,
-                    issignal = x.issignal,
-                    allowtoshow = (userlogin.ispaid || !x.isneedpaid) ? true : false,
                     categoryname = x.category.name,
-                    subcategoryname = x.subcategory.name,
-                    subcategorygroupname=x.subcategorygroup.name
                 }).ToListAsync();
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = datas };
@@ -118,5 +94,6 @@ namespace NextTradeAPIs.Services
             }
             return message;
         }
+
     }
 }

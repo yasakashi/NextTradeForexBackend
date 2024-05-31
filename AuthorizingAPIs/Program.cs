@@ -150,6 +150,7 @@ builder.Services.AddTransient<BlockedIPServices, BlockedIPServices>();
 builder.Services.AddTransient<UserTypeServices, UserTypeServices>();
 
 builder.Services.AddTransient<ForumsServices, ForumsServices>();
+builder.Services.AddTransient<CommunityGroupServices, CommunityGroupServices>();
 
 #endregion
 

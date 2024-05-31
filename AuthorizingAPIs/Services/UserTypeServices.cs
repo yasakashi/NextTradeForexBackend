@@ -61,6 +61,7 @@ public class UserTypeServices
             List<CategorisDto> datas = await _Context.Categories.Select(x => new CategorisDto()
             {
                 Id = x.Id,
+                parentId=x.parentId,
                 name = x.name
             }).ToListAsync();
 
@@ -125,6 +126,34 @@ public class UserTypeServices
                 name = x.name,
                 categotyId = x.categotyId
             }).ToListAsync();
+
+            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = datas };
+        }
+        catch (Exception ex)
+        {
+            message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "خطا در انجام درخواست", MessageData = ex.Message };
+            string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+            await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+        }
+        return message;
+    }
+
+    public async Task<SystemMessageModel> AddCategory(BaseInformationDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+    {
+        SystemMessageModel message;
+        StackTrace stackTrace = new StackTrace();
+        string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+        long SerrvieCode = 130000;
+
+        try
+        {
+            Category datas = new Category()
+            {
+                name = model.name,
+                parentId=model.parentid
+            };
+            _Context.Categories.Add(datas);
+            await _Context.SaveChangesAsync();
 
             message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = datas };
         }

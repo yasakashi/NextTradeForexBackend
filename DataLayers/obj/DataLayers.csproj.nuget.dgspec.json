@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\New folder\\DataLayers\\DataLayers.csproj": {}
+    "D:\\source\\DataLayers\\DataLayers.csproj": {}
   },
   "projects": {
-    "D:\\New folder\\DataLayers\\DataLayers.csproj": {
+    "D:\\source\\DataLayers\\DataLayers.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\New folder\\DataLayers\\DataLayers.csproj",
+        "projectUniqueName": "D:\\source\\DataLayers\\DataLayers.csproj",
         "projectName": "DataLayers",
-        "projectPath": "D:\\New folder\\DataLayers\\DataLayers.csproj",
+        "projectPath": "D:\\source\\DataLayers\\DataLayers.csproj",
         "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
-        "outputPath": "D:\\New folder\\DataLayers\\obj\\",
+        "outputPath": "D:\\source\\DataLayers\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -29,8 +29,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\New folder\\Entities\\Entities.csproj": {
-                "projectPath": "D:\\New folder\\Entities\\Entities.csproj"
+              "D:\\source\\Entities\\Entities.csproj": {
+                "projectPath": "D:\\source\\Entities\\Entities.csproj"
               }
             }
           }
@@ -107,14 +107,14 @@
         }
       }
     },
-    "D:\\New folder\\Entities\\Entities.csproj": {
+    "D:\\source\\Entities\\Entities.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\New folder\\Entities\\Entities.csproj",
+        "projectUniqueName": "D:\\source\\Entities\\Entities.csproj",
         "projectName": "Entities",
-        "projectPath": "D:\\New folder\\Entities\\Entities.csproj",
+        "projectPath": "D:\\source\\Entities\\Entities.csproj",
         "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
-        "outputPath": "D:\\New folder\\Entities\\obj\\",
+        "outputPath": "D:\\source\\Entities\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",

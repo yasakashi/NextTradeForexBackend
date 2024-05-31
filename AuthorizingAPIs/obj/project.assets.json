@@ -12494,11 +12494,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\New folder\\AuthorizingAPIs\\NextTradeAPIs.csproj",
+      "projectUniqueName": "D:\\source\\AuthorizingAPIs\\NextTradeAPIs.csproj",
       "projectName": "NextTradeAPIs",
-      "projectPath": "D:\\New folder\\AuthorizingAPIs\\NextTradeAPIs.csproj",
+      "projectPath": "D:\\source\\AuthorizingAPIs\\NextTradeAPIs.csproj",
       "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
-      "outputPath": "D:\\New folder\\AuthorizingAPIs\\obj\\",
+      "outputPath": "D:\\source\\AuthorizingAPIs\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -12516,14 +12516,14 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "D:\\New folder\\Base.Common\\Base.Common.csproj": {
-              "projectPath": "D:\\New folder\\Base.Common\\Base.Common.csproj"
+            "D:\\source\\Base.Common\\Base.Common.csproj": {
+              "projectPath": "D:\\source\\Base.Common\\Base.Common.csproj"
             },
-            "D:\\New folder\\DataLayers\\DataLayers.csproj": {
-              "projectPath": "D:\\New folder\\DataLayers\\DataLayers.csproj"
+            "D:\\source\\DataLayers\\DataLayers.csproj": {
+              "projectPath": "D:\\source\\DataLayers\\DataLayers.csproj"
             },
-            "D:\\New folder\\Entities\\Entities.csproj": {
-              "projectPath": "D:\\New folder\\Entities\\Entities.csproj"
+            "D:\\source\\Entities\\Entities.csproj": {
+              "projectPath": "D:\\source\\Entities\\Entities.csproj"
             }
           }
         }

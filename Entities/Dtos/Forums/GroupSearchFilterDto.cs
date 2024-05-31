@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Entities.Dtos;
 
-public class CategorisDto
+public class GroupSearchFilterDto
 {
-    public long? Id { get; set; }
-    public long? parentId { get; set; }
-    public string name { get; set; }
+    public long? owneruserid { get; set; }
+    public long? categoryid { get; set; }
 }

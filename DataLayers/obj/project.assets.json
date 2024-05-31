@@ -4694,11 +4694,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\New folder\\DataLayers\\DataLayers.csproj",
+      "projectUniqueName": "D:\\source\\DataLayers\\DataLayers.csproj",
       "projectName": "DataLayers",
-      "projectPath": "D:\\New folder\\DataLayers\\DataLayers.csproj",
+      "projectPath": "D:\\source\\DataLayers\\DataLayers.csproj",
       "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
-      "outputPath": "D:\\New folder\\DataLayers\\obj\\",
+      "outputPath": "D:\\source\\DataLayers\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -4716,8 +4716,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "D:\\New folder\\Entities\\Entities.csproj": {
-              "projectPath": "D:\\New folder\\Entities\\Entities.csproj"
+            "D:\\source\\Entities\\Entities.csproj": {
+              "projectPath": "D:\\source\\Entities\\Entities.csproj"
             }
           }
         }

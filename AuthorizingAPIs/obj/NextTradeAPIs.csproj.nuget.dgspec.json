@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\New folder\\AuthorizingAPIs\\NextTradeAPIs.csproj": {}
+    "D:\\source\\AuthorizingAPIs\\NextTradeAPIs.csproj": {}
   },
   "projects": {
-    "D:\\New folder\\AuthorizingAPIs\\NextTradeAPIs.csproj": {
+    "D:\\source\\AuthorizingAPIs\\NextTradeAPIs.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\New folder\\AuthorizingAPIs\\NextTradeAPIs.csproj",
+        "projectUniqueName": "D:\\source\\AuthorizingAPIs\\NextTradeAPIs.csproj",
         "projectName": "NextTradeAPIs",
-        "projectPath": "D:\\New folder\\AuthorizingAPIs\\NextTradeAPIs.csproj",
+        "projectPath": "D:\\source\\AuthorizingAPIs\\NextTradeAPIs.csproj",
         "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
-        "outputPath": "D:\\New folder\\AuthorizingAPIs\\obj\\",
+        "outputPath": "D:\\source\\AuthorizingAPIs\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -29,14 +29,14 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\New folder\\Base.Common\\Base.Common.csproj": {
-                "projectPath": "D:\\New folder\\Base.Common\\Base.Common.csproj"
+              "D:\\source\\Base.Common\\Base.Common.csproj": {
+                "projectPath": "D:\\source\\Base.Common\\Base.Common.csproj"
               },
-              "D:\\New folder\\DataLayers\\DataLayers.csproj": {
-                "projectPath": "D:\\New folder\\DataLayers\\DataLayers.csproj"
+              "D:\\source\\DataLayers\\DataLayers.csproj": {
+                "projectPath": "D:\\source\\DataLayers\\DataLayers.csproj"
               },
-              "D:\\New folder\\Entities\\Entities.csproj": {
-                "projectPath": "D:\\New folder\\Entities\\Entities.csproj"
+              "D:\\source\\Entities\\Entities.csproj": {
+                "projectPath": "D:\\source\\Entities\\Entities.csproj"
               }
             }
           }
@@ -132,14 +132,14 @@
         }
       }
     },
-    "D:\\New folder\\Base.Common\\Base.Common.csproj": {
+    "D:\\source\\Base.Common\\Base.Common.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\New folder\\Base.Common\\Base.Common.csproj",
+        "projectUniqueName": "D:\\source\\Base.Common\\Base.Common.csproj",
         "projectName": "Base.Common",
-        "projectPath": "D:\\New folder\\Base.Common\\Base.Common.csproj",
+        "projectPath": "D:\\source\\Base.Common\\Base.Common.csproj",
         "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
-        "outputPath": "D:\\New folder\\Base.Common\\obj\\",
+        "outputPath": "D:\\source\\Base.Common\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -243,14 +243,14 @@
         }
       }
     },
-    "D:\\New folder\\DataLayers\\DataLayers.csproj": {
+    "D:\\source\\DataLayers\\DataLayers.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\New folder\\DataLayers\\DataLayers.csproj",
+        "projectUniqueName": "D:\\source\\DataLayers\\DataLayers.csproj",
         "projectName": "DataLayers",
-        "projectPath": "D:\\New folder\\DataLayers\\DataLayers.csproj",
+        "projectPath": "D:\\source\\DataLayers\\DataLayers.csproj",
         "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
-        "outputPath": "D:\\New folder\\DataLayers\\obj\\",
+        "outputPath": "D:\\source\\DataLayers\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -268,8 +268,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\New folder\\Entities\\Entities.csproj": {
-                "projectPath": "D:\\New folder\\Entities\\Entities.csproj"
+              "D:\\source\\Entities\\Entities.csproj": {
+                "projectPath": "D:\\source\\Entities\\Entities.csproj"
               }
             }
           }
@@ -346,14 +346,14 @@
         }
       }
     },
-    "D:\\New folder\\Entities\\Entities.csproj": {
+    "D:\\source\\Entities\\Entities.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\New folder\\Entities\\Entities.csproj",
+        "projectUniqueName": "D:\\source\\Entities\\Entities.csproj",
         "projectName": "Entities",
-        "projectPath": "D:\\New folder\\Entities\\Entities.csproj",
+        "projectPath": "D:\\source\\Entities\\Entities.csproj",
         "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
-        "outputPath": "D:\\New folder\\Entities\\obj\\",
+        "outputPath": "D:\\source\\Entities\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",
