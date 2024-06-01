@@ -12,13 +12,13 @@ public class ForumMessageFilterDto
     public Guid? parentId { get; set; }
     public long? categoryid { get; set; }
     public long? creatoruserid { get; set; }
-    public string creatorusername { get; set; }
+    public string? creatorusername { get; set; }
     public DateTime? fromregisterdatetime { get; set; }
     public DateTime? toregisterdatetime { get; set; }
     public Guid? communitygroupid { get; set; }
-    public string title { get; set; }
-    public string messagebody { get; set; }
-    public bool isneedpaid { get; set; }
+    public string? title { get; set; }
+    public string? messagebody { get; set; }
+    public bool? isneedpaid { get; set; }
 
 }
 public class ForumMessageDto
