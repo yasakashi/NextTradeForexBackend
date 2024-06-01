@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -14,6 +15,15 @@ public class CommunityGroupDto
     public DateTime? createdatetime { get; set; }
     public long? owneruserid { get; set; }
     public long categoryid { get; set; }
-    public string categoryname { get; set; }
-    public byte[] coverimage { get; set; }
+    public string? categoryname { get; set; }
+    public byte[]? coverimage { get; set; }
 }
+
+public class CommunityGroupImageDto
+{
+
+    public Guid? Id { get; set; }
+
+    public IFormFile? coverPicture { get; set; }
+}
+
