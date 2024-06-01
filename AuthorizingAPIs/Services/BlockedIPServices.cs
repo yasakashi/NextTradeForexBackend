@@ -50,7 +50,7 @@ namespace NextTradeAPIs.Services
 
                 await _Context.SaveChangesAsync();
 
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = data };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data };
             }
             catch (Exception ex)
             {
@@ -75,7 +75,7 @@ namespace NextTradeAPIs.Services
                     bip = x.BIP
                 }).ToListAsync();
 
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = result };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = result };
             }
             catch (Exception ex)
             {

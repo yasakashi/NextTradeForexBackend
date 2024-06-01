@@ -32,8 +32,10 @@ namespace DataLayers
         public DbSet<Person> People { get; set; }
         public DbSet<CommunityGroup> CommunityGroups { get; set; }
 
-        
+
         public DbSet<MessageAttachement> MessageAttachements { get; set; }
+        public DbSet<CommunityGroupMember> CommunityGroupMembers { get; set; }
+        
         public DbSet<SubCategoryGroup> SubCategoryGroups { get; set; }
         public DbSet<SubCategory> SubCategories { get; set; }
         public DbSet<Category> Categories{ get; set; }

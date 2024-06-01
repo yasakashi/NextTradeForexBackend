@@ -66,7 +66,7 @@ namespace NextTradeAPIs.Services
                 else
                 {
                     if (user.IsActive)
-                        message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = user };
+                        message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = user };
                     else
                         message = new SystemMessageModel() { MessageCode = -301, MessageDescription = "کاربر غیر فعال می باشد", MessageData = null };
                 }
@@ -119,7 +119,7 @@ namespace NextTradeAPIs.Services
                 }
                 else
                 {
-                    message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = user };
+                    message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = user };
                 }
             }
             catch (Exception ex)
@@ -192,7 +192,7 @@ namespace NextTradeAPIs.Services
 
                 model.userid = data.UserId;
 
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = model };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
             }
             catch (Exception ex)
             {
@@ -273,7 +273,7 @@ namespace NextTradeAPIs.Services
 
                 model.userid = data.UserId;
 
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = model };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
             }
             catch (Exception ex)
             {
@@ -349,7 +349,7 @@ namespace NextTradeAPIs.Services
                     Mobile = mobile
                 };
 
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = model };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
             }
             catch (Exception ex)
             {
@@ -387,7 +387,7 @@ namespace NextTradeAPIs.Services
                     await _Context.SaveChangesAsync();
                 }
 
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = username };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = username };
             }
             catch (Exception ex)
             {
@@ -569,7 +569,7 @@ namespace NextTradeAPIs.Services
                     ispaid=x.ispaied,
                 }).ToListAsync();
 
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = datas };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
             }
             catch (Exception ex)
             {
@@ -620,7 +620,7 @@ namespace NextTradeAPIs.Services
                         taxcode = person.taxcode
                     };
                     if (user.IsActive)
-                        message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = userModel };
+                        message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = userModel };
                     else
                         message = new SystemMessageModel() { MessageCode = -301, MessageDescription = "کاربر غیر فعال می باشد", MessageData = userModel };
                 }
@@ -652,7 +652,7 @@ namespace NextTradeAPIs.Services
                 else
                 {
                     if (user.IsActive)
-                        message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = user };
+                        message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = user };
                     else
                     {
                         message = await CheckUserInShahkar(model, userlogin, processId, clientip, hosturl, bearer_token);
@@ -757,7 +757,7 @@ namespace NextTradeAPIs.Services
                                 await _Context.SaveChangesAsync();
                             }
                         }
-                        message = new SystemMessageModel() { MessageCode = 200, MessageData = identityResult, MessageDescription = "درخواست با موفقیت انجام شد" };
+                        message = new SystemMessageModel() { MessageCode = 200, MessageData = identityResult, MessageDescription = "Request Compeleted Successfully" };
 
                     }
                     catch (Exception ex)
@@ -835,7 +835,7 @@ namespace NextTradeAPIs.Services
 
                     //return await _sMSService.ActionManagment(smsmodel, 1, "", "", processId, null, "");
 
-                    //return new SystemMessage() { returncode = 1, returndescription = "درخواست با موفقیت انجام شد", returnvalue = data.ActiveCode };
+                    //return new SystemMessage() { returncode = 1, returndescription = "Request Compeleted Successfully", returnvalue = data.ActiveCode };
                     return null;
                 }
             }
@@ -870,7 +870,7 @@ namespace NextTradeAPIs.Services
                     await _Context.SaveChangesAsync();
 
 
-                    return new SystemMessageModel() { MessageCode = 1, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = data.ActiveCode };
+                    return new SystemMessageModel() { MessageCode = 1, MessageDescription = "Request Compeleted Successfully", MessageData = data.ActiveCode };
 
                 }
             }
@@ -917,7 +917,7 @@ namespace NextTradeAPIs.Services
                     await _Context.SaveChangesAsync();
 
 
-                    return new SystemMessageModel() { MessageCode = 1, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = data.ActiveCode };
+                    return new SystemMessageModel() { MessageCode = 1, MessageDescription = "Request Compeleted Successfully", MessageData = data.ActiveCode };
 
                 }
             }
@@ -959,7 +959,7 @@ namespace NextTradeAPIs.Services
                     await _Context.SaveChangesAsync();
 
 
-                    return new SystemMessageModel() { MessageCode = 1, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = new { username = username } };
+                    return new SystemMessageModel() { MessageCode = 1, MessageDescription = "Request Compeleted Successfully", MessageData = new { username = username } };
 
                 }
             }
@@ -991,7 +991,7 @@ namespace NextTradeAPIs.Services
                 _Context.People.Update(person);
                 await _Context.SaveChangesAsync();
 
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = model };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
             }
             catch (Exception ex)
             {

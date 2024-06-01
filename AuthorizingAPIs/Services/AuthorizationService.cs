@@ -115,7 +115,7 @@ namespace NextTradeAPIs.Services
             long SerrvieCode = 203000;
             try
             {
-                return new SystemMessageModel() { MessageCode = 200, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = "" };
+                return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = "" };
             }
             catch (Exception ex)
             {
@@ -174,7 +174,7 @@ namespace NextTradeAPIs.Services
 
                 //usermodel.userservicelist = await GetUserServiceAccessIds(user.ID);
 
-                return new SystemMessageModel() { MessageCode = 200, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = usermodel };
+                return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = usermodel };
             }
             catch (Exception ex)
             {
@@ -262,7 +262,7 @@ namespace NextTradeAPIs.Services
 
                 //usermodel.userservicelist = await GetUserServiceAccessIds(user.ID);
 
-                return new SystemMessageModel() { MessageCode = 200, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = usermodel };
+                return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = usermodel };
             }
             catch (Exception ex)
             {

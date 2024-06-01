@@ -32,6 +32,9 @@ namespace NextTradeAPIs.Services
 
             try
             {
+                if(userlogin.UserTypeId == (long)UserTypes.Student && model.communitygroupid == null)
+                    return new SystemMessageModel() { MessageCode = -220, MessageDescription = "you not allowed to create message", MessageData = model };
+
                 ForumMessage data  = new ForumMessage()
                 { 
                     Id = Guid.NewGuid(),
@@ -40,8 +43,7 @@ namespace NextTradeAPIs.Services
                     creatoruserid = userlogin.userid,
                     registerdatetime = DateTime.Now,    
                     messagebody = model.messagebody,    
-                    subcategorygroupid = model.subcategorygroupid,  
-                    subcategoryid = model.subcategoryid,    
+                    communitygroupid = model.communitygroupid,  
                     title = model.title
                 };
 
@@ -50,7 +52,7 @@ namespace NextTradeAPIs.Services
 
                 model.Id = data.Id;
 
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = model };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
             }
             catch (Exception ex)
             {
@@ -78,11 +80,8 @@ namespace NextTradeAPIs.Services
                 if (model.categoryid != null)
                     query = query.Where(x => x.categoryid == model.categoryid);
 
-                if (model.subcategoryid != null)
-                    query = query.Where(x => x.subcategoryid == model.subcategoryid);
-
-                if (model.subcategorygroupid != null)
-                    query = query.Where(x => x.subcategorygroupid == model.subcategorygroupid);
+                if (model.communitygroupid != null)
+                    query = query.Where(x => x.communitygroupid == model.communitygroupid);
 
                 if (model.fromregisterdatetime != null)
                     query = query.Where(x => x.registerdatetime >= model.fromregisterdatetime);
@@ -90,25 +89,22 @@ namespace NextTradeAPIs.Services
                 if (model.toregisterdatetime != null)
                     query = query.Where(x => x.registerdatetime <= model.toregisterdatetime);
 
-                List<ForumMessageDto> datas = await query.Include(x=> x.category).Include(x => x.subcategory).Include(x=>x.subcategorygroup).Select(x=> new ForumMessageDto() { 
+                List<ForumMessageDto> datas = await query.Include(x=> x.category).Select(x=> new ForumMessageDto() { 
                     Id = x.Id,
                     parentId = x.parentId,
                     categoryid = x.categoryid,
                     creatoruserid = x.creatoruserid,
                     registerdatetime = x.registerdatetime,
                     messagebody = x.messagebody,
-                    subcategorygroupid = x.subcategorygroupid,
-                    subcategoryid = x.subcategoryid,
+                    communitygroupid = x.communitygroupid,
                     title = x.title,
                     isneedpaid = x.isneedpaid,
                     issignal = x.issignal,
                     allowtoshow = (userlogin.ispaid || !x.isneedpaid) ? true : false,
-                    categoryname = x.category.name,
-                    subcategoryname = x.subcategory.name,
-                    subcategorygroupname=x.subcategorygroup.name
+                    categoryname = x.category.name
                 }).ToListAsync();
 
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = datas };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
             }
             catch (Exception ex)
             {

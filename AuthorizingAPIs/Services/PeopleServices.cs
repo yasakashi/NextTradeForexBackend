@@ -49,7 +49,7 @@ namespace NextTradeAPIs.Services
 
                 datas = await query.ToListAsync();
 
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = datas };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
             }
             catch (Exception ex)
             {

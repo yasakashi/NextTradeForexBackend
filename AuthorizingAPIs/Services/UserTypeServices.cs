@@ -38,7 +38,7 @@ public class UserTypeServices
                 Name = x.Name
             } ).ToListAsync();
 
-            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = datas };
+            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
         }
         catch (Exception ex)
         {
@@ -65,7 +65,7 @@ public class UserTypeServices
                 name = x.name
             }).ToListAsync();
 
-            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = datas };
+            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
         }
         catch (Exception ex)
         {
@@ -95,7 +95,7 @@ public class UserTypeServices
                 name = x.name
             }).ToListAsync();
 
-            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = datas };
+            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
         }
         catch (Exception ex)
         {
@@ -127,7 +127,7 @@ public class UserTypeServices
                 categotyId = x.categotyId
             }).ToListAsync();
 
-            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = datas };
+            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
         }
         catch (Exception ex)
         {
@@ -155,7 +155,7 @@ public class UserTypeServices
             _Context.Categories.Add(datas);
             await _Context.SaveChangesAsync();
 
-            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "درخواست با موفقیت انجام شد", MessageData = datas };
+            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
         }
         catch (Exception ex)
         {

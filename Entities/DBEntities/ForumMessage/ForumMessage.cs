@@ -14,11 +14,9 @@ public class ForumMessage
     [Key]
     public Guid Id { get; set; }
     public Guid? parentId { get; set; }
+    public Guid? communitygroupid { get; set; }
     public long creatoruserid { get; set; }
     public long categoryid { get; set; }
-    public long subcategoryid { get; set; }
-    public long subcategorygroupid { get; set; }
-
     public string title { get; set; }
     public string messagebody { get; set; }
     public bool isneedpaid { get; set; }
@@ -26,6 +24,5 @@ public class ForumMessage
     public DateTime registerdatetime { get; set; }
     public virtual List<MessageAttachement> sttachements { get; set; }
     public virtual Category category { get; set; }
-    public virtual SubCategory subcategory { get; set; }
-    public virtual SubCategoryGroup subcategorygroup { get; set; }
+    public virtual CommunityGroup communitygroup { get; set; }
 }

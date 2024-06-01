@@ -19,10 +19,11 @@ namespace Entities.DBEntities;
     public string title { get; set; }
     public DateTime createdatetime { get; set; }
     public long owneruserid { get; set; }
-    public long categoryid { get; set; }
-    public byte[] coverimage { get; set; }
+    //public long categoryid { get; set; }
+    public byte[]? coverimage { get; set; }
+    public string? description { get; set; }
 
-    public virtual Category category { get; set; }
+    //public virtual Category category { get; set; }
     public virtual User owneruser { get; set; }
 }
 
