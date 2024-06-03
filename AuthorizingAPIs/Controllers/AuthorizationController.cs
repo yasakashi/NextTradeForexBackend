@@ -148,7 +148,7 @@ namespace NextTradeAPIs
                 string log = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
                 _systemLogServices.InsertLogs(log, processId, clientip, hosturl, LogTypes.TokenError);
                 return Unauthorized();
-                //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "خطا در انجام درخواست", MessageData = ex.Message });
+                //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
             }
         }
 
@@ -190,7 +190,7 @@ namespace NextTradeAPIs
                 string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
                 _systemLogServices.InsertLogs(error, processId, clientip, hosturl, LogTypes.SystemError);
 
-                message = new SystemMessageModel() { MessageCode = -501, MessageDescription = "خطا در انجام درخواست", MessageData = $"'ProccessID':'{processId}','ErrorMessage':'{ex.Message}'" };
+                message = new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = $"'ProccessID':'{processId}','ErrorMessage':'{ex.Message}'" };
                 return BadRequest(message);
             }
 
@@ -227,7 +227,7 @@ namespace NextTradeAPIs
                 string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
                 _systemLogServices.InsertLogs(error, processId, clientip, hosturl, LogTypes.SystemError);
 
-                message = new SystemMessageModel() { MessageCode = -501, MessageDescription = "خطا در انجام درخواست", MessageData = $"'ProccessID':'{processId}','ErrorMessage':'{ex.Message}'" };
+                message = new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = $"'ProccessID':'{processId}','ErrorMessage':'{ex.Message}'" };
                 return BadRequest(message);
             }
 
@@ -271,7 +271,7 @@ namespace NextTradeAPIs
                 string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
                 _systemLogServices.InsertLogs(error, processId, clientip, hosturl, LogTypes.SystemError);
 
-                message = new SystemMessageModel() { MessageCode = -501, MessageDescription = "خطا در انجام درخواست", MessageData = $"'ProccessID':'{processId}','ErrorMessage':'{ex.Message}'" };
+                message = new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = $"'ProccessID':'{processId}','ErrorMessage':'{ex.Message}'" };
                 return BadRequest(message);
             }
 

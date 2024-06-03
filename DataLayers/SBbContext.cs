@@ -38,8 +38,9 @@ namespace DataLayers
         
         public DbSet<SubCategoryGroup> SubCategoryGroups { get; set; }
         public DbSet<SubCategory> SubCategories { get; set; }
-        public DbSet<Category> Categories{ get; set; }
-public DbSet<ForumMessage> ForumMessages{ get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<GroupType> GroupTypes { get; set; }
+        public DbSet<ForumMessage> ForumMessages{ get; set; }
 
 #region OnModelCreating
 protected override void OnModelCreating(ModelBuilder builder)

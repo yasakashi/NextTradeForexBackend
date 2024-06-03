@@ -105,7 +105,7 @@ namespace NextTradeAPIs.Controllers
             }
             catch (Exception ex)
             {
-                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "خطا در انجام درخواست", MessageData = ex.Message };
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
                 string log = $"'ApiCode':{ApiCode},'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
                 _systemLogServices.InsertLogs(log, processId, clientip, hosturl, (long)LogTypes.TokenError);
                 return BadRequest(message);
@@ -169,7 +169,7 @@ namespace NextTradeAPIs.Controllers
             }
             catch (Exception ex)
             {
-                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "خطا در انجام درخواست", MessageData = ex.Message };
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
                 string log = $"'ApiCode':{ApiCode},'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
                 _systemLogServices.InsertLogs(log, processId, clientip, hosturl, (long)LogTypes.TokenError);
                 return BadRequest(message);
@@ -239,7 +239,7 @@ namespace NextTradeAPIs.Controllers
             }
             catch (Exception ex)
             {
-                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "خطا در انجام درخواست", MessageData = ex.Message };
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
                 string log = $"'ApiCode':{ApiCode},'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
                 _systemLogServices.InsertLogs(log, processId, clientip, hosturl, (long)LogTypes.TokenError);
                 return BadRequest(message);
@@ -300,7 +300,7 @@ namespace NextTradeAPIs.Controllers
             }
             catch (Exception ex)
             {
-                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "خطا در انجام درخواست", MessageData = ex.Message };
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
                 string log = $"'ApiCode':{ApiCode},'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
                 _systemLogServices.InsertLogs(log, processId, clientip, hosturl, (long)LogTypes.TokenError);
                 return BadRequest(message);
@@ -368,7 +368,7 @@ namespace NextTradeAPIs.Controllers
             }
             catch (Exception ex)
             {
-                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "خطا در انجام درخواست", MessageData = ex.Message };
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
                 string log = $"'ApiCode':{ApiCode},'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
                 _systemLogServices.InsertLogs(log, processId, clientip, hosturl, (long)LogTypes.TokenError);
                 return BadRequest(message);
@@ -431,7 +431,7 @@ namespace NextTradeAPIs.Controllers
             }
             catch (Exception ex)
             {
-                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "خطا در انجام درخواست", MessageData = ex.Message };
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
                 string log = $"'ApiCode':{ApiCode},'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
                 _systemLogServices.InsertLogs(log, processId, clientip, hosturl, (long)LogTypes.TokenError);
                 return BadRequest(message);
@@ -493,7 +493,7 @@ namespace NextTradeAPIs.Controllers
             }
             catch (Exception ex)
             {
-                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "خطا در انجام درخواست", MessageData = ex.Message };
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
                 string log = $"'ApiCode':{ApiCode},'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
                 _systemLogServices.InsertLogs(log, processId, clientip, hosturl, (long)LogTypes.TokenError);
                 return BadRequest(message);
@@ -591,7 +591,7 @@ namespace NextTradeAPIs.Controllers
             }
             catch (Exception ex)
             {
-                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "خطا در انجام درخواست", MessageData = ex.Message };
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
                 string log = $"'ApiCode':{ApiCode},'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
                 _systemLogServices.InsertLogs(log, processId, clientip, hosturl, (long)LogTypes.TokenError);
                 return BadRequest(message);
@@ -682,7 +682,7 @@ namespace NextTradeAPIs.Controllers
             }
             catch (Exception ex)
             {
-                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "خطا در انجام درخواست", MessageData = ex.Message };
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
                 string log = $"'ApiCode':{ApiCode},'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
                 _systemLogServices.InsertLogs(log, processId, clientip, hosturl, (long)LogTypes.TokenError);
                 return BadRequest(message);
@@ -751,7 +751,7 @@ namespace NextTradeAPIs.Controllers
             }
             catch (Exception ex)
             {
-                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "خطا در انجام درخواست", MessageData = ex.Message };
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
                 string log = $"'ApiCode':{ApiCode},'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
                 _systemLogServices.InsertLogs(log, processId, clientip, hosturl, (long)LogTypes.TokenError);
                 return BadRequest(message);
@@ -798,7 +798,7 @@ namespace NextTradeAPIs.Controllers
             }
             catch (Exception ex)
             {
-                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "خطا در انجام درخواست", MessageData = ex.Message };
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
                 string log = $"'ApiCode':{ApiCode},'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
                 _systemLogServices.InsertLogs(log, processId, clientip, hosturl, (long)LogTypes.TokenError);
                 return message;

@@ -106,7 +106,7 @@ namespace NextTradeAPIs.Controllers
                 string log = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
                 _systemLogServices.InsertLogs(log, processId, clientip, hosturl, LogTypes.TokenError);
                 return Unauthorized();
-                //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "خطا در انجام درخواست", MessageData = ex.Message });
+                //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
             }
         }
 
@@ -172,7 +172,7 @@ namespace NextTradeAPIs.Controllers
                 string log = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
                 _systemLogServices.InsertLogs(log, processId, clientip, hosturl, LogTypes.TokenError);
                 return Unauthorized();
-                //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "خطا در انجام درخواست", MessageData = ex.Message });
+                //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
             }
         }
 

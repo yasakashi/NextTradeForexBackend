@@ -3,6 +3,7 @@ using DataLayers;
 using DocumentFormat.OpenXml.InkML;
 using Entities.DBEntities;
 using Entities.Dtos;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using NextTradeAPIs.Dtos;
@@ -36,7 +37,7 @@ namespace NextTradeAPIs.Services
                 CommunityGroup data = new CommunityGroup()
                 {
                     Id = Guid.NewGuid(),
-                    //categoryid = (long)model.categoryid,
+                    grouptypeId = model.grouptypeId,
                     owneruserid = userlogin.userid,
                     createdatetime = DateTime.Now,
                     description = model.description,
@@ -52,7 +53,7 @@ namespace NextTradeAPIs.Services
             }
             catch (Exception ex)
             {
-                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "خطا در انجام درخواست", MessageData = ex.Message };
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
                 string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
                 await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
             }
@@ -76,22 +77,22 @@ namespace NextTradeAPIs.Services
                 //if (model.categoryid != null)
                 //    query = query.Where(x => x.categoryid == model.categoryid);
 
-                List<CommunityGroupDto> datas = await query.Select(x => new CommunityGroupDto()
+                List<CommunityGroupDto> datas = await query.Include(x=>x.grouptype).Select(x => new CommunityGroupDto()
                 {
                     Id = x.Id,
                     owneruserid = x.owneruserid,
-                    //categoryid = x.categoryid,
+                    grouptypeId = x.grouptypeId,
                     createdatetime = x.createdatetime,
                     description = x.description,
                     title = x.title,
-                    //categoryname = x.category.name,
+                    grouptypename = x.grouptype.name,
                 }).ToListAsync();
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
             }
             catch (Exception ex)
             {
-                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "خطا در انجام درخواست", MessageData = ex.Message };
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
                 string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
                 await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
             }
@@ -120,7 +121,7 @@ namespace NextTradeAPIs.Services
             }
             catch (Exception ex)
             {
-                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "خطا در انجام درخواست", MessageData = ex.Message };
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
                 string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
                 await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
             }
@@ -149,7 +150,7 @@ namespace NextTradeAPIs.Services
             }
             catch (Exception ex)
             {
-                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "خطا در انجام درخواست", MessageData = ex.Message };
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
                 string error = $"'ErrorLocation':'{methodpath}','ProccessID':'','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
                 await _systemLogServices.InsertLogs(error, "", "", methodpath, LogTypes.SystemError);
             }
@@ -189,7 +190,7 @@ namespace NextTradeAPIs.Services
             }
             catch (Exception ex)
             {
-                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "خطا در انجام درخواست", MessageData = ex.Message };
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
                 string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
                 await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
             }
@@ -205,7 +206,11 @@ namespace NextTradeAPIs.Services
 
             try
             {
-                CommunityGroupMember data = await _Context.CommunityGroupMembers.Where(x => x.communitygroupId == model.communitygroupId && x.userId == userlogin.userid).SingleOrDefaultAsync();
+                long requesteduserid = (long)model.userId;
+                if (requesteduserid == null)
+                    requesteduserid = userlogin.userid;
+                CommunityGroup group = await _Context.CommunityGroups.FindAsync(model.communitygroupId);
+                CommunityGroupMember data = await _Context.CommunityGroupMembers.Where(x => x.communitygroupId == model.communitygroupId && x.userId == requesteduserid).SingleOrDefaultAsync();
 
                 if (data == null)
                 {
@@ -213,10 +218,15 @@ namespace NextTradeAPIs.Services
                     {
                         Id = Guid.NewGuid(),
                         communitygroupId = model.communitygroupId,
-                        userId = userlogin.userid,
+                        userId = requesteduserid,
                         requestdatetime = DateTime.Now,
                         isaccepted = false
                     };
+                    if (group.grouptypeId == (int)GroupTypes.PublicGroup)
+                    {
+                        data.isaccepted = true;
+                        data.accepteddatetime = DateTime.Now;
+                    }
 
                     _Context.CommunityGroupMembers.Add(data);
                     await _Context.SaveChangesAsync();
@@ -227,12 +237,19 @@ namespace NextTradeAPIs.Services
                 else
                 {
                     model.Id = data.Id;
-                    message = new SystemMessageModel() { MessageCode = -160, MessageDescription = "You have been requested before", MessageData = model };
+                    if (!data.isaccepted)
+                    {
+                        message = new SystemMessageModel() { MessageCode = -160, MessageDescription = "You have been requested before", MessageData = model };
+                    }
+                    else
+                    {
+                        message = new SystemMessageModel() { MessageCode = -160, MessageDescription = "You are member of group", MessageData = model };
+                    }
                 }
             }
             catch (Exception ex)
             {
-                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "خطا در انجام درخواست", MessageData = ex.Message };
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
                 string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
                 await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
             }
@@ -266,6 +283,8 @@ namespace NextTradeAPIs.Services
                             }
                         }
                     }
+                    await _Context.SaveChangesAsync();
+                    message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request success", MessageData = model };
                 }
                 else
                 {
@@ -273,15 +292,19 @@ namespace NextTradeAPIs.Services
                     if (data != null)
                     {
                         _Context.CommunityGroupMembers.Remove(data);
+                        await _Context.SaveChangesAsync();
+
+                        message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request success", MessageData = model };
+                    }
+                    else
+                    {
+                        message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "this user is not memeber of group", MessageData = model };
                     }
                 }
-                await _Context.SaveChangesAsync();
-
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request success", MessageData = model };
             }
             catch (Exception ex)
             {
-                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "خطا در انجام درخواست", MessageData = ex.Message };
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
                 string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
                 await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
             }

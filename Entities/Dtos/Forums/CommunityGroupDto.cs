@@ -11,6 +11,7 @@ namespace Entities.Dtos;
 public class CommunityGroupDto
 {
     public Guid? Id { get; set; }
+    public long grouptypeId { get; set; }
     public string title { get; set; }
     public string description { get; set; }
     public DateTime? createdatetime { get; set; }
@@ -18,6 +19,7 @@ public class CommunityGroupDto
     //public long categoryid { get; set; }
     //public string? categoryname { get; set; }
     public byte[]? coverimage { get; set; }
+    public string? grouptypename { get; set; }
 }
 
 public class CommunityGroupImageDto

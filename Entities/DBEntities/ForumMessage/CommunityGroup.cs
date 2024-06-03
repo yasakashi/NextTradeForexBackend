@@ -15,6 +15,7 @@ namespace Entities.DBEntities;
     {
     [Key]
     public Guid Id { get; set; }
+    public long grouptypeId { get; set; }
     [Column("grouptitle")]
     public string title { get; set; }
     public DateTime createdatetime { get; set; }
@@ -25,5 +26,6 @@ namespace Entities.DBEntities;
 
     //public virtual Category category { get; set; }
     public virtual User owneruser { get; set; }
+    public virtual GroupType grouptype { get; set; }
 }
 
