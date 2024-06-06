@@ -108,26 +108,26 @@ public class UserTypeServices
 
     public async Task<SystemMessageModel> GetSubCategoryGroup(long? subcategoryid, UserModel? userlogin, string processId, string clientip, string hosturl)
     {
-        SystemMessageModel message;
+        SystemMessageModel message = new SystemMessageModel();
         StackTrace stackTrace = new StackTrace();
         string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
         long SerrvieCode = 130000;
 
         try
         {
-            IQueryable<SubCategory> query = _Context.SubCategories;
+            //IQueryable<SubCategory> query = _Context.SubCategories;
 
-            if (subcategoryid != null && ((long)subcategoryid < 0))
-                query = query.Where(x => x.Id == subcategoryid);
+            //if (subcategoryid != null && ((long)subcategoryid < 0))
+            //    query = query.Where(x => x.Id == subcategoryid);
 
-            List<SubCategoryDto> datas = await query.Select(x => new SubCategoryDto()
-            {
-                Id = x.Id,
-                name = x.name,
-                categotyId = x.categotyId
-            }).ToListAsync();
+            //List<SubCategoryDto> datas = await query.Select(x => new SubCategoryDto()
+            //{
+            //    Id = x.Id,
+            //    name = x.name,
+            //    categotyId = x.categotyId
+            //}).ToListAsync();
 
-            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+            //message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
         }
         catch (Exception ex)
         {

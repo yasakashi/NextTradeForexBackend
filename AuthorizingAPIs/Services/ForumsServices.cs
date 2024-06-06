@@ -99,7 +99,6 @@ namespace NextTradeAPIs.Services
                     communitygroupid = x.communitygroupid,
                     title = x.title,
                     isneedpaid = x.isneedpaid,
-                    issignal = x.issignal,
                     allowtoshow = (userlogin.ispaid || !x.isneedpaid) ? true : false,
                     categoryname = x.category.name
                 }).ToListAsync();

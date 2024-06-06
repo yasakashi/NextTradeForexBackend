@@ -282,7 +282,7 @@ namespace NextTradeAPIs.Controllers
 
                 UserModel userlogin = message.MessageData as UserModel;
 
-                message = await _userTypeService.GetSubCategoryGroup(model.subcategoryid, userlogin, processId, clientip, hosturl);
+                //message = await _userTypeService.GetSubCategoryGroup(model.subcategoryid, userlogin, processId, clientip, hosturl);
 
                 if (message.MessageCode < 0)
                     return BadRequest(message);

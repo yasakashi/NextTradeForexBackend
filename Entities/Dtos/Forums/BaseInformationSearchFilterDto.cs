@@ -9,8 +9,6 @@ namespace Entities.Dtos;
 public class BaseInformationSearchFilterDto
 {
     public long? categoryid { get; set; }
-    public long? subcategoryid { get; set; }
-    public long? subcategorygroupid { get; set; }
     public long? id { get; set; }
 }
 public class BaseInformationDto
