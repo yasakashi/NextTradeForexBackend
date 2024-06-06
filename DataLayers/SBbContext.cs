@@ -31,6 +31,7 @@ namespace DataLayers
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<Person> People { get; set; }
         public DbSet<CommunityGroup> CommunityGroups { get; set; }
+        public DbSet<SignalChannel> SignalChannels { get; set; }
 
 
         public DbSet<MessageAttachement> MessageAttachements { get; set; }
@@ -40,9 +41,16 @@ namespace DataLayers
         //public DbSet<SubCategory> SubCategories { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<GroupType> GroupTypes { get; set; }
-        public DbSet<ForumMessage> ForumMessages{ get; set; }
+        public DbSet<ForumMessage> ForumMessages { get; set; }
+        public DbSet<AnalysisType> AnalysisTypes { get; set; }
+        public DbSet<PositionType> PositionTypes { get; set; }
+        public DbSet<MarketCycle> MarketCycles { get; set; }
+        public DbSet<InstrumentType> Instruments { get; set; }
+        public DbSet<EntryPointType> EntryPoints { get; set; }
+        
 
-#region OnModelCreating
+
+        #region OnModelCreating
 protected override void OnModelCreating(ModelBuilder builder)
         {
             // ToDo : To Be Fixed Later...

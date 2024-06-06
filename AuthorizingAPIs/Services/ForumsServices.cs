@@ -23,7 +23,7 @@ namespace NextTradeAPIs.Services
             _systemLogServices = systemLogServices;
         }
 
-        public async Task<SystemMessageModel> CreateForumMessage(ForumMessageFilterDto model,UserModel? userlogin, string processId, string clientip, string hosturl)
+        public async Task<SystemMessageModel> CreateForumMessage(ForumMessageFilterDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
             SystemMessageModel message;
             StackTrace stackTrace = new StackTrace();
@@ -32,18 +32,18 @@ namespace NextTradeAPIs.Services
 
             try
             {
-                if(userlogin.UserTypeId == (long)UserTypes.Student && model.communitygroupid == null)
+                if (userlogin.UserTypeId == (long)UserTypes.Student && model.communitygroupid == null)
                     return new SystemMessageModel() { MessageCode = -220, MessageDescription = "you not allowed to create message", MessageData = model };
 
-                ForumMessage data  = new ForumMessage()
-                { 
+                ForumMessage data = new ForumMessage()
+                {
                     Id = Guid.NewGuid(),
-                    parentId= model.parentId,
+                    parentId = model.parentId,
                     categoryid = (long)model.categoryid,
                     creatoruserid = userlogin.userid,
-                    registerdatetime = DateTime.Now,    
-                    messagebody = model.messagebody,    
-                    communitygroupid = model.communitygroupid,  
+                    registerdatetime = DateTime.Now,
+                    messagebody = model.messagebody,
+                    communitygroupid = model.communitygroupid,
                     title = model.title
                 };
 
@@ -73,7 +73,7 @@ namespace NextTradeAPIs.Services
 
             try
             {
-                IQueryable <ForumMessage> query = _Context.ForumMessages;
+                IQueryable<ForumMessage> query = _Context.ForumMessages;
                 if (model.parentId != null)
                     query = query.Where(x => x.parentId == model.parentId);
 
@@ -89,7 +89,12 @@ namespace NextTradeAPIs.Services
                 if (model.toregisterdatetime != null)
                     query = query.Where(x => x.registerdatetime <= model.toregisterdatetime);
 
-                List<ForumMessageDto> datas = await query.Include(x=> x.category).Select(x=> new ForumMessageDto() { 
+                if (model.creatoruserid != null)
+                    query = query.Where(x => x.creatoruserid == model.creatoruserid);
+
+
+                List<ForumMessageDto> datas = await query.Include(x => x.category).Include(x => x.creatoruser).Select(x => new ForumMessageDto()
+                {
                     Id = x.Id,
                     parentId = x.parentId,
                     categoryid = x.categoryid,
@@ -100,8 +105,14 @@ namespace NextTradeAPIs.Services
                     title = x.title,
                     isneedpaid = x.isneedpaid,
                     allowtoshow = (userlogin.ispaid || !x.isneedpaid) ? true : false,
-                    categoryname = x.category.name
+                    categoryname = x.category.name,
+                    creatorusername = x.creatoruser.Username
                 }).ToListAsync();
+
+                foreach (ForumMessageDto data in datas)
+                {
+                    data.commentcount = await _Context.ForumMessages.Where(x => x.parentId == data.Id).CountAsync();
+                }
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
             }

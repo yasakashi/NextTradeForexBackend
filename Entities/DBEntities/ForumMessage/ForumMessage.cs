@@ -24,4 +24,5 @@ public class ForumMessage
     public virtual List<MessageAttachement> sttachements { get; set; }
     public virtual Category category { get; set; }
     public virtual CommunityGroup communitygroup { get; set; }
+    public virtual User creatoruser { get; set; }
 }

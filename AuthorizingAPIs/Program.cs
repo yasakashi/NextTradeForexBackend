@@ -142,6 +142,8 @@ builder.Services.AddTransient<AuthorizationService, AuthorizationService>();
 
 builder.Services.AddScoped<IJwtHandler, JwtHandler>();
 
+builder.Services.AddTransient<BaseInformationServices, BaseInformationServices>();
+
 builder.Services.AddTransient<UserServices, UserServices>();
 builder.Services.AddTransient<SystemLogServices, SystemLogServices>();
 builder.Services.AddTransient<PeopleServices, PeopleServices>();
@@ -151,6 +153,7 @@ builder.Services.AddTransient<UserTypeServices, UserTypeServices>();
 
 builder.Services.AddTransient<ForumsServices, ForumsServices>();
 builder.Services.AddTransient<CommunityGroupServices, CommunityGroupServices>();
+builder.Services.AddTransient<SignalChannelServices, SignalChannelServices>();
 
 #endregion
 

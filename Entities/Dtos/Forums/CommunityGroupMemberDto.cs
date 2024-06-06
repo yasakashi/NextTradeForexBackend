@@ -15,4 +15,7 @@ public class CommunityGroupMemberDto
     public DateTime? requestdatetime { get; set; }
     public bool? isaccepted { get; set; }
     public DateTime? accepteddatetime { get; set; }
+    public string? communitygrouptitle { get; set; }
+    public string? username { get; set; }
+    
 }

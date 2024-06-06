@@ -37,7 +37,7 @@ namespace NextTradeAPIs.Services
                 CommunityGroup data = new CommunityGroup()
                 {
                     Id = Guid.NewGuid(),
-                    grouptypeId = model.grouptypeId,
+                    grouptypeId = (model.grouptypeId == 0) ? model.grouptypeId : (int)GroupTypes.PublicGroup,
                     owneruserid = userlogin.userid,
                     createdatetime = DateTime.Now,
                     description = model.description,
@@ -74,19 +74,29 @@ namespace NextTradeAPIs.Services
                 if (model.owneruserid != null)
                     query = query.Where(x => x.owneruserid == model.owneruserid);
 
-                //if (model.categoryid != null)
-                //    query = query.Where(x => x.categoryid == model.categoryid);
+                if (model.grouptypeId != null)
+                    query = query.Where(x => x.grouptypeId == model.grouptypeId);
 
-                List<CommunityGroupDto> datas = await query.Include(x=>x.grouptype).Select(x => new CommunityGroupDto()
+                List<CommunityGroupDto> datas = await query
+                                .Include(x => x.grouptype)
+                                .Include(x => x.owneruser)
+                                .Select(x => new CommunityGroupDto()
+                                {
+                                    Id = x.Id,
+                                    owneruserid = x.owneruserid,
+                                    grouptypeId = x.grouptypeId,
+                                    createdatetime = x.createdatetime,
+                                    description = x.description,
+                                    title = x.title,
+                                    ownerusername = x.owneruser.Username,
+                                    grouptypename = x.grouptype.name,
+                                }).ToListAsync();
+                foreach (var data in datas)
                 {
-                    Id = x.Id,
-                    owneruserid = x.owneruserid,
-                    grouptypeId = x.grouptypeId,
-                    createdatetime = x.createdatetime,
-                    description = x.description,
-                    title = x.title,
-                    grouptypename = x.grouptype.name,
-                }).ToListAsync();
+                    data.membercount = await _Context.CommunityGroupMembers.Where(x => x.communitygroupId == data.Id).CountAsync();
+                    data.signalchannelcount = await _Context.SignalChannels.Where(x => x.communitygroupId == data.Id).CountAsync();
+                    data.messagecount = await _Context.ForumMessages.Where(x => x.communitygroupid == data.Id).CountAsync();
+                }
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
             }
@@ -166,7 +176,7 @@ namespace NextTradeAPIs.Services
 
             try
             {
-                CommunityGroupMember data = await _Context.CommunityGroupMembers.Where(x=> x.communitygroupId == model.communitygroupId && x.userId == model.userId).SingleOrDefaultAsync();
+                CommunityGroupMember data = await _Context.CommunityGroupMembers.Where(x => x.communitygroupId == model.communitygroupId && x.userId == model.userId).SingleOrDefaultAsync();
                 if (data != null)
                 {
                     if ((userlogin.UserTypeId == (long)UserTypes.Admin) || (userlogin.UserTypeId == (long)UserTypes.SuperAdmin))
@@ -187,6 +197,49 @@ namespace NextTradeAPIs.Services
                 await _Context.SaveChangesAsync();
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request success", MessageData = model };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<SystemMessageModel> GetCommunityGroupMember(CommunityGroupMemberDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                IQueryable<CommunityGroupMember> query = _Context.CommunityGroupMembers;
+
+                if (model.communitygroupId != null)
+                    query = query.Where(x => x.communitygroupId == model.communitygroupId);
+                if (model.isaccepted != null)
+                    query = query.Where(x => x.isaccepted == model.isaccepted);
+
+
+                List<CommunityGroupMemberDto> datas = await query
+                                                    .Include(x => x.communitygroup)
+                                                    .Include(x => x.user)
+                                           .Select(x => new CommunityGroupMemberDto()
+                                           {
+                                               accepteddatetime = x.accepteddatetime,
+                                               communitygroupId = x.communitygroupId,
+                                               Id = x.Id,
+                                               isaccepted = x.isaccepted,
+                                               requestdatetime = x.requestdatetime,
+                                               userId = x.userId,
+                                               username = x.user.Username,
+                                               communitygrouptitle = x.communitygroup.title
+                                           }).ToListAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
             }
             catch (Exception ex)
             {

@@ -20,6 +20,10 @@ public class CommunityGroupDto
     //public string? categoryname { get; set; }
     public byte[]? coverimage { get; set; }
     public string? grouptypename { get; set; }
+    public string? ownerusername { get; set; }
+    public int? membercount { get; set; }
+    public int? messagecount { get; set; }
+    public int? signalchannelcount { get; set; }
 }
 
 public class CommunityGroupImageDto

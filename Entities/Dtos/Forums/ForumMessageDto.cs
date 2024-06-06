@@ -36,7 +36,7 @@ public class ForumMessageDto
     public string title { get; set; }
     public string messagebody { get; set; }
     public bool isneedpaid { get; set; }
-    public bool issignal { get; set; }
     public bool allowtoshow { get; set; }
+    public int? commentcount { get; set; }
 
 }
