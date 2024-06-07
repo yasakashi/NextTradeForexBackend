@@ -20,6 +20,6 @@ public class SignalChannel
     public bool isneedpaid { get; set; }
 
     public virtual CommunityGroup communitygroup { get; set; }
-    public virtual User user { get; set; }
+    public virtual User owneruser { get; set; }
 
 }

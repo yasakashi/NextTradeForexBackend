@@ -8,10 +8,17 @@ namespace Entities.Dtos;
 
 public class SignalDto
 {
-    public Guid Id { get; set; }
+    public Guid? Id { get; set; }
     public Guid signalchannelId { get; set; }
+    public long? creatoruserId { get; set; }
+    public string? creatorusername { get; set; }
+    public DateTime? fromcreatedatetime { get; set; }
+    public DateTime? tocreatedatetime { get; set; }
+    public DateTime? createdatetime { get; set; }    
     public int? positiontypeId { get; set; }
     public string? positiontypename { get; set; }
+    public int? instrumenttypeid { get; set; }
+    public string? instrumenttypename { get; set; }
     public int? timeframe_1min { get; set; }
     public bool? timeframe_5min { get; set; }
     public bool? timeframe_15min { get; set; }

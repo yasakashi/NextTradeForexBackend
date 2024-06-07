@@ -47,6 +47,8 @@ namespace DataLayers
         public DbSet<MarketCycle> MarketCycles { get; set; }
         public DbSet<InstrumentType> Instruments { get; set; }
         public DbSet<EntryPointType> EntryPoints { get; set; }
+        public DbSet<SignalFileAttachment> SignalFileAttachments { get; set; }
+        public DbSet<Signal> Signals { get; set; }
         
 
 

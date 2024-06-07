@@ -14,6 +14,8 @@ public class Signal
     [Key]
     public Guid Id { get; set; }
     public Guid signalchannelId { get; set; }
+    public long creatoruserId { get; set; }
+    public DateTime createdatetime { get; set; }
     public int? positiontypeId { get; set; }
     public int? timeframe_1min { get; set; }
     public bool? timeframe_5min { get; set; }
@@ -49,6 +51,8 @@ public class Signal
     public virtual MarketCycle marketsycle { get; set; }
     public virtual PositionType positiontype { get; set; }
     public virtual EntryPointType entrypointtype { get; set; }
+    public virtual User creatoruser { get; set; }
+    
 }
 
 
