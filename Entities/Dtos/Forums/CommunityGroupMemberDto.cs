@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Entities.Dtos;
 
-public class CommunityGroupMemberDto
+public class CommunityGroupMemberDto:BaseFilterDto
 {
     public Guid? Id { get; set; }
     public Guid communitygroupId { get; set; }

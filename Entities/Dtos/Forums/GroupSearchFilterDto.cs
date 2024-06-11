@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace Entities.Dtos;
 
-public class GroupSearchFilterDto
+public class GroupSearchFilterDto:BaseFilterDto
 {
     public Guid? id { get; set; }
     public long? owneruserid { get; set; }
     public long? grouptypeId { get; set; }
+    public bool showdetail { get; set; } = false;
+
 }

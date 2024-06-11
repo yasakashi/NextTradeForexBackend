@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Entities.Dtos;
 
-public class SignalDto
+public class SignalDto : BaseFilterDto
 {
     public Guid? Id { get; set; }
     public Guid signalchannelId { get; set; }

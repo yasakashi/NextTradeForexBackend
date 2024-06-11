@@ -51,7 +51,7 @@ namespace NextTradeAPIs.Controllers
         [HttpPost]
         [Route("/api/signal/getsignalchannel")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetCommunityGroup(SignalChannelDto model)
+        public async Task<IActionResult> GetSignalChannel(SignalChannelDto model)
         {
             StackTrace stackTrace = new StackTrace();
             SystemMessageModel message;
@@ -118,7 +118,7 @@ namespace NextTradeAPIs.Controllers
         [HttpPost]
         [Route("/api/signal/addsignalchannel")]
         [AllowAnonymous]
-        public async Task<IActionResult> AddCommunityGroup(SignalChannelDto model)
+        public async Task<IActionResult> AddSignalChannel(SignalChannelDto model)
         {
             StackTrace stackTrace = new StackTrace();
             SystemMessageModel message;
@@ -184,7 +184,7 @@ namespace NextTradeAPIs.Controllers
         [HttpPost]
         [Route("/api/signal/deletesignalchannel")]
         [AllowAnonymous]
-        public async Task<IActionResult> RemoveCommunityGroup(SignalChannelDto model)
+        public async Task<IActionResult> RemoveSignalChannel(SignalChannelDto model)
         {
             StackTrace stackTrace = new StackTrace();
             SystemMessageModel message;
@@ -250,7 +250,7 @@ namespace NextTradeAPIs.Controllers
         [HttpPost]
         [Route("/api/signal/updatesignalchannel")]
         [AllowAnonymous]
-        public async Task<IActionResult> EditCommunityGroup(SignalChannelDto model)
+        public async Task<IActionResult> EditSignalChannel(SignalChannelDto model)
         {
             StackTrace stackTrace = new StackTrace();
             SystemMessageModel message;

@@ -42,14 +42,17 @@ namespace NextTradeAPIs.Services
                 if (model.owneruserid != null)
                     query = query.Where(x => x.owneruserid == model.owneruserid);
 
-                //if(userlogin.UserTypeId == (long)UserTypes.Master)
-                //    query = query.Where(x => x.owneruserid == model.owneruserid);
+                if (model.Id != null)
+                    query = query.Where(x => x.Id == model.Id);
 
                 if (model.communitygroupId != null)
                     query = query.Where(x => x.communitygroupId == model.communitygroupId);
 
+                int pageIndex = (model.pageindex == null || model.pageindex == 0) ? 1 : (int)model.pageindex;
+                int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 50 : (int)model.rowcount;
 
-                List<SignalChannelDto> data = await query.Include(x => x.communitygroup).Select(x => new SignalChannelDto()
+
+                List<SignalChannelDto> data = await query.Skip(pageIndex-1).Take(PageRowCount).Include(x => x.communitygroup).Select(x => new SignalChannelDto()
                 {
                     Id = Guid.NewGuid(),
                     isneedpaid = x.isneedpaid,
@@ -121,8 +124,19 @@ namespace NextTradeAPIs.Services
 
                 SignalChannel data = await _Context.SignalChannels.FindAsync(model.Id);
 
-                _Context.SignalChannels.Remove(data);
-                await _Context.SaveChangesAsync();
+                if (data == null)
+                {
+                    message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "ID is worng", MessageData = model };
+                }
+                else
+                {
+                    List<Signal> signallist = await _Context.Signals.Where(x=>x.signalchannelId== model.Id).ToListAsync();
+
+                    _Context.Signals.RemoveRange(signallist);
+                    _Context.SignalChannels.Remove(data);
+
+                    await _Context.SaveChangesAsync();
+                }
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
             }
@@ -188,9 +202,11 @@ namespace NextTradeAPIs.Services
 
                 if (model.tocreatedatetime != null)
                     query = query.Where(x => x.createdatetime >= model.tocreatedatetime);
+                int pageIndex = (model.pageindex == null || model.pageindex == 0) ? 1 : (int)model.pageindex;
+                int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 50 : (int)model.rowcount;
 
 
-                List<SignalDto> data = await query
+                List <SignalDto> data = await query.Skip(pageIndex - 1).Take(PageRowCount)
                     .Include(x => x.analysistype)
                     .Include(x => x.creatoruser)
                     .Include(x => x.entrypointtype)
