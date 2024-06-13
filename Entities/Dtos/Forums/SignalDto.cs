@@ -19,7 +19,7 @@ public class SignalDto : BaseFilterDto
     public string? positiontypename { get; set; }
     public int? instrumenttypeid { get; set; }
     public string? instrumenttypename { get; set; }
-    public int? timeframe_1min { get; set; }
+    public bool? timeframe_1min { get; set; }
     public bool? timeframe_5min { get; set; }
     public bool? timeframe_15min { get; set; }
     public bool? timeframe_30min { get; set; }
@@ -27,8 +27,8 @@ public class SignalDto : BaseFilterDto
     public bool? timeframe_4houre { get; set; }
     public bool? timeframe_8houre { get; set; }
     public bool? timeframe_1day { get; set; }
-    public int? timeframe_1week { get; set; }
-    public int? timeframe_1month { get; set; }
+    public bool? timeframe_1week { get; set; }
+    public bool? timeframe_1month { get; set; }
     public int? analysistypeId { get; set; }
     public string? analysistypename { get; set; }
     public int? marketsycleid { get; set; }

@@ -54,7 +54,7 @@ namespace NextTradeAPIs.Services
 
                 List<SignalChannelDto> data = await query.Skip(pageIndex-1).Take(PageRowCount).Include(x => x.communitygroup).Select(x => new SignalChannelDto()
                 {
-                    Id = Guid.NewGuid(),
+                    Id = x.Id,
                     isneedpaid = x.isneedpaid,
                     owneruserid = x.owneruserid,
                     createdatetime = x.createdatetime,
@@ -252,7 +252,9 @@ namespace NextTradeAPIs.Services
                         timeframe_8houre = x.timeframe_8houre,
                         tp1 = x.tp1,
                         tp2 = x.tp2,
-                        tp3 = x.tp3
+                        tp3 = x.tp3,
+                        pageindex = pageIndex,
+                        rowcount = PageRowCount
                     }).ToListAsync();
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data };

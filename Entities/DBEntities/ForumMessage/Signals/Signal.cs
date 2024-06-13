@@ -17,7 +17,7 @@ public class Signal
     public long creatoruserId { get; set; }
     public DateTime createdatetime { get; set; }
     public int? positiontypeId { get; set; }
-    public int? timeframe_1min { get; set; }
+    public bool? timeframe_1min { get; set; }
     public bool? timeframe_5min { get; set; }
     public bool? timeframe_15min { get; set; }
     public bool? timeframe_30min { get; set; }
@@ -25,13 +25,12 @@ public class Signal
     public bool? timeframe_4houre { get; set; }
     public bool? timeframe_8houre { get; set; }
     public bool? timeframe_1day { get; set; }
-    public int? timeframe_1week { get; set; }
-    public int? timeframe_1month { get; set; }
+    public bool? timeframe_1week { get; set; }
+    public bool? timeframe_1month { get; set; }
     public int? analysistypeId { get; set; }
     public int? marketsycleid { get; set; }
     public int? instrumenttypeid { get; set; }
     public int? entrypointtypeId { get; set; }
-    public string? entrypointtypename { get; set; }
     public decimal? entrypointtypevalue { get; set; }
     public decimal? sl { get; set; }
     public decimal? tp1 { get; set; }

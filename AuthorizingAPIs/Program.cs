@@ -154,6 +154,7 @@ builder.Services.AddTransient<UserTypeServices, UserTypeServices>();
 builder.Services.AddTransient<ForumsServices, ForumsServices>();
 builder.Services.AddTransient<CommunityGroupServices, CommunityGroupServices>();
 builder.Services.AddTransient<SignalChannelServices, SignalChannelServices>();
+builder.Services.AddTransient<CourseServices, CourseServices>();
 
 #endregion
 

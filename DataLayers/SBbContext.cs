@@ -49,11 +49,17 @@ namespace DataLayers
         public DbSet<EntryPointType> EntryPoints { get; set; }
         public DbSet<SignalFileAttachment> SignalFileAttachments { get; set; }
         public DbSet<Signal> Signals { get; set; }
+
+        #region [ Course ]
+        public DbSet<CourseLevelType> CourseLevelTypes { get; set; }
+        public DbSet<CourseType> CourseTypes { get; set; }
+        public DbSet<Course> Courses { get; set; }
         
 
+        #endregion [ Course ]
 
         #region OnModelCreating
-protected override void OnModelCreating(ModelBuilder builder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
             // ToDo : To Be Fixed Later...
             //builder.UseEncryption(_provider);
