@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Entities.DBEntities;
 
 namespace Entities.DBEntities;
 [Table("tblCourses")]
@@ -30,6 +31,6 @@ public class Course
     public virtual CourseLevelType courseleveltype { get; set; }
     public virtual CourseType coursetype { get; set; }
     public virtual User owneruser { get; set; }
-
+    public virtual List<CourseLessen> CourseLessens { get; set; }
 
 }

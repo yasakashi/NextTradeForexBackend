@@ -8,10 +8,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Entities.DBEntities;
 
-[Table("tblCourseTypes")]
-public class CourseType
+[Table("tblCourseLessens")]
+public class CourseLessen
 {
     [Key]
-    public int Id { get; set; }
-    public string name { get; set; }
+    public Guid Id { get; set; }
+    public Guid courseId { get; set; }
+
+    public virtual Course course { get; set; }
 }
