@@ -31,6 +31,6 @@ public class Course
     public virtual CourseLevelType courseleveltype { get; set; }
     public virtual CourseType coursetype { get; set; }
     public virtual User owneruser { get; set; }
-    public virtual List<CourseLessen> CourseLessens { get; set; }
+    public virtual List<CourseLesson> CourseLessons { get; set; }
 
 }

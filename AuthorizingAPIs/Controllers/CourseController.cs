@@ -310,9 +310,9 @@ namespace NextTradeAPIs.Controllers
 
 
         [HttpPost]
-        [Route("/api/course/addcourselessen")]
+        [Route("/api/course/addCourseLesson")]
         [AllowAnonymous]
-        public async Task<IActionResult> AddCourseLessen(CourseLessenDto model)
+        public async Task<IActionResult> AddCourseLesson(CourseLessonDto model)
         {
             StackTrace stackTrace = new StackTrace();
             SystemMessageModel message;
@@ -358,7 +358,7 @@ namespace NextTradeAPIs.Controllers
 
                 //UserModel userlogin = message.MessageData as UserModel;
 
-                message = await _courseService.AddCourseLessen(model, null, processId, clientip, hosturl);
+                message = await _courseService.AddCourseLesson(model, null, processId, clientip, hosturl);
 
                 if (message.MessageCode < 0)
                     return BadRequest(message);

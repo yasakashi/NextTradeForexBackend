@@ -211,7 +211,7 @@ namespace NextTradeAPIs.Services
             return message;
         }
 
-        public async Task<SystemMessageModel> AddCourseLessen(CourseLessenDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        public async Task<SystemMessageModel> AddCourseLesson(CourseLessonDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
             SystemMessageModel message;
             StackTrace stackTrace = new StackTrace();
@@ -220,7 +220,7 @@ namespace NextTradeAPIs.Services
 
             try
             {
-                CourseLessen data = new CourseLessen()
+                CourseLesson data = new CourseLesson()
                 {
                     Id = Guid.NewGuid(),
                     //allowdownload = model.allowdownload,
@@ -240,7 +240,7 @@ namespace NextTradeAPIs.Services
                 };
 
                 //model.Id = data.Id;
-                await _Context.CourseLessens.AddAsync(data);
+                await _Context.CourseLessons.AddAsync(data);
                 await _Context.SaveChangesAsync();
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
