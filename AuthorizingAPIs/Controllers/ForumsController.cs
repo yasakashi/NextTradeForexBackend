@@ -177,5 +177,110 @@ namespace NextTradeAPIs.Controllers
         }
 
 
+        [Route("/api/addforummessagepic")]
+        [HttpPost]
+        public async Task<IActionResult> AddForumMessagePic([FromForm] CommunityGroupImageDto model)
+        {
+
+            if (model == null)
+            {
+                return Content("Invalid Submission!");
+            }
+            StackTrace stackTrace = new StackTrace();
+            SystemMessageModel message;
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string authHeader = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            UserModel user = null;
+            LoginLog loginLog = null;
+
+            long ApiCode = 2000;
+
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                message = await _authorizationService.CheckToken(_bearer_token, processId);
+
+                if (message.MessageCode < 0)
+                    return Unauthorized(message);
+
+                UserModel userlogin = message.MessageData as UserModel;
+
+                if (model.coverPicture != null)
+                {
+
+                    if (model.coverPicture.FileName == null || model.coverPicture.FileName.Length == 0)
+                    {
+                        return Content("File not selected");
+                    }
+
+                    MessageAttachement modeldate = new MessageAttachement()
+                    {
+                        Id = Guid.NewGuid(),
+                        ForumMessageId = (Guid)model.Id
+                    };
+
+                    using (var ms = new MemoryStream())
+                    {
+                        model.coverPicture.CopyTo(ms);
+                        modeldate.attachment = ms.ToArray();
+                    }
+                    message = await _forumsService.SaveForumMessageImage(modeldate, userlogin, processId, clientip, hosturl);
+                    if (message.MessageCode < 0)
+                        return BadRequest(message);
+                }
+                else
+                {
+                    return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Erroe Canot catch file", MessageData = null });
+                }
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                string log = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, LogTypes.TokenError);
+                return Unauthorized();
+            }
+        }
+
+        [HttpPost("{id}")]
+        [HttpGet("{id}")]
+        [Route("/api/getforummessageimage/{id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetImage(Guid id)
+        {
+            var image = await _forumsService.GetForumMessageImage(id);
+            if (image == null)
+            {
+                return NotFound();
+            }
+
+            return File(image, "image/png");
+        }
     }
 }

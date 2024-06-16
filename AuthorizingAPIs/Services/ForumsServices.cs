@@ -92,6 +92,9 @@ namespace NextTradeAPIs.Services
                 if (model.creatoruserid != null)
                     query = query.Where(x => x.creatoruserid == model.creatoruserid);
 
+                if(model.showpost != null && model.showpost == true)
+                    query = query.Where(x => x.parentId == null);
+
 
                 List<ForumMessageDto> datas = await query.Include(x => x.category).Include(x => x.creatoruser).Select(x => new ForumMessageDto()
                 {
@@ -124,5 +127,59 @@ namespace NextTradeAPIs.Services
             }
             return message;
         }
+
+
+        public async Task<SystemMessageModel> SaveForumMessageImage(MessageAttachement model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                await _Context.MessageAttachements.AddAsync(model);
+                await _Context.SaveChangesAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request success", MessageData = new {Id=model.Id } };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<byte[]> GetForumMessageImage(Guid Id)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                MessageAttachement data = await _Context.MessageAttachements.FindAsync(Id);
+
+                if (data != null && data.attachment != null)
+                {
+                    return data.attachment;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, "", "", methodpath, LogTypes.SystemError);
+            }
+            return null;
+        }
+
     }
 }

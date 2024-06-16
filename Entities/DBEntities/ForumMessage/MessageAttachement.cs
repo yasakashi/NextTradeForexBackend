@@ -8,9 +8,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Entities.DBEntities;
 
-[Table("tblMessageAttachements")]
+[Table("tblForumMessageFileAttachments")]
 public class MessageAttachement
 {
     [Key]
     public Guid Id { get; set; }
+    public Guid ForumMessageId { get; set; }
+    public byte[]? attachment { get; set; }
 }

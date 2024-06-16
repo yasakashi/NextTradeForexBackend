@@ -189,8 +189,6 @@ app.UseCors(x => x
     .SetIsOriginAllowed(origin => true)
 );
 
-app.UseAuthentication();
-
 app.UseStaticFiles();
 
 app.UseRouting();
