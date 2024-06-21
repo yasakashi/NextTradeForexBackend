@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace Entities.Dtos;
 
-public class CourseLessonDto
+public class CourseLessonDto:BaseFilterDto
 {
     public Guid? Id { get; set; }
     public Guid? courseId { get; set; }
+    public string? coursename { get; set; }
     public long? aoutoruserid { get; set; }
     public string? aoutorusername { get; set; }
     public string? author { get; set; }

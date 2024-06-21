@@ -611,18 +611,19 @@
           }
         }
       },
-      "Microsoft.AspNetCore.Http.Features/2.2.0": {
+      "Microsoft.AspNetCore.Http.Features/5.0.17": {
         "type": "package",
         "dependencies": {
-          "Microsoft.Extensions.Primitives": "2.2.0"
+          "Microsoft.Extensions.Primitives": "5.0.1",
+          "System.IO.Pipelines": "5.0.2"
         },
         "compile": {
-          "lib/netstandard2.0/Microsoft.AspNetCore.Http.Features.dll": {
+          "lib/net5.0/Microsoft.AspNetCore.Http.Features.dll": {
             "related": ".xml"
           }
         },
         "runtime": {
-          "lib/netstandard2.0/Microsoft.AspNetCore.Http.Features.dll": {
+          "lib/net5.0/Microsoft.AspNetCore.Http.Features.dll": {
             "related": ".xml"
           }
         }
@@ -4683,6 +4684,7 @@
         "framework": ".NETCoreApp,Version=v8.0",
         "dependencies": {
           "EntityFrameworkCore.DataEncryption": "4.0.0",
+          "Microsoft.AspNetCore.Http.Features": "5.0.17",
           "Microsoft.EntityFrameworkCore": "8.0.5",
           "RestSharp": "110.2.0"
         },
@@ -5304,18 +5306,19 @@
           }
         }
       },
-      "Microsoft.AspNetCore.Http.Features/2.2.0": {
+      "Microsoft.AspNetCore.Http.Features/5.0.17": {
         "type": "package",
         "dependencies": {
-          "Microsoft.Extensions.Primitives": "2.2.0"
+          "Microsoft.Extensions.Primitives": "5.0.1",
+          "System.IO.Pipelines": "5.0.2"
         },
         "compile": {
-          "lib/netstandard2.0/Microsoft.AspNetCore.Http.Features.dll": {
+          "lib/net5.0/Microsoft.AspNetCore.Http.Features.dll": {
             "related": ".xml"
           }
         },
         "runtime": {
-          "lib/netstandard2.0/Microsoft.AspNetCore.Http.Features.dll": {
+          "lib/net5.0/Microsoft.AspNetCore.Http.Features.dll": {
             "related": ".xml"
           }
         }
@@ -9471,6 +9474,7 @@
         "framework": ".NETCoreApp,Version=v8.0",
         "dependencies": {
           "EntityFrameworkCore.DataEncryption": "4.0.0",
+          "Microsoft.AspNetCore.Http.Features": "5.0.17",
           "Microsoft.EntityFrameworkCore": "8.0.5",
           "RestSharp": "110.2.0"
         },
@@ -9985,16 +9989,22 @@
         "microsoft.aspnetcore.http.extensions.nuspec"
       ]
     },
-    "Microsoft.AspNetCore.Http.Features/2.2.0": {
-      "sha512": "ziFz5zH8f33En4dX81LW84I6XrYXKf9jg6aM39cM+LffN9KJahViKZ61dGMSO2gd3e+qe5yBRwsesvyqlZaSMg==",
+    "Microsoft.AspNetCore.Http.Features/5.0.17": {
+      "sha512": "3jG2xS+dx8DDCGV/F+STdPTg89lX3ao3dF/VEPvJaz3wzBIjuadipTtYNEXDIVuOPZwb6jdmhrX9jkzOIBm5cw==",
       "type": "package",
-      "path": "microsoft.aspnetcore.http.features/2.2.0",
+      "path": "microsoft.aspnetcore.http.features/5.0.17",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
+        "Icon.png",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/net461/Microsoft.AspNetCore.Http.Features.dll",
+        "lib/net461/Microsoft.AspNetCore.Http.Features.xml",
+        "lib/net5.0/Microsoft.AspNetCore.Http.Features.dll",
+        "lib/net5.0/Microsoft.AspNetCore.Http.Features.xml",
         "lib/netstandard2.0/Microsoft.AspNetCore.Http.Features.dll",
         "lib/netstandard2.0/Microsoft.AspNetCore.Http.Features.xml",
-        "microsoft.aspnetcore.http.features.2.2.0.nupkg.sha512",
+        "microsoft.aspnetcore.http.features.5.0.17.nupkg.sha512",
         "microsoft.aspnetcore.http.features.nuspec"
       ]
     },
@@ -17938,19 +17948,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Asus\\.nuget\\packages\\": {}
+    "C:\\Users\\Yasa\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\New folder\\AuthorizingAPIs\\NextTradeAPIs.csproj",
+      "projectUniqueName": "E:\\Programming\\NextTradeForex\\AuthorizingAPIs\\NextTradeAPIs.csproj",
       "projectName": "NextTradeAPIs",
-      "projectPath": "D:\\New folder\\AuthorizingAPIs\\NextTradeAPIs.csproj",
-      "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
-      "outputPath": "D:\\New folder\\AuthorizingAPIs\\obj\\publish\\win-x64\\",
+      "projectPath": "E:\\Programming\\NextTradeForex\\AuthorizingAPIs\\NextTradeAPIs.csproj",
+      "packagesPath": "C:\\Users\\Yasa\\.nuget\\packages\\",
+      "outputPath": "E:\\Programming\\NextTradeForex\\AuthorizingAPIs\\obj\\publish\\win-x64\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Yasa\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -17958,21 +17968,20 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "D:\\New folder\\Base.Common\\Base.Common.csproj": {
-              "projectPath": "D:\\New folder\\Base.Common\\Base.Common.csproj"
+            "E:\\Programming\\NextTradeForex\\Base.Common\\Base.Common.csproj": {
+              "projectPath": "E:\\Programming\\NextTradeForex\\Base.Common\\Base.Common.csproj"
             },
-            "D:\\New folder\\DataLayers\\DataLayers.csproj": {
-              "projectPath": "D:\\New folder\\DataLayers\\DataLayers.csproj"
+            "E:\\Programming\\NextTradeForex\\DataLayers\\DataLayers.csproj": {
+              "projectPath": "E:\\Programming\\NextTradeForex\\DataLayers\\DataLayers.csproj"
             },
-            "D:\\New folder\\Entities\\Entities.csproj": {
-              "projectPath": "D:\\New folder\\Entities\\Entities.csproj"
+            "E:\\Programming\\NextTradeForex\\Entities\\Entities.csproj": {
+              "projectPath": "E:\\Programming\\NextTradeForex\\Entities\\Entities.csproj"
             }
           }
         }

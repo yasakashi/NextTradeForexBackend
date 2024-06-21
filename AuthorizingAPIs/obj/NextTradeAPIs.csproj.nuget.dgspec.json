@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\source\\AuthorizingAPIs\\NextTradeAPIs.csproj": {}
+    "E:\\Programming\\NextTradeForex\\AuthorizingAPIs\\NextTradeAPIs.csproj": {}
   },
   "projects": {
-    "D:\\source\\AuthorizingAPIs\\NextTradeAPIs.csproj": {
+    "E:\\Programming\\NextTradeForex\\AuthorizingAPIs\\NextTradeAPIs.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\source\\AuthorizingAPIs\\NextTradeAPIs.csproj",
+        "projectUniqueName": "E:\\Programming\\NextTradeForex\\AuthorizingAPIs\\NextTradeAPIs.csproj",
         "projectName": "NextTradeAPIs",
-        "projectPath": "D:\\source\\AuthorizingAPIs\\NextTradeAPIs.csproj",
-        "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
-        "outputPath": "D:\\source\\AuthorizingAPIs\\obj\\",
+        "projectPath": "E:\\Programming\\NextTradeForex\\AuthorizingAPIs\\NextTradeAPIs.csproj",
+        "packagesPath": "C:\\Users\\Yasa\\.nuget\\packages\\",
+        "outputPath": "E:\\Programming\\NextTradeForex\\AuthorizingAPIs\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Yasa\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -22,21 +22,20 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\source\\Base.Common\\Base.Common.csproj": {
-                "projectPath": "D:\\source\\Base.Common\\Base.Common.csproj"
+              "E:\\Programming\\NextTradeForex\\Base.Common\\Base.Common.csproj": {
+                "projectPath": "E:\\Programming\\NextTradeForex\\Base.Common\\Base.Common.csproj"
               },
-              "D:\\source\\DataLayers\\DataLayers.csproj": {
-                "projectPath": "D:\\source\\DataLayers\\DataLayers.csproj"
+              "E:\\Programming\\NextTradeForex\\DataLayers\\DataLayers.csproj": {
+                "projectPath": "E:\\Programming\\NextTradeForex\\DataLayers\\DataLayers.csproj"
               },
-              "D:\\source\\Entities\\Entities.csproj": {
-                "projectPath": "D:\\source\\Entities\\Entities.csproj"
+              "E:\\Programming\\NextTradeForex\\Entities\\Entities.csproj": {
+                "projectPath": "E:\\Programming\\NextTradeForex\\Entities\\Entities.csproj"
               }
             }
           }
@@ -132,17 +131,17 @@
         }
       }
     },
-    "D:\\source\\Base.Common\\Base.Common.csproj": {
+    "E:\\Programming\\NextTradeForex\\Base.Common\\Base.Common.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\source\\Base.Common\\Base.Common.csproj",
+        "projectUniqueName": "E:\\Programming\\NextTradeForex\\Base.Common\\Base.Common.csproj",
         "projectName": "Base.Common",
-        "projectPath": "D:\\source\\Base.Common\\Base.Common.csproj",
-        "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
-        "outputPath": "D:\\source\\Base.Common\\obj\\",
+        "projectPath": "E:\\Programming\\NextTradeForex\\Base.Common\\Base.Common.csproj",
+        "packagesPath": "C:\\Users\\Yasa\\.nuget\\packages\\",
+        "outputPath": "E:\\Programming\\NextTradeForex\\Base.Common\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Yasa\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -150,7 +149,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -243,17 +241,17 @@
         }
       }
     },
-    "D:\\source\\DataLayers\\DataLayers.csproj": {
+    "E:\\Programming\\NextTradeForex\\DataLayers\\DataLayers.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\source\\DataLayers\\DataLayers.csproj",
+        "projectUniqueName": "E:\\Programming\\NextTradeForex\\DataLayers\\DataLayers.csproj",
         "projectName": "DataLayers",
-        "projectPath": "D:\\source\\DataLayers\\DataLayers.csproj",
-        "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
-        "outputPath": "D:\\source\\DataLayers\\obj\\",
+        "projectPath": "E:\\Programming\\NextTradeForex\\DataLayers\\DataLayers.csproj",
+        "packagesPath": "C:\\Users\\Yasa\\.nuget\\packages\\",
+        "outputPath": "E:\\Programming\\NextTradeForex\\DataLayers\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Yasa\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -261,15 +259,14 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\source\\Entities\\Entities.csproj": {
-                "projectPath": "D:\\source\\Entities\\Entities.csproj"
+              "E:\\Programming\\NextTradeForex\\Entities\\Entities.csproj": {
+                "projectPath": "E:\\Programming\\NextTradeForex\\Entities\\Entities.csproj"
               }
             }
           }
@@ -346,17 +343,17 @@
         }
       }
     },
-    "D:\\source\\Entities\\Entities.csproj": {
+    "E:\\Programming\\NextTradeForex\\Entities\\Entities.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\source\\Entities\\Entities.csproj",
+        "projectUniqueName": "E:\\Programming\\NextTradeForex\\Entities\\Entities.csproj",
         "projectName": "Entities",
-        "projectPath": "D:\\source\\Entities\\Entities.csproj",
-        "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
-        "outputPath": "D:\\source\\Entities\\obj\\",
+        "projectPath": "E:\\Programming\\NextTradeForex\\Entities\\Entities.csproj",
+        "packagesPath": "C:\\Users\\Yasa\\.nuget\\packages\\",
+        "outputPath": "E:\\Programming\\NextTradeForex\\Entities\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Yasa\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -364,7 +361,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {

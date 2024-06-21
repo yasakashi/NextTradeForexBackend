@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\source\\Base.Common\\Base.Common.csproj": {}
+    "E:\\Programming\\NextTradeForex\\Base.Common\\Base.Common.csproj": {}
   },
   "projects": {
-    "D:\\source\\Base.Common\\Base.Common.csproj": {
+    "E:\\Programming\\NextTradeForex\\Base.Common\\Base.Common.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\source\\Base.Common\\Base.Common.csproj",
+        "projectUniqueName": "E:\\Programming\\NextTradeForex\\Base.Common\\Base.Common.csproj",
         "projectName": "Base.Common",
-        "projectPath": "D:\\source\\Base.Common\\Base.Common.csproj",
-        "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
-        "outputPath": "D:\\source\\Base.Common\\obj\\",
+        "projectPath": "E:\\Programming\\NextTradeForex\\Base.Common\\Base.Common.csproj",
+        "packagesPath": "C:\\Users\\Yasa\\.nuget\\packages\\",
+        "outputPath": "E:\\Programming\\NextTradeForex\\Base.Common\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Yasa\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -22,7 +22,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -112,6 +111,11 @@
             }
           },
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.300/PortableRuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "win-x64": {
+          "#import": []
         }
       }
     }

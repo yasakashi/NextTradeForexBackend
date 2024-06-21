@@ -54,8 +54,8 @@ namespace DataLayers
         public DbSet<CourseLevelType> CourseLevelTypes { get; set; }
         public DbSet<CourseType> CourseTypes { get; set; }
         public DbSet<Course> Courses { get; set; }
-        
         public DbSet<CourseLesson> CourseLessons { get; set; }
+        public DbSet<CourseLessonFile> CourseLessonFiles { get; set; }
         #endregion [ Course ]
 
         #region OnModelCreating
