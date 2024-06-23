@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Entities.Dtos;
 
 namespace Entities.DBEntities;
 
@@ -18,8 +19,10 @@ public class SignalChannel
     public DateTime createdatetime { get; set; }
     public long owneruserid { get; set; }
     public bool isneedpaid { get; set; }
+    public long grouptypeId { get; set; }
 
     public virtual CommunityGroup communitygroup { get; set; }
+    public virtual GroupType grouptype { get; set; }
     public virtual User owneruser { get; set; }
 
 }

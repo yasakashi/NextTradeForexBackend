@@ -49,13 +49,14 @@ namespace NextTradeAPIs.Services
             long SerrvieCode = 111000;
             try
             {
-                UserModel user = await _Context.Users.Where(x => x.Username == username && x.Password == password).Select(x=> new UserModel() { 
+                UserModel user = await _Context.Users.Where(x => x.Username == username && x.Password == password).Select(x => new UserModel()
+                {
                     userid = x.UserId,
                     username = x.Username,
                     fname = x.Fname,
                     lname = x.Lname,
                     IsActive = x.IsActive,
-                    ispaid=x.ispaied,
+                    ispaid = x.ispaied,
                     UserTypeId = x.UserTypeId
                 }).FirstOrDefaultAsync();
 
@@ -89,7 +90,7 @@ namespace NextTradeAPIs.Services
             long SerrvieCode = 111000;
             try
             {
-                User user = await _Context.Users.Where(x => x.UserId == userid ).FirstOrDefaultAsync();
+                User user = await _Context.Users.Where(x => x.UserId == userid).FirstOrDefaultAsync();
 
                 return user;
             }
@@ -251,7 +252,7 @@ namespace NextTradeAPIs.Services
 
                 User data = new User()
                 {
-                    ParentUserId = (userloginmodel != null) ? userloginmodel.userid : null,
+                    ParentUserId = (model.parentuserId != null) ? 1 : model.parentuserId,
                     Username = model.username,
                     Password = model.Password,
                     Email = model.Email,
@@ -260,11 +261,11 @@ namespace NextTradeAPIs.Services
                     IsActive = true,
                     IsDelete = false,
                     IsAccepted = false,
-                    ispaied = false,                    
+                    ispaied = false,
                     registerDate = DateTime.Now,
                     PersonId = person.PersonId,
                     Mobile = model.Mobile,
-                    UserTypeId = (model.UserTypeId != null)? model.UserTypeId :(long)UserTypes.Student
+                    UserTypeId = (model.UserTypeId != null) ? model.UserTypeId : (long)UserTypes.Student
                 };
 
                 _Context.Users.Add(data);
@@ -424,7 +425,7 @@ namespace NextTradeAPIs.Services
                         _LogContext.LoginLogs.UpdateRange(ativetokens);
 
                     }
-                    else if(ativetokens!= null && ativetokens.Count > 0)
+                    else if (ativetokens != null && ativetokens.Count > 0)
                     {
                         loginlog = ativetokens.OrderByDescending(x => x.LoginDate).First();
                     }
@@ -566,7 +567,7 @@ namespace NextTradeAPIs.Services
                     lname = x.Lname,
                     UserTypeId = x.UserTypeId,
                     IsActive = x.IsActive,
-                    ispaid=x.ispaied,
+                    ispaid = x.ispaied,
                 }).ToListAsync();
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
@@ -984,11 +985,17 @@ namespace NextTradeAPIs.Services
             {
                 User _user = await _Context.Users.Where(x => x.UserId == userlogin.userid).SingleOrDefaultAsync();
                 Person person = await _Context.People.Where(x => x.PersonId == _user.PersonId).SingleOrDefaultAsync();
-                person.FName = model.fname;
-                person.LName = model.lname;
+                _user.Fname = person.FName = model.fname;
+                _user.Lname = person.LName = model.lname;
                 person.BirthDate = model.BirthDate;
+                person.Sex = model.sex;
+                person.postalcode = model.postalcode;
+                person.BirthDate = model.BirthDate;
+                person.Address = model.address;
+
 
                 _Context.People.Update(person);
+                _Context.Users.Update(_user);
                 await _Context.SaveChangesAsync();
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
@@ -1001,5 +1008,45 @@ namespace NextTradeAPIs.Services
             }
             return message;
         }
+
+        public async Task<SystemMessageModel> ChangeUserPassword(UserDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 11300;
+
+            try
+            {
+                User data = null;
+                if (!string.IsNullOrEmpty(model.username))
+                {
+                    data = await _Context.Users.Where(x => x.Username == model.username).SingleOrDefaultAsync();
+                }
+                else
+                {
+                    data = await _Context.Users.FindAsync(userlogin.userid);
+                }
+                if (data.Password == model.oldpassword)
+                    data.Password = model.newpassword;
+                else
+                {
+                    return new SystemMessageModel() { MessageCode = 200, MessageDescription = "old password is wrong", MessageData = model };
+                }
+                _Context.Users.Update(data);
+
+                await _Context.SaveChangesAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
     }
 }

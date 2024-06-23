@@ -129,6 +129,6 @@ namespace Entities.Dtos
         public string? telephone { get; set; }
         public string? postalcode { get; set; }
         public string? legalnationalcode { get; set; }
-
+        public long? parentuserId { get; set; }
     }
 }

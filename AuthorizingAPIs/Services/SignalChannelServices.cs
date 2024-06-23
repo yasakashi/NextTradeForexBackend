@@ -39,6 +39,9 @@ namespace NextTradeAPIs.Services
                 if (model.isneedpaid != null)
                     query = query.Where(x => x.isneedpaid == model.isneedpaid);
 
+                if (model.grouptypeId != null)
+                    query = query.Where(x => x.grouptypeId == model.grouptypeId);
+
                 if (model.owneruserid != null)
                     query = query.Where(x => x.owneruserid == model.owneruserid);
 
@@ -52,16 +55,21 @@ namespace NextTradeAPIs.Services
                 int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 50 : (int)model.rowcount;
 
 
-                List<SignalChannelDto> data = await query.Skip(pageIndex-1).Take(PageRowCount).Include(x => x.communitygroup).Select(x => new SignalChannelDto()
-                {
-                    Id = x.Id,
-                    isneedpaid = x.isneedpaid,
-                    owneruserid = x.owneruserid,
-                    createdatetime = x.createdatetime,
-                    communitygroupId = x.communitygroupId,
-                    title = x.title,
-                    communitygroupname = x.communitygroup.title
-                }).ToListAsync();
+                List<SignalChannelDto> data = await query.Skip(pageIndex - 1).Take(PageRowCount)
+                                    .Include(x => x.communitygroup)
+                                    .Include(x => x.grouptype)
+                                    .Select(x => new SignalChannelDto()
+                                    {
+                                        Id = x.Id,
+                                        isneedpaid = x.isneedpaid,
+                                        owneruserid = x.owneruserid,
+                                        createdatetime = x.createdatetime,
+                                        communitygroupId = x.communitygroupId,
+                                        grouptypeId = x.grouptypeId,
+                                        title = x.title,
+                                        communitygroupname = x.communitygroup.title,
+                                        grouptypename = x.grouptype.name
+                                    }).ToListAsync();
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data };
             }
@@ -91,6 +99,7 @@ namespace NextTradeAPIs.Services
                     owneruserid = userlogin.userid,
                     createdatetime = DateTime.Now,
                     communitygroupId = model.communitygroupId,
+                    grouptypeId = (long)model.grouptypeId,
                     title = model.title
                 };
 
@@ -130,7 +139,7 @@ namespace NextTradeAPIs.Services
                 }
                 else
                 {
-                    List<Signal> signallist = await _Context.Signals.Where(x=>x.signalchannelId== model.Id).ToListAsync();
+                    List<Signal> signallist = await _Context.Signals.Where(x => x.signalchannelId == model.Id).ToListAsync();
 
                     _Context.Signals.RemoveRange(signallist);
                     _Context.SignalChannels.Remove(data);
@@ -206,7 +215,7 @@ namespace NextTradeAPIs.Services
                 int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 50 : (int)model.rowcount;
 
 
-                List <SignalDto> data = await query.Skip(pageIndex - 1).Take(PageRowCount)
+                List<SignalDto> data = await query.Skip(pageIndex - 1).Take(PageRowCount)
                     .Include(x => x.analysistype)
                     .Include(x => x.creatoruser)
                     .Include(x => x.entrypointtype)
@@ -228,7 +237,7 @@ namespace NextTradeAPIs.Services
                         entrypointtypevalue = x.entrypointtypevalue,
                         instrumenttypeid = x.instrumenttypeid,
                         instrumenttypename = (x.instrumenttype != null) ? x.instrumenttype.name : "",
-                        marketsycleid=x.marketsycleid,
+                        marketsycleid = x.marketsycleid,
                         marketsyclename = (x.marketsycle != null) ? x.marketsycle.name : "",
                         positiontypeId = x.positiontypeId,
                         positiontypename = (x.positiontype != null) ? x.positiontype.name : "",
@@ -236,7 +245,7 @@ namespace NextTradeAPIs.Services
                         resistance2 = x.resistance2,
                         resistance3 = x.resistance3,
                         signalchannelId = x.signalchannelId,
-                        sl=x.sl,
+                        sl = x.sl,
                         support1 = x.support1,
                         support2 = x.support2,
                         support3 = x.support3,
@@ -245,7 +254,7 @@ namespace NextTradeAPIs.Services
                         timeframe_1houre = x.timeframe_1houre,
                         timeframe_1min = x.timeframe_1min,
                         timeframe_1month = x.timeframe_1month,
-                        timeframe_1week = x.timeframe_1week,    
+                        timeframe_1week = x.timeframe_1week,
                         timeframe_30min = x.timeframe_30min,
                         timeframe_4houre = x.timeframe_4houre,
                         timeframe_5min = x.timeframe_5min,

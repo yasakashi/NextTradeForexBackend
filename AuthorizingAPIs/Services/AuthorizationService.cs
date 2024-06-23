@@ -272,61 +272,62 @@ namespace NextTradeAPIs.Services
                 return message;
             }
         }
+
         /*
-        public async Task<List<Service>> GetUserServiceAccessList(int userId)
-        {
-            SystemMessageModel message;
-            StackTrace stackTrace = new StackTrace();
-            if (string.IsNullOrEmpty(processId)) processId = Guid.NewGuid().ToString();
-            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+public async Task<List<Service>> GetUserServiceAccessList(int userId)
+{
+   SystemMessageModel message;
+   StackTrace stackTrace = new StackTrace();
+   if (string.IsNullOrEmpty(processId)) processId = Guid.NewGuid().ToString();
+   string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
 
-            try
-            {
-                List<int> servidIds = await _Context.UserAccesses.Where(x => x.UserID == userId).Select(X => X.ServiceID).ToListAsync();
-                return await _Context.Services.Where(x => servidIds.Contains(x.ID)).ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                string error = $"ErrorLocation:{methodpath},ProccessId={processId},ErrorMessage={JsonConvert.SerializeObject(ex)}";
-                return null;
-            }
-        }
+   try
+   {
+       List<int> servidIds = await _Context.UserAccesses.Where(x => x.UserID == userId).Select(X => X.ServiceID).ToListAsync();
+       return await _Context.Services.Where(x => servidIds.Contains(x.ID)).ToListAsync();
+   }
+   catch (Exception ex)
+   {
+       string error = $"ErrorLocation:{methodpath},ProccessId={processId},ErrorMessage={JsonConvert.SerializeObject(ex)}";
+       return null;
+   }
+}
 
-        public async Task<List<int>> GetUserServiceAccessIds(int userId)
-        {
-            SystemMessageModel message;
-            StackTrace stackTrace = new StackTrace();
-            if (string.IsNullOrEmpty(processId)) processId = Guid.NewGuid().ToString();
-            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+public async Task<List<int>> GetUserServiceAccessIds(int userId)
+{
+   SystemMessageModel message;
+   StackTrace stackTrace = new StackTrace();
+   if (string.IsNullOrEmpty(processId)) processId = Guid.NewGuid().ToString();
+   string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
 
-            try
-            {
-                return await _Context.UserAccesses.Where(x => x.UserID == userId).Select(X => X.ServiceID).ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                string error = $"ErrorLocation:{methodpath},ProccessId={processId},ErrorMessage={JsonConvert.SerializeObject(ex)}";
-                return null;
-            }
-        }
+   try
+   {
+       return await _Context.UserAccesses.Where(x => x.UserID == userId).Select(X => X.ServiceID).ToListAsync();
+   }
+   catch (Exception ex)
+   {
+       string error = $"ErrorLocation:{methodpath},ProccessId={processId},ErrorMessage={JsonConvert.SerializeObject(ex)}";
+       return null;
+   }
+}
 
-        public async Task<SystemMessageModel> CheckUserAccess(string token, int ServiceCode)
-        {
-            SystemMessageModel message = await CheckToken(token);
-            if (message.MessageCode < 0)
-                return message;
+public async Task<SystemMessageModel> CheckUserAccess(string token, int ServiceCode)
+{
+   SystemMessageModel message = await CheckToken(token);
+   if (message.MessageCode < 0)
+       return message;
 
-            UserModel user = message.MessageData as UserModel;
+   UserModel user = message.MessageData as UserModel;
 
-            if (user.userservicelist == null || user.userservicelist.Count == 0)
-                return new SystemMessageModel() { MessageCode = -401, MessageDescription = "شما درسترسی به این سرویس را ندارید" };
+   if (user.userservicelist == null || user.userservicelist.Count == 0)
+       return new SystemMessageModel() { MessageCode = -401, MessageDescription = "شما درسترسی به این سرویس را ندارید" };
 
-            if (user.userservicelist.Contains(ServiceCode))
-                return new SystemMessageModel() { MessageCode = 200, MessageDescription = "درسترسی دارد" };
-            else
-                return new SystemMessageModel() { MessageCode = -401, MessageDescription = "شما درسترسی به این سرویس را ندارید" };
+   if (user.userservicelist.Contains(ServiceCode))
+       return new SystemMessageModel() { MessageCode = 200, MessageDescription = "درسترسی دارد" };
+   else
+       return new SystemMessageModel() { MessageCode = -401, MessageDescription = "شما درسترسی به این سرویس را ندارید" };
 
-        }
-        */
+}
+*/
     }
 }

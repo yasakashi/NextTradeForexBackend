@@ -22,6 +22,10 @@ namespace DataLayers
         }
         public DbSet<SystemMessage> SystemMessages { get; set; }
         public DbSet<LogType> LogTypes { get; set; }
+        public DbSet<Country> Countries { get; set; }
+        public DbSet<State> States { get; set; }
+        public DbSet<City> Cities { get; set; }
+
         //public DbSet<SystemLog> SystemLogs { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<UserType> UserTypes { get; set; }        
