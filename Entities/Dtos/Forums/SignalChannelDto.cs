@@ -16,6 +16,6 @@ public class SignalChannelDto : BaseFilterDto
     public bool? isneedpaid { get; set; }
     public string? communitygroupname { get; set; }
     public long? grouptypeId { get; set; }
-    public string grouptypename { get; set; }
+    public string? grouptypename { get; set; }
 
 }

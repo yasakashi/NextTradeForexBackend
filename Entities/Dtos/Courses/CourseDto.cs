@@ -22,8 +22,9 @@ public class CourseDto : BaseFilterDto
     public int coursetypeId { get; set; }
     public string? coursetypename { get; set; }
     public DateTime? registerdatetime { get; set; }
-    public bool siteisowner { get; set; }
+    public bool isprelesson { get; set; }
     public long? owneruserId { get; set; }
     public string? ownerusername { get; set; }
     public string? coursedescription { get; set; }
+    public bool? isadminaccepted { get; set; }
 }

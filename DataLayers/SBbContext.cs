@@ -62,6 +62,11 @@ namespace DataLayers
         public DbSet<CourseLessonFile> CourseLessonFiles { get; set; }
         #endregion [ Course ]
 
+        #region [  TicketType ]
+        public DbSet<Priority> Priorities { get; set; }
+        public DbSet<Ticket> Tickets { get; set; }
+        #endregion [  TicketType ]
+
         #region OnModelCreating
         protected override void OnModelCreating(ModelBuilder builder)
         {

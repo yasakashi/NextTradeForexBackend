@@ -156,6 +156,8 @@ builder.Services.AddTransient<CommunityGroupServices, CommunityGroupServices>();
 builder.Services.AddTransient<SignalChannelServices, SignalChannelServices>();
 builder.Services.AddTransient<CourseServices, CourseServices>();
 
+builder.Services.AddTransient<TicketServices, TicketServices>();
+//builder.Services.AddTransient<CourseServices, CourseServices>();
 #endregion
 
 builder.Services.AddSwaggerGen();

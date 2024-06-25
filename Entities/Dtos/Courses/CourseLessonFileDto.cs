@@ -26,3 +26,11 @@ public class FileAttachmentDto
     public IFormFile? attachtment { get; set; }
 }
 
+public class AttachmentFileDto : BaseFilterDto
+{
+    public Guid? Id { get; set; }
+    public byte[]? attachment { get; set; }
+    public string? fileextention { get; set; }
+    public string? filename { get; set; }
+    public string? contenttype { get; set; }
+}

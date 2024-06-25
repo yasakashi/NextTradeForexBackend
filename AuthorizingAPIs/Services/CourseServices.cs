@@ -41,8 +41,11 @@ namespace NextTradeAPIs.Services
                 if (model.owneruserId != null)
                     query = query.Where(x => x.owneruserId == model.owneruserId);
 
-                if (model.siteisowner != null)
-                    query = query.Where(x => x.siteisowner == model.siteisowner);
+                if (model.isadminaccepted != null)
+                    query = query.Where(x => x.isadminaccepted == model.isadminaccepted);
+
+                if (model.isprelesson != null)
+                    query = query.Where(x => x.isprelesson == model.isprelesson);
 
                 if (model.coursetypeId != null)
                     query = query.Where(x => x.coursetypeId == model.coursetypeId);
@@ -78,7 +81,8 @@ namespace NextTradeAPIs.Services
                                                       pageindex = pageIndex,
                                                       registerdatetime = x.registerdatetime,
                                                       rowcount = PageRowCount,
-                                                      siteisowner = x.siteisowner,
+                                                      isprelesson = x.isprelesson,
+                                                      isadminaccepted = x.isadminaccepted,
                                                       startdate = x.startdate
                                                   }).ToListAsync();
 
@@ -117,7 +121,8 @@ namespace NextTradeAPIs.Services
                     lessencount = (int)model.lessencount,
                     owneruserId = userlogin.userid,
                     registerdatetime = DateTime.Now,
-                    siteisowner = model.siteisowner,
+                    isadminaccepted = model.isadminaccepted,
+                    isprelesson = model.isprelesson,
                     startdate = (DateTime)model.startdate
                 };
 
@@ -194,8 +199,43 @@ namespace NextTradeAPIs.Services
                 data.coursetypeId = model.coursetypeId;
                 data.enddate = (DateTime)model.enddate;
                 data.lessencount = (int)model.lessencount;
-                data.siteisowner = model.siteisowner;
+                data.isprelesson = model.isprelesson;
                 data.startdate = (DateTime)model.startdate;
+                data.isadminaccepted = (bool)model.isadminaccepted;
+
+                _Context.Courses.Update(data);
+                await _Context.SaveChangesAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+
+        public async Task<SystemMessageModel> AcceptCoursesByAdmin(CourseDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                if (model.Id == null)
+                    return new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 101) * -1), MessageDescription = "Data is wrong", MessageData = model };
+                Course data = await _Context.Courses.FindAsync(model.Id);
+
+                if (data == null)
+                    return new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 101) * -2), MessageDescription = "Data is wrong", MessageData = model };
+
+
+                data.isadminaccepted = (bool)model.isadminaccepted;
 
                 _Context.Courses.Update(data);
                 await _Context.SaveChangesAsync();

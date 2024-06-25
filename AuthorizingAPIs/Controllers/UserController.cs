@@ -226,11 +226,11 @@ namespace NextTradeAPIs.Controllers
 
                 UserModel userlogin = message.MessageData as UserModel;
 
-                if((userlogin.UserTypeId == (long)UserTypes.Admin)|| (userlogin.UserTypeId == (long)UserTypes.SuperAdmin))
+                if ((userlogin.UserTypeId == (long)UserTypes.Admin) || (userlogin.UserTypeId == (long)UserTypes.SuperAdmin))
 
-                message = await _userServices.GetUsers(model, userlogin, processId, clientip, hosturl);
+                    message = await _userServices.GetUsers(model, userlogin, processId, clientip, hosturl);
                 else
-                    return Unauthorized(new SystemMessageModel() {MessageCode =-403,MessageDescription="You do not have permissim for this service" });
+                    return Unauthorized(new SystemMessageModel() { MessageCode = -403, MessageDescription = "You do not have permissim for this service" });
                 if (message.MessageCode < 0)
                     return BadRequest(message);
 
@@ -561,7 +561,7 @@ namespace NextTradeAPIs.Controllers
 
                 if (user.ActiveCodeExpire != null && user.ActiveCodeExpire <= DateTime.Now)
                 {
-                    return BadRequest(new SystemMessageModel() {MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 503) * -1), MessageDescription="اعتبار کد ارسالی به پایان رسیده است" });
+                    return BadRequest(new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 503) * -1), MessageDescription = "اعتبار کد ارسالی به پایان رسیده است" });
                 }
 
                 if (user.ActiveCode == model.activationcode)
@@ -770,10 +770,14 @@ namespace NextTradeAPIs.Controllers
             long ApiCode = 12000;
             try
             {
-                message = await _userServices.InsertLoginLog(new UserModel() {
-                        userid = user.UserId, username = user.Username, 
-                        IsActive = user.IsActive, UserTypeId= (user.UserTypeId!= null)?2 :(long)user.UserTypeId, 
-                        ParentUserId = user.ParentUserId }, clientip, contex, processId, hosturl);
+                message = await _userServices.InsertLoginLog(new UserModel()
+                {
+                    userid = user.UserId,
+                    username = user.Username,
+                    IsActive = user.IsActive,
+                    UserTypeId = (user.UserTypeId != null) ? 2 : (long)user.UserTypeId,
+                    ParentUserId = user.ParentUserId
+                }, clientip, contex, processId, hosturl);
 
                 if (message.MessageCode < 0)
                     return message;
@@ -872,5 +876,69 @@ namespace NextTradeAPIs.Controllers
 
         }
 
+        [HttpPost]
+        [HttpGet]
+        [Route("/api/users/getrefferalcode")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetReferralCode()
+        {
+            StackTrace stackTrace = new StackTrace();
+            SystemMessageModel message;
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string authHeader = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            UserModel user = null;
+            LoginLog loginLog = null;
+
+            long ApiCode = 2000;
+
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                message = await _authorizationService.CheckToken(_bearer_token, processId);
+
+                if (message.MessageCode < 0)
+                    return Unauthorized(message);
+
+                UserModel userlogin = message.MessageData as UserModel;
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageData = new { refferalcode = userlogin.userid }, MessageDescription = "request success" };
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(error, processId, clientip, hosturl, LogTypes.SystemError);
+
+                message = new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = $"'ProccessID':'{processId}','ErrorMessage':'{ex.Message}'" };
+                return BadRequest(message);
+            }
+
+        }
     }
 }
