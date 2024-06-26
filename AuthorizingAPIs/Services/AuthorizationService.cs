@@ -258,7 +258,7 @@ namespace NextTradeAPIs.Services
                 }
 
                 User user = await _Context.Users.FindAsync(loginLog.UserId);
-                UserModel usermodel = new UserModel() { loginlogid = new Guid(LoginLogId), organizename = "", userid = user.UserId, username = user.Username };
+                UserModel usermodel = new UserModel() { loginlogid = new Guid(LoginLogId), organizename = "", userid = user.UserId, username = user.Username , UserTypeId = user.UserTypeId, fname = user.Fname, lname = user.Lname};
 
                 //usermodel.userservicelist = await GetUserServiceAccessIds(user.ID);
 
