@@ -92,8 +92,17 @@ namespace NextTradeAPIs.Services
                 if (model.creatoruserid != null)
                     query = query.Where(x => x.creatoruserid == model.creatoruserid);
 
-                if(model.showpost != null && model.showpost == true)
-                    query = query.Where(x => x.parentId == null);
+                if (model.showpost != null)
+                {
+                    if (model.showpost == true)
+                    {
+                        query = query.Where(x => x.parentId == null);
+                    }
+                    else
+                    {
+                        query = query.Where(x => x.parentId != null);
+                    }
+                }
 
 
                 List<ForumMessageDto> datas = await query.Include(x => x.category).Include(x => x.creatoruser).Select(x => new ForumMessageDto()

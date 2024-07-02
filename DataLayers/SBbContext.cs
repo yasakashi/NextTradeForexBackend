@@ -45,6 +45,8 @@ namespace DataLayers
         //public DbSet<SubCategory> SubCategories { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<GroupType> GroupTypes { get; set; }
+        
+        public DbSet<ForexExperienceLevel> ForexExperienceLevels { get; set; }
         public DbSet<ForumMessage> ForumMessages { get; set; }
         public DbSet<AnalysisType> AnalysisTypes { get; set; }
         public DbSet<PositionType> PositionTypes { get; set; }
@@ -66,6 +68,11 @@ namespace DataLayers
         public DbSet<Priority> Priorities { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         #endregion [  TicketType ]
+
+        #region [ Wallet ]
+        public DbSet<FinancialInstrument> FinancialInstruments { get; set; }
+        public DbSet<Wallet> Wallets { get; set; }
+        #endregion [ Wallet ]
 
         #region OnModelCreating
         protected override void OnModelCreating(ModelBuilder builder)
