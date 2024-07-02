@@ -252,10 +252,10 @@ namespace NextTradeAPIs
                     clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
 
                 /// بررسی IP 
-                if (await _blockedIPService.IsIPBlocked(clientip, processId, _bearer_token))
-                {
-                    return BadRequest(new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "دسترسی برای شما بسته شده است" });
-                }
+                //if (await _blockedIPService.IsIPBlocked(clientip, processId, _bearer_token))
+                //{
+                //    return BadRequest(new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "دسترسی برای شما بسته شده است" });
+                //}
                 hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
 
 

@@ -606,20 +606,41 @@ namespace NextTradeAPIs.Services
                 {
                     Person person = await _Context.People.Where(x => x.PersonId == user.PersonId).SingleOrDefaultAsync();
 
-                    UserPersonModel userModel = new UserPersonModel()
+                    UserPersonModel userModel = null;
+                    if (person != null)
                     {
-                        fname = person.FName,
-                        lname = person.LName,
-                        username = user.Username,
-                        userid = user.UserId,
-                        BirthDate = person.BirthDate,
-                        Companyname = person.Companyname,
-                        companyregisterdate = "",
-                        legalNationalCode = person.legalNationalCode,
-                        Mobile = person.Mobile,
-                        PersonTypeId = person.PersonTypeId,
-                        taxcode = person.taxcode
-                    };
+                        userModel = new UserPersonModel()
+                        {
+                            fname = person.FName,
+                            lname = person.LName,
+                            username = user.Username,
+                            userid = user.UserId,
+                            BirthDate = person.BirthDate,
+                            Companyname = person.Companyname,
+                            companyregisterdate = "",
+                            legalNationalCode = person.legalNationalCode,
+                            Mobile = person.Mobile,
+                            PersonTypeId = person.PersonTypeId,
+                            taxcode = person.taxcode
+                        };
+                    }
+                    else
+                    {
+                        userModel = new UserPersonModel()
+                        {
+                            fname = user.Fname,
+                            lname = user.Lname,
+                            username = user.Username,
+                            userid = user.UserId,
+                            BirthDate = null,
+                            Companyname = null,
+                            companyregisterdate = "",
+                            legalNationalCode = null,
+                            Mobile = user.Mobile,
+                            PersonTypeId = null,
+                            taxcode = null
+                        };
+                    }
                     if (user.IsActive)
                         message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = userModel };
                     else

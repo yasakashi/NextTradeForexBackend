@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore.DataEncryption.Providers;
 using Microsoft.EntityFrameworkCore.DataEncryption;
 using Entities.Systems;
 using Entities.DBEntities;
-using Entities.DBEntities;
 
 namespace DataLayers
 {
