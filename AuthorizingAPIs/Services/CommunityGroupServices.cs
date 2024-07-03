@@ -454,7 +454,10 @@ namespace NextTradeAPIs.Services
 
             try
             {
-                List<Guid> CommunityGroupListIDs= await _Context.CommunityGroupMembers.Where(x => x.userId == userlogin.userid && x.isaccepted == true).Select(x => x.communitygroupId).ToListAsync();
+                List<CommunityGroupMember> CommunityGroupList= await _Context.CommunityGroupMembers.Where(x => x.userId == userlogin.userid).ToListAsync();
+
+                List<Guid> CommunityGroupListIDs = CommunityGroupList.Select(x => x.communitygroupId).ToList();
+                List<Guid> AcceptedCommunityGroupListIDs = CommunityGroupList.Where(x=>x.isaccepted==true).Select(x => x.communitygroupId).ToList();
 
                 IQueryable<CommunityGroup> query = _Context.CommunityGroups;
                 
@@ -483,8 +486,12 @@ namespace NextTradeAPIs.Services
                                     description = x.description,
                                     title = x.title,
                                     ownerusername = x.owneruser.Username,
-                                    grouptypename = x.grouptype.name,
+                                    grouptypename = x.grouptype.name
                                 }).ToListAsync();
+
+                foreach (CommunityGroupDto data in datas)
+                    data.isaccepted = AcceptedCommunityGroupListIDs.Contains((Guid)data.Id);
+
                 if (model.showdetail)
                 {
                     foreach (var data in datas)

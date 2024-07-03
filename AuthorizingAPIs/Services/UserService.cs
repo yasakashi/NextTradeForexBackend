@@ -621,7 +621,10 @@ namespace NextTradeAPIs.Services
                             legalNationalCode = person.legalNationalCode,
                             Mobile = person.Mobile,
                             PersonTypeId = person.PersonTypeId,
-                            taxcode = person.taxcode
+                            taxcode = person.taxcode,
+                            address = person.Address,
+                            sex = person.Sex,
+                            email = user.Email
                         };
                     }
                     else
@@ -655,6 +658,50 @@ namespace NextTradeAPIs.Services
             }
             return message;
         }
+
+        /// <summary>
+        /// فعال و غیر فعال کردن کاربر  
+        /// </summary>
+        /// <param name="username">نام کاربری</param>
+        /// <param name="password">رمز عبور</param>
+        /// <returns></returns>
+        public async Task<SystemMessageModel> SetUserActiveOrDisactive(UserSearchModel model, UserModel userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 121000;
+
+            try
+            {
+                User user = await _Context.Users.Where(x => x.Username == model.username).FirstOrDefaultAsync();
+
+                if (user == null)
+                {
+                    message = new SystemMessageModel() { MessageCode = -300, MessageDescription = "کاربر موجود نمی باشد", MessageData = null };
+                }
+                else
+                {
+                    user.IsActive =(bool) model.isactive;
+
+                    _Context.Users.Update(user);
+                    await _Context.SaveChangesAsync();
+
+                    if (user.IsActive)
+                        message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = "user actied" };
+                    else
+                        message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = "user disactied" };
+                }
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+        
 
         public async Task<SystemMessageModel> KYCUserCheck(UserSearchModel model, UserModel? userlogin, string processId, string clientip, string hosturl, string bearer_token)
         {

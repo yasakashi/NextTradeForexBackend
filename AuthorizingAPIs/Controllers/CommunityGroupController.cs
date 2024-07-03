@@ -687,6 +687,11 @@ namespace NextTradeAPIs.Controllers
             }
         }
 
+        /// <summary>
+        /// ایست گروه هایی که یک کاربر عضو می باشد
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("/api/getmycommunitygroup")]
         [AllowAnonymous]
@@ -755,6 +760,5 @@ namespace NextTradeAPIs.Controllers
             }
         }
 
-        
     }
 }

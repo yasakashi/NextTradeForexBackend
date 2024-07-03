@@ -17,5 +17,6 @@ namespace Entities.Dtos
         public string? lname { get; set; }
         public string? mobile { get; set; }
         public string? nationalcode { get; set; }
+        public bool? isactive { get; set; }
     }
 }

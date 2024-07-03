@@ -940,5 +940,77 @@ namespace NextTradeAPIs.Controllers
             }
 
         }
+
+        /// <summary>
+        /// دریافت کابر با نام کاربری
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("/api/users/setactiveordisactive")]
+        public async Task<IActionResult> ActiveOrDisActive(UserSearchModel model)
+        {
+            StackTrace stackTrace = new StackTrace();
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string _bearer_token = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            SystemMessageModel message = new SystemMessageModel();
+            long ApiCode = 5000;
+
+            try
+            {
+                _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}','LogDescription':'{JsonConvert.SerializeObject(model)}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                message = await _authorizationService.CheckToken(_bearer_token);
+
+                if (message.MessageCode < 0)
+                    return Unauthorized(message);
+
+                UserModel userlogin = message.MessageData as UserModel;
+
+                if ((userlogin.UserTypeId == (long)UserTypes.Admin) || (userlogin.UserTypeId == (long)UserTypes.SuperAdmin))
+
+                    message = await _userServices.SetUserActiveOrDisactive(model, userlogin, processId, clientip, hosturl);
+                else
+                    message = new SystemMessageModel() { MessageCode=403,MessageDescription="you have not access"};
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string log = $"'ApiCode':{ApiCode},'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, (long)LogTypes.TokenError);
+                return BadRequest(message);
+            }
+        }
+
     }
 }
