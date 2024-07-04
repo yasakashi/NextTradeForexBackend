@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using NextTradeAPIs.Dtos;
 using System.Diagnostics;
+using System.Linq;
 using System.Net.Mail;
 
 namespace NextTradeAPIs.Services
@@ -55,7 +56,45 @@ namespace NextTradeAPIs.Services
                 int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 50 : (int)model.rowcount;
 
 
-                List<SignalChannelDto> data = await query.Skip(pageIndex - 1).Take(PageRowCount)
+                if (model.sortitem != null)
+                {
+                    foreach (var item in model.sortitem)
+                    {
+                        if (item.ascending == null || (bool)item.ascending)
+                        {
+                            switch (item.fieldname.ToLower())
+                            {
+                                case "createdatetime":
+                                    query = query.OrderBy(x => x.createdatetime);
+                                    break;
+                                case "title":
+                                    query = query.OrderBy(x => x.title);
+                                    break;
+                                case "grouptypeId":
+                                    query = query.OrderBy(x => x.grouptypeId);
+                                    break;
+                            };
+                        }
+                        else if (!(bool)item.ascending)
+                        {
+                            switch (item.fieldname.ToLower())
+                            {
+                                case "createdatetime":
+                                    query = query.OrderByDescending(x => x.createdatetime);
+                                    break;
+                                case "title":
+                                    query = query.OrderByDescending(x => x.title);
+                                    break;
+                                case "grouptypeId":
+                                    query = query.OrderByDescending(x => x.grouptypeId);
+                                    break;
+                            };
+                        }
+                    }
+                }
+                List<SignalChannelDto> data = await query
+                                    .Skip(pageIndex - 1)
+                                    .Take(PageRowCount)
                                     .Include(x => x.communitygroup)
                                     .Include(x => x.grouptype)
                                     .Select(x => new SignalChannelDto()

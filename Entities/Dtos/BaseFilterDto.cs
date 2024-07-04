@@ -16,6 +16,6 @@ namespace Entities.Dtos
     public class  SortItem
     {
         public string fieldname { get; set; }
-        public object fieldvalue { get; set; }
+        public bool? ascending { get; set; }
     }
 }

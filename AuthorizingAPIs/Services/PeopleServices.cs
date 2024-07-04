@@ -11,11 +11,11 @@ using NextTradeAPIs.Dtos;
 using RestSharp;
 using System.Net;
 using static System.Runtime.InteropServices.JavaScript.JSType;
-using Entities.DBEntities;
 using System.Net.Sockets;
 using DocumentFormat.OpenXml.InkML;
 using Entities.Systems;
 using NextTradeAPIs.Services;
+using Entities.DBEntities;
 
 namespace NextTradeAPIs.Services
 {
