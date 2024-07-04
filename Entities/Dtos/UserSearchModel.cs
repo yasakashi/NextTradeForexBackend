@@ -9,7 +9,7 @@ namespace Entities.Dtos
     /// <summary>
     /// پارامترهای جستحوی کاربران
     /// </summary>
-    public class UserSearchModel
+    public class UserSearchModel: BaseFilterDto
     {
         public string? username { get; set; }
         public string? parentid { get; set; }

@@ -10,5 +10,12 @@ namespace Entities.Dtos
     {
         public int? rowcount { get; set; }
         public int? pageindex { get; set; }
+        public List<SortItem> sortitem { get; set; }
+    }
+
+    public class  SortItem
+    {
+        public string fieldname { get; set; }
+        public object fieldvalue { get; set; }
     }
 }

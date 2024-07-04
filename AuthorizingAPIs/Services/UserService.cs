@@ -18,6 +18,7 @@ using Entities.Systems;
 using NextTradeAPIs.Services;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System.Reflection.Metadata.Ecma335;
+using DocumentFormat.OpenXml.Office2010.Excel;
 
 namespace NextTradeAPIs.Services
 {
@@ -682,7 +683,7 @@ namespace NextTradeAPIs.Services
                 }
                 else
                 {
-                    user.IsActive =(bool) model.isactive;
+                    user.IsActive = (bool)model.isactive;
 
                     _Context.Users.Update(user);
                     await _Context.SaveChangesAsync();
@@ -701,7 +702,7 @@ namespace NextTradeAPIs.Services
             }
             return message;
         }
-        
+
 
         public async Task<SystemMessageModel> KYCUserCheck(UserSearchModel model, UserModel? userlogin, string processId, string clientip, string hosturl, string bearer_token)
         {
@@ -1116,5 +1117,50 @@ namespace NextTradeAPIs.Services
             return message;
         }
 
+        public async Task<SystemMessageModel> GetUserListByReferralCode(UserSearchModel filter, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            List<UserModel> datas = null;
+            long SerrvieCode = 120000;
+
+            try
+            {
+                IQueryable<User> query = _Context.Users;
+
+                if (!string.IsNullOrEmpty(filter.username))
+                {
+                    User parentuser = await _Context.Users.Where(x => x.Username == filter.username).SingleOrDefaultAsync();
+                    if (parentuser != null)
+                        query = query.Where(x => x.ParentUserId == parentuser.UserId);
+                }
+                else
+                    query = query.Where(x => x.ParentUserId == userlogin.userid);
+
+                int pageIndex = (filter.pageindex == null || filter.pageindex == 0) ? 1 : (int)filter.pageindex;
+                int PageRowCount = (filter.rowcount == null || filter.rowcount == 0) ? 50 : (int)filter.rowcount;
+
+                datas = await query.Select(x => new UserModel()
+                {
+                    userid = x.UserId,
+                    username = x.Username,
+                    fname = x.Fname,
+                    lname = x.Lname,
+                    UserTypeId = x.UserTypeId,
+                    IsActive = x.IsActive,
+                    ispaid = x.ispaied,
+                }).ToListAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
     }
 }
