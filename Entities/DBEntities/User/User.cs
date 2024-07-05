@@ -122,8 +122,15 @@ public class User
     public long UserTypeId { get; set; }
     public bool ispaied { get; set; }
 
+    public string? financialinstrumentIds { get; set; }
+    public string? forexexperiencelevelId { get; set; }
+    public string? trainingmethodIds { get; set; }
+    public string? targettrainerIds { get; set; }
+    public int? interestforexId { get; set; }
+    public bool? hobbyoftradingfulltime { get; set; }
     #region [ relations ]
-    public UserType UserType { get; set; }
+    public virtual UserType UserType { get; set; }
+    public virtual ForexExperienceLevel forexexperiencelevel { get; set; }
     #endregion
 
 }

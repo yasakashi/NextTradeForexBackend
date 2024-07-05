@@ -3,6 +3,7 @@ using DataLayers;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Entities.DBEntities;
 using Entities.Dtos;
+using Entities.Dtos;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using NextTradeAPIs.Dtos;

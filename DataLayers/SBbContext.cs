@@ -46,6 +46,9 @@ namespace DataLayers
         public DbSet<GroupType> GroupTypes { get; set; }
         
         public DbSet<ForexExperienceLevel> ForexExperienceLevels { get; set; }
+        public DbSet<TrainingMethod> TrainingMethods { get; set; }
+        public DbSet<FinancialInstrument> FinancialInstruments { get; set; }
+        
         public DbSet<ForumMessage> ForumMessages { get; set; }
         public DbSet<AnalysisType> AnalysisTypes { get; set; }
         public DbSet<PositionType> PositionTypes { get; set; }
@@ -69,7 +72,6 @@ namespace DataLayers
         #endregion [  TicketType ]
 
         #region [ Wallet ]
-        public DbSet<FinancialInstrument> FinancialInstruments { get; set; }
         public DbSet<Wallet> Wallets { get; set; }
         #endregion [ Wallet ]
 

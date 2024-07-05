@@ -2,6 +2,7 @@
 using DataLayers;
 using Entities.DBEntities;
 using Entities.Dtos;
+using Entities.Dtos;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using NextTradeAPIs.Dtos;

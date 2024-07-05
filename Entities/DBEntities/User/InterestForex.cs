@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace Entities.DBEntities;
 
-[Table("tblForexExperienceLevels")]
-public class ForexExperienceLevel
+[Table("tblInterestForexs")]
+public class InterestForex
 {
     [Key]
     public int Id { get; set; }

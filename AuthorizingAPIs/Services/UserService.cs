@@ -19,6 +19,7 @@ using NextTradeAPIs.Services;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System.Reflection.Metadata.Ecma335;
 using DocumentFormat.OpenXml.Office2010.Excel;
+using System.Linq;
 
 namespace NextTradeAPIs.Services
 {
@@ -244,7 +245,10 @@ namespace NextTradeAPIs.Services
                     telephone = model.telephone,
                     postalcode = model.postalcode,
                     legalNationalCode = model.legalnationalcode,
-                    Mobile = model.Mobile
+                    Mobile = model.Mobile,
+                    cityId = model.cityId,
+                    countryId = model.countryId,
+                    stateId = model.stateId
                 };
                 _Context.People.Add(person);
 
@@ -266,7 +270,13 @@ namespace NextTradeAPIs.Services
                     registerDate = DateTime.Now,
                     PersonId = person.PersonId,
                     Mobile = model.Mobile,
-                    UserTypeId = (model.UserTypeId != null) ? model.UserTypeId : (long)UserTypes.Student
+                    UserTypeId = (model.UserTypeId != null) ? model.UserTypeId : (long)UserTypes.Student,
+                    financialinstrumentIds = (model.financialinstrumentIds== null)?null: string.Join(",",(List<int>)model.financialinstrumentIds),
+                    forexexperiencelevelId = model.forexexperiencelevelId,
+                    trainingmethodIds = (model.trainingmethodIds == null) ? null : string.Join(",", (List<int>)model.trainingmethodIds),
+                    targettrainerIds = (model.targettrainerIds == null) ? null : string.Join(",", (List<int>)model.targettrainerIds) ,
+                    interestforexId = model.interestforexId,
+                    hobbyoftradingfulltime = model.hobbyoftradingfulltime
                 };
 
                 _Context.Users.Add(data);

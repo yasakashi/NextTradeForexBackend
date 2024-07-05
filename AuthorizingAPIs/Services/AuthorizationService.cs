@@ -13,6 +13,7 @@ using NextTradeAPIs.Interfaces;
 using NextTradeAPIs.Dtos;
 using Base.Common.Enums;
 using Entities.DBEntities;
+using Entities.Dtos;
 
 namespace NextTradeAPIs.Services
 {
