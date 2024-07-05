@@ -139,7 +139,7 @@ public class UserRegisterModel
     public string? legalnationalcode { get; set; }
     public long? parentuserId { get; set; }
     public List<int>? financialinstrumentIds { get; set; }
-    public string? forexexperiencelevelId { get; set; }
+    public int? forexexperiencelevelId { get; set; }
     public List<int>? trainingmethodIds { get; set; }
     public List<int>? targettrainerIds { get; set; }
     public int? interestforexId { get; set; }

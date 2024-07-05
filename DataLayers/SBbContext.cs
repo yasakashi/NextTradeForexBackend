@@ -48,7 +48,7 @@ namespace DataLayers
         public DbSet<ForexExperienceLevel> ForexExperienceLevels { get; set; }
         public DbSet<TrainingMethod> TrainingMethods { get; set; }
         public DbSet<FinancialInstrument> FinancialInstruments { get; set; }
-        
+        public DbSet<InterestForex> InterestForexs { get; set; }
         public DbSet<ForumMessage> ForumMessages { get; set; }
         public DbSet<AnalysisType> AnalysisTypes { get; set; }
         public DbSet<PositionType> PositionTypes { get; set; }

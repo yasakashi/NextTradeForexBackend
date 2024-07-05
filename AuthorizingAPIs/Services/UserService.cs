@@ -607,7 +607,11 @@ namespace NextTradeAPIs.Services
 
             try
             {
-                User user = await _Context.Users.Where(x => x.Username == username).FirstOrDefaultAsync();
+                User user = await _Context.Users.Where(x => x.Username == username)
+                        .Include(x => x.forexexperiencelevel)
+                        .Include(x => x.interestforex)
+                        .Include(x => x.UserType)
+                        .FirstOrDefaultAsync();
 
                 if (user == null)
                 {
@@ -615,7 +619,13 @@ namespace NextTradeAPIs.Services
                 }
                 else
                 {
-                    Person person = await _Context.People.Where(x => x.PersonId == user.PersonId).SingleOrDefaultAsync();
+                    Person person = await _Context.People.Where(x => x.PersonId == user.PersonId)
+                            .Include(x => x.city)
+                            .Include(x => x.state)
+                            .Include(x => x.country)
+                            .SingleOrDefaultAsync();
+
+
 
                     UserPersonModel userModel = null;
                     if (person != null)
@@ -635,8 +645,35 @@ namespace NextTradeAPIs.Services
                             taxcode = person.taxcode,
                             address = person.Address,
                             sex = person.Sex,
-                            email = user.Email
+                            email = user.Email,
+                            cityId = person.cityId,
+                            countryId = person.countryId,
+                            stateId = person.stateId,
+                            cityname = (person.city != null) ? person.city.name : "",
+                            statename = (person.state != null) ? person.state.name : "",
+                            countryname = (person.country != null) ? person.country.name : "",
+                            interestforexId = user.interestforexId,
+                            interestforexname = (user.interestforex != null) ? user.interestforex.name : "",
+                            hobbyoftradingfulltime = user.hobbyoftradingfulltime,
+                            forexexperiencelevelId = user.forexexperiencelevelId,
+                            forexexperiencelevelname = (user.forexexperiencelevel != null) ? user.forexexperiencelevel.name : ""
                         };
+                        List<FinancialInstrumentDto> financialinstruments = null;
+                        if (!string.IsNullOrEmpty(user.financialinstrumentIds))
+                            financialinstruments = await _Context.FinancialInstruments.Where(x => user.financialinstrumentIds.Contains(x.Id.ToString())).Select(x=> new FinancialInstrumentDto() { Id = x.Id, name = x.name}).ToListAsync();
+                        userModel.financialinstruments = financialinstruments;
+
+
+                        List<TrainingMethodDto> trainingmethods = null;
+                        if (!string.IsNullOrEmpty(user.financialinstrumentIds))
+                            trainingmethods = await _Context.TrainingMethods.Where(x => user.trainingmethodIds.Contains(x.Id.ToString())).Select(x => new TrainingMethodDto() { Id = x.Id, name = x.name }).ToListAsync();
+                        userModel.trainingmethods = trainingmethods;
+
+
+                        List<TargetTrainerDto> targettrainers = null;
+                        if (!string.IsNullOrEmpty(user.targettrainerIds))
+                            targettrainers = await _Context.TrainingMethods.Where(x => user.targettrainerIds.Contains(x.Id.ToString())).Select(x => new TargetTrainerDto() { Id = x.Id, name = x.name }).ToListAsync();
+                        userModel.targettrainers = targettrainers;
                     }
                     else
                     {

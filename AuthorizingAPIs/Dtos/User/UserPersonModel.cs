@@ -28,5 +28,23 @@ namespace Entities.Dtos
         public string? postalcode { get; set; }
         public string? address { get; set; }
         public string? email { get; set; }
+        public List<int>? financialinstrumentIds { get; set; }
+        public List<FinancialInstrumentDto>? financialinstruments { get; set; }
+        public int? forexexperiencelevelId { get; set; }
+        public List<int>? trainingmethodIds { get; set; }
+        public List<TrainingMethodDto>? trainingmethods { get; set; }
+        public List<int>? targettrainerIds { get; set; }
+        public List<TargetTrainerDto>? targettrainers { get; set; }
+        
+        public int? interestforexId { get; set; }
+        public string? interestforexname { get; set; }
+        public string? forexexperiencelevelname { get; set; }
+        public bool? hobbyoftradingfulltime { get; set; }
+        public int? countryId { get; set; }
+        public int? stateId { get; set; }
+        public int? cityId { get; set; }
+        public string? countryname { get; set; }
+        public string? statename { get; set; }
+        public string? cityname { get; set; }
     }
 }
