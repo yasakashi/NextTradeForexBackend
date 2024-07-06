@@ -336,7 +336,7 @@ namespace NextTradeAPIs.Services
 
             try
             {
-                List<ForexExperienceLevelDto> datas = await _Context.ForexExperienceLevels.Select(x => new ForexExperienceLevelDto()
+                List<ForexExperienceLevelDto> datas = await _Context.CourseLevelTypes.Select(x => new ForexExperienceLevelDto()
                 {
                     Id = x.Id,
                     name = x.name
