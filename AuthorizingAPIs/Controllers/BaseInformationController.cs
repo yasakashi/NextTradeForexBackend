@@ -1036,7 +1036,7 @@ namespace NextTradeAPIs.Controllers
         [HttpGet]
         [Route("/api/getpriorities")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetPriorities(LocationDto model)
+        public async Task<IActionResult> GetPriorities()
         {
             StackTrace stackTrace = new StackTrace();
             SystemMessageModel message;
@@ -1103,7 +1103,7 @@ namespace NextTradeAPIs.Controllers
         [HttpGet]
         [Route("/api/getforexexperiencelevels")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetForexExperienceLevels(LocationDto model)
+        public async Task<IActionResult> GetForexExperienceLevels()
         {
             StackTrace stackTrace = new StackTrace();
             SystemMessageModel message;
@@ -1169,7 +1169,7 @@ namespace NextTradeAPIs.Controllers
         [HttpGet]
         [Route("/api/getfinancialinstruments")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetFinancialInstruments(LocationDto model)
+        public async Task<IActionResult> GetFinancialInstruments()
         {
             StackTrace stackTrace = new StackTrace();
             SystemMessageModel message;
@@ -1236,7 +1236,7 @@ namespace NextTradeAPIs.Controllers
         [HttpGet]
         [Route("/api/gettrainingmethods")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetTrainingMethods(LocationDto model)
+        public async Task<IActionResult> GetTrainingMethods()
         {
             StackTrace stackTrace = new StackTrace();
             SystemMessageModel message;
@@ -1303,7 +1303,7 @@ namespace NextTradeAPIs.Controllers
         [HttpGet]
         [Route("/api/gettargettrainers")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetTargetTrainers(LocationDto model)
+        public async Task<IActionResult> GetTargetTrainers()
         {
             StackTrace stackTrace = new StackTrace();
             SystemMessageModel message;
@@ -1370,7 +1370,7 @@ namespace NextTradeAPIs.Controllers
         [HttpGet]
         [Route("/api/getinterestforexs")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetInterestForexs(LocationDto model)
+        public async Task<IActionResult> GetInterestForexs()
         {
             StackTrace stackTrace = new StackTrace();
             SystemMessageModel message;
