@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Entities.DBEntities;
 
-[Table("tblFinanciaIinstruments")]
+[Table("tblFinancialInstruments")]
 public class FinancialInstrument
 {
     [Key]

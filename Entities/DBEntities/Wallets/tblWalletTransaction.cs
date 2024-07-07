@@ -18,6 +18,7 @@ public class WalletTransaction
     public decimal transactionamount { get; set; }
     public DateTime? transactiondatetime { get; set; }
     public int transactiontypeId { get; set; }
+    public string? transactiondiscription { get; set; }
 
     public virtual  Wallet wallet { get; set; }
     public virtual TransactionType transactiontype { get; set; }

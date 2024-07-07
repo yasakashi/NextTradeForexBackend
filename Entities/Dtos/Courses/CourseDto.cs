@@ -27,4 +27,6 @@ public class CourseDto : BaseFilterDto
     public string? ownerusername { get; set; }
     public string? coursedescription { get; set; }
     public bool? isadminaccepted { get; set; }
+    public bool? issitecourse { get; set; }
+    public string? username { get; set; }
 }

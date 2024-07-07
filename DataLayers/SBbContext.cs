@@ -63,7 +63,9 @@ namespace DataLayers
         public DbSet<CourseType> CourseTypes { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<CourseLesson> CourseLessons { get; set; }
+        public DbSet<CourseMemeber> CourseMemebers { get; set; }
         public DbSet<CourseLessonFile> CourseLessonFiles { get; set; }
+        
         #endregion [ Course ]
 
         #region [  TicketType ]
@@ -73,6 +75,7 @@ namespace DataLayers
 
         #region [ Wallet ]
         public DbSet<Wallet> Wallets { get; set; }
+        public DbSet<WalletTransaction> WalletTransactions { get; set; }
         #endregion [ Wallet ]
 
         #region OnModelCreating

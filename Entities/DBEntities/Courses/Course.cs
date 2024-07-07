@@ -28,7 +28,7 @@ public class Course
     public long owneruserId { get; set; }
     public string coursedescription { get; set; }
     public bool? isadminaccepted { get; set; }
-
+    public bool? issitecourse { get; set; }
     public virtual CourseLevelType courseleveltype { get; set; }
     public virtual CourseType coursetype { get; set; }
     public virtual User owneruser { get; set; }

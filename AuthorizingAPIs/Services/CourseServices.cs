@@ -1,5 +1,7 @@
 ﻿using Base.Common.Enums;
 using DataLayers;
+using DocumentFormat.OpenXml.Office2021.Excel.RichDataWebImage;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Entities.DBEntities;
 using Entities.Dtos;
 using Entities.Dtos;
@@ -16,12 +18,16 @@ namespace NextTradeAPIs.Services
         LogSBbContext _LogContext { get; set; }
         SystemLogServices _systemLogServices;
         private readonly IConfiguration _config;
-        public CourseServices(SBbContext context, LogSBbContext logcontext, IConfiguration config, SystemLogServices systemLogServices)
+
+        private WalletServices _walletService;
+
+        public CourseServices(SBbContext context, LogSBbContext logcontext, IConfiguration config, SystemLogServices systemLogServices, WalletServices walletService)
         {
             _Context = context;
             _LogContext = logcontext;
             _config = config;
             _systemLogServices = systemLogServices;
+            _walletService = walletService;
         }
 
 
@@ -433,7 +439,7 @@ namespace NextTradeAPIs.Services
             return message;
         }
 
-        internal async Task<SystemMessageModel> GetCourseLessonFileList(CourseLessonFileDto model, object value, string processId, string clientip, string hosturl)
+        internal async Task<SystemMessageModel> GetCourseLessonFileList(CourseLessonFileDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
             SystemMessageModel message;
             StackTrace stackTrace = new StackTrace();
@@ -497,6 +503,160 @@ namespace NextTradeAPIs.Services
                 await _systemLogServices.InsertLogs(error, "", "", methodpath, LogTypes.SystemError);
                 return null;
             }
+        }
+
+        public async Task<SystemMessageModel> AddCourseRequest(CourseLessonDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                if (await _Context.CourseMemebers.Where(x => x.courseId == model.courseId && x.userId == userlogin.userid).AnyAsync())
+                {
+                    return new SystemMessageModel() { MessageCode = 200, MessageDescription = "you bought this course before ", MessageData = model };
+                }
+
+                WalletTransactionDto transactionmodel = new WalletTransactionDto();
+               Course course = await _Context.Courses.FindAsync(model.courseId);
+
+                Wallet sourcewallet = await _Context.Wallets.Where(x => x.userId == userlogin.userid).SingleOrDefaultAsync();
+
+                transactionmodel.sourcewalletId = sourcewallet.Id;
+
+                if ((bool)course.issitecourse)
+                {
+                    transactionmodel.destiationwalletId = SitWallet.SitWalletId;
+                }
+                else
+                {
+                    Wallet distinationwallet = await _Context.Wallets.Where(x => x.userId == course.owneruserId).SingleOrDefaultAsync();
+                    transactionmodel.destiationwalletId = distinationwallet.Id;
+                }
+
+                
+                transactionmodel.transactionamount = course.courseprice;
+
+                if (transactionmodel.transactionamount > 0)
+                {
+                    message = await _walletService.Transfer(transactionmodel, userlogin, processId, clientip, hosturl);
+                    if (message.MessageCode < 0)
+                        return message;
+                }
+
+                CourseMemeber data = new CourseMemeber()
+                {
+                    Id = Guid.NewGuid(),
+                    registerdatetime = DateTime.Now,
+                    courseId = (Guid)model.courseId,
+                    userId = userlogin.userid
+                };
+
+                model.Id = data.Id;
+                await _Context.CourseMemebers.AddAsync(data);
+                await _Context.SaveChangesAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<SystemMessageModel> GetUserCourses(CourseDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                List<Guid> CourseIds = null;
+                IQueryable<Course> query = _Context.Courses;
+
+                if (model.Id != null)
+                    query = query.Where(x => x.Id == model.Id);
+
+                if (model.owneruserId != null)
+                    query = query.Where(x => x.owneruserId == model.owneruserId);
+
+                if (model.isadminaccepted != null)
+                    query = query.Where(x => x.isadminaccepted == model.isadminaccepted);
+
+                if (model.isprelesson != null)
+                    query = query.Where(x => x.isprelesson == model.isprelesson);
+
+                if (model.coursetypeId != null)
+                    query = query.Where(x => x.coursetypeId == model.coursetypeId);
+
+                if (model.courseleveltypeId != null)
+                    query = query.Where(x => x.courseleveltypeId == model.courseleveltypeId);
+
+                if (!string.IsNullOrEmpty(model.username))
+                {
+                    User user = await _Context.Users.Where(x => x.Username == model.username).SingleOrDefaultAsync();
+                    CourseIds = await _Context.CourseMemebers.Where(x => x.userId == user.UserId).Select(x => x.courseId).ToListAsync();
+                }
+                else
+                {
+                    CourseIds = await _Context.CourseMemebers.Where(x => x.userId == userlogin.userid).Select(x => x.courseId).ToListAsync();
+                }
+
+                if(CourseIds!= null && CourseIds.Count > 0)
+                {
+                    query = query.Where(x => CourseIds.Contains(x.Id));
+                }
+            
+
+                int pageIndex = (model.pageindex == null || model.pageindex == 0) ? 1 : (int)model.pageindex;
+                int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 50 : (int)model.rowcount;
+
+
+                List<CourseDto> data = await query.Skip(pageIndex - 1).Take(PageRowCount)
+                                                  .Include(x => x.owneruser)
+                                                  .Include(x => x.courseleveltype)
+                                                  .Include(x => x.coursetype)
+                                                  .Select(x => new CourseDto()
+                                                  {
+                                                      Id = x.Id,
+                                                      allowdownload = x.allowdownload,
+                                                      coursecoverimage = x.coursecoverimage,
+                                                      coursedescription = x.coursedescription,
+                                                      courseduringtime = x.courseduringtime,
+                                                      coursename = x.coursename,
+                                                      courseleveltypeId = x.courseleveltypeId,
+                                                      courseleveltypename = x.courseleveltype.name,
+                                                      courseprice = (x.courseprice == null || x.courseprice == 0) ? 0 : x.courseprice,
+                                                      coursetypeId = x.coursetypeId,
+                                                      coursetypename = x.coursetype.name,
+                                                      enddate = x.enddate,
+                                                      lessencount = x.lessencount,
+                                                      owneruserId = x.owneruserId,
+                                                      ownerusername = x.owneruser.Username,
+                                                      pageindex = pageIndex,
+                                                      registerdatetime = x.registerdatetime,
+                                                      rowcount = PageRowCount,
+                                                      isprelesson = x.isprelesson,
+                                                      isadminaccepted = x.isadminaccepted,
+                                                      startdate = x.startdate
+                                                  }).ToListAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
         }
     }
 }

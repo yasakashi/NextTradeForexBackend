@@ -157,7 +157,7 @@ builder.Services.AddTransient<SignalChannelServices, SignalChannelServices>();
 builder.Services.AddTransient<CourseServices, CourseServices>();
 
 builder.Services.AddTransient<TicketServices, TicketServices>();
-//builder.Services.AddTransient<CourseServices, CourseServices>();
+builder.Services.AddTransient<WalletServices, WalletServices>();
 #endregion
 
 builder.Services.AddSwaggerGen();
