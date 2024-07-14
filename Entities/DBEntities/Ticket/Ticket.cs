@@ -23,7 +23,7 @@ public class Ticket
     public string? textbody { get; set; }
     public string? responsedescription { get; set; }
     public long? responseuserid { get; set; }
-    public byte[] fileattachment { get; set; }
+    public byte[]? fileattachment { get; set; }
     public string? attachmentcontexttype { get; set; }
     public string? fileattachmentname { get; set; }
 

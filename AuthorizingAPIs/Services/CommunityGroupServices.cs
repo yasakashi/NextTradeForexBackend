@@ -81,6 +81,9 @@ namespace NextTradeAPIs.Services
                 if (model.id != null)
                     query = query.Where(x => x.Id == model.id);
 
+                if (!string.IsNullOrEmpty(model.title))
+                    query = query.Where(x => x.title.Contains(model.title));
+
                 int pageIndex = (model.pageindex == null || model.pageindex == 0) ? 1 : (int)model.pageindex;
                 int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 10 : (int)model.rowcount;
 
@@ -138,419 +141,419 @@ namespace NextTradeAPIs.Services
                                     ownerusername = x.owneruser.Username,
                                     grouptypename = x.grouptype.name,
                                 }).ToListAsync();
-            if (model.showdetail)
-            {
-                foreach (var data in datas)
+                if (model.showdetail)
                 {
-                    data.membercount = await _Context.CommunityGroupMembers.Where(x => x.communitygroupId == data.Id).CountAsync();
-                    data.signalchannelcount = await _Context.SignalChannels.Where(x => x.communitygroupId == data.Id).CountAsync();
-                    data.messagecount = await _Context.ForumMessages.Where(x => x.communitygroupid == data.Id).CountAsync();
+                    foreach (var data in datas)
+                    {
+                        data.membercount = await _Context.CommunityGroupMembers.Where(x => x.communitygroupId == data.Id).CountAsync();
+                        data.signalchannelcount = await _Context.SignalChannels.Where(x => x.communitygroupId == data.Id).CountAsync();
+                        data.messagecount = await _Context.ForumMessages.Where(x => x.communitygroupid == data.Id).CountAsync();
+                    }
                 }
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
             }
-            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
-        }
             catch (Exception ex)
             {
                 message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
-        string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
-        await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
-    }
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
             return message;
         }
 
-public async Task<SystemMessageModel> GetTopCommunityGroup(GroupSearchFilterDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
-{
-    SystemMessageModel message;
-    StackTrace stackTrace = new StackTrace();
-    string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
-    long SerrvieCode = 129000;
-
-    try
-    {
-        IQueryable<CommunityGroup> query = _Context.CommunityGroups;
-        if (model.owneruserid != null)
-            query = query.Where(x => x.owneruserid == model.owneruserid);
-
-        if (model.grouptypeId != null)
-            query = query.Where(x => x.grouptypeId == model.grouptypeId);
-
-        if (model.id != null)
-            query = query.Where(x => x.Id == model.id);
-
-
-        int pageIndex = (model.pageindex == null || model.pageindex == 0) ? 1 : (int)model.pageindex;
-        int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 10 : (int)model.rowcount;
-
-        List<Guid> topCommunityGroupIds = await _Context.CommunityGroupMembers
-                                                  .GroupBy(m => m.communitygroupId)
-                                                  .OrderByDescending(g => g.Count())
-                                                  .Take(PageRowCount)
-                                                  .Select(g => g.Key).ToListAsync();
-
-        if (topCommunityGroupIds != null && topCommunityGroupIds.Count > 0)
+        public async Task<SystemMessageModel> GetTopCommunityGroup(GroupSearchFilterDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
-            query = query.Where(x => topCommunityGroupIds.Contains(x.Id));
-        }
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
 
-        List<CommunityGroupDto> datas = await query.Skip(pageIndex - 1).Take(PageRowCount)
-                        .Include(x => x.grouptype)
-                        .Include(x => x.owneruser)
-                        .Select(x => new CommunityGroupDto()
-                        {
-                            Id = x.Id,
-                            owneruserid = x.owneruserid,
-                            grouptypeId = x.grouptypeId,
-                            createdatetime = x.createdatetime,
-                            description = x.description,
-                            title = x.title,
-                            ownerusername = x.owneruser.Username,
-                            grouptypename = x.grouptype.name,
-                        }).ToListAsync();
-        if (model.showdetail)
-        {
-            foreach (var data in datas)
+            try
             {
-                data.membercount = await _Context.CommunityGroupMembers.Where(x => x.communitygroupId == data.Id).CountAsync();
-                data.signalchannelcount = await _Context.SignalChannels.Where(x => x.communitygroupId == data.Id).CountAsync();
-                data.messagecount = await _Context.ForumMessages.Where(x => x.communitygroupid == data.Id).CountAsync();
-            }
-        }
-        message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
-    }
-    catch (Exception ex)
-    {
-        message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
-        string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
-        await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
-    }
-    return message;
-}
+                IQueryable<CommunityGroup> query = _Context.CommunityGroups;
+                if (model.owneruserid != null)
+                    query = query.Where(x => x.owneruserid == model.owneruserid);
+
+                if (model.grouptypeId != null)
+                    query = query.Where(x => x.grouptypeId == model.grouptypeId);
+
+                if (model.id != null)
+                    query = query.Where(x => x.Id == model.id);
 
 
-public async Task<SystemMessageModel> UpdateCommunityGroupImage(CommunityGroupDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
-{
-    SystemMessageModel message;
-    StackTrace stackTrace = new StackTrace();
-    string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
-    long SerrvieCode = 129000;
+                int pageIndex = (model.pageindex == null || model.pageindex == 0) ? 1 : (int)model.pageindex;
+                int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 10 : (int)model.rowcount;
 
-    try
-    {
-        CommunityGroup data = await _Context.CommunityGroups.FindAsync(model.Id);
-        if (data != null)
-        {
-            data.coverimage = model.coverimage;
-        }
+                List<Guid> topCommunityGroupIds = await _Context.CommunityGroupMembers
+                                                          .GroupBy(m => m.communitygroupId)
+                                                          .OrderByDescending(g => g.Count())
+                                                          .Take(PageRowCount)
+                                                          .Select(g => g.Key).ToListAsync();
 
-        _Context.CommunityGroups.Update(data);
-        await _Context.SaveChangesAsync();
-
-        message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request success", MessageData = model };
-    }
-    catch (Exception ex)
-    {
-        message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
-        string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
-        await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
-    }
-    return message;
-}
-
-public async Task<byte[]> GetCommunityGroupImage(Guid Id)
-{
-    SystemMessageModel message;
-    StackTrace stackTrace = new StackTrace();
-    string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
-    long SerrvieCode = 129000;
-
-    try
-    {
-        CommunityGroup data = await _Context.CommunityGroups.FindAsync(Id);
-
-        if (data != null && data.coverimage != null)
-        {
-            return data.coverimage;
-        }
-        else
-        {
-            return null;
-        }
-    }
-    catch (Exception ex)
-    {
-        message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
-        string error = $"'ErrorLocation':'{methodpath}','ProccessID':'','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
-        await _systemLogServices.InsertLogs(error, "", "", methodpath, LogTypes.SystemError);
-    }
-    return null;
-}
-
-public async Task<SystemMessageModel> AcceptCommunityGroupMember(CommunityGroupMemberDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
-{
-    SystemMessageModel message;
-    StackTrace stackTrace = new StackTrace();
-    string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
-    long SerrvieCode = 130000;
-
-    try
-    {
-        CommunityGroupMember data = await _Context.CommunityGroupMembers.Where(x => x.communitygroupId == model.communitygroupId && x.userId == model.userId).SingleOrDefaultAsync();
-        if (data != null)
-        {
-            if ((userlogin.UserTypeId == (long)UserTypes.Admin) || (userlogin.UserTypeId == (long)UserTypes.SuperAdmin))
-            {
-                data.isaccepted = true;
-            }
-            else
-            {
-                CommunityGroup ccproup = await _Context.CommunityGroups.Where(x => x.Id == data.communitygroupId && x.owneruserid == userlogin.userid).SingleOrDefaultAsync();
-                if (ccproup != null)
+                if (topCommunityGroupIds != null && topCommunityGroupIds.Count > 0)
                 {
-                    data.isaccepted = true;
+                    query = query.Where(x => topCommunityGroupIds.Contains(x.Id));
                 }
-            }
-        }
 
-        _Context.CommunityGroupMembers.Update(data);
-        await _Context.SaveChangesAsync();
-
-        message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request success", MessageData = model };
-    }
-    catch (Exception ex)
-    {
-        message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
-        string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
-        await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
-    }
-    return message;
-}
-
-public async Task<SystemMessageModel> GetCommunityGroupMember(CommunityGroupMemberDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
-{
-    SystemMessageModel message;
-    StackTrace stackTrace = new StackTrace();
-    string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
-    long SerrvieCode = 129000;
-
-    try
-    {
-        IQueryable<CommunityGroupMember> query = _Context.CommunityGroupMembers;
-
-        if (model.communitygroupId != null)
-            query = query.Where(x => x.communitygroupId == model.communitygroupId);
-        if (model.isaccepted != null)
-            query = query.Where(x => x.isaccepted == model.isaccepted);
-
-        int pageIndex = (model.pageindex == null || model.pageindex == 0) ? 1 : (int)model.pageindex;
-        int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 10 : (int)model.rowcount;
-
-
-        List<CommunityGroupMemberDto> datas = await query.Skip(pageIndex - 1).Take(PageRowCount)
-                                            .Include(x => x.communitygroup)
-                                            .Include(x => x.user)
-                                   .Select(x => new CommunityGroupMemberDto()
-                                   {
-                                       accepteddatetime = x.accepteddatetime,
-                                       communitygroupId = x.communitygroupId,
-                                       Id = x.Id,
-                                       isaccepted = x.isaccepted,
-                                       requestdatetime = x.requestdatetime,
-                                       userId = x.userId,
-                                       username = x.user.Username,
-                                       communitygrouptitle = x.communitygroup.title
-                                   }).ToListAsync();
-
-        message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
-    }
-    catch (Exception ex)
-    {
-        message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
-        string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
-        await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
-    }
-    return message;
-}
-
-public async Task<SystemMessageModel> AddCommunityGroupMember(CommunityGroupMemberDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
-{
-    SystemMessageModel message;
-    StackTrace stackTrace = new StackTrace();
-    string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
-    long SerrvieCode = 129000;
-
-    try
-    {
-        long requesteduserid = (long)model.userId;
-        if (requesteduserid == null)
-            requesteduserid = userlogin.userid;
-        CommunityGroup group = await _Context.CommunityGroups.FindAsync(model.communitygroupId);
-        CommunityGroupMember data = await _Context.CommunityGroupMembers.Where(x => x.communitygroupId == model.communitygroupId && x.userId == requesteduserid).SingleOrDefaultAsync();
-
-        if (data == null)
-        {
-            data = new CommunityGroupMember()
-            {
-                Id = Guid.NewGuid(),
-                communitygroupId = model.communitygroupId,
-                userId = requesteduserid,
-                requestdatetime = DateTime.Now,
-                isaccepted = false
-            };
-            if (group.grouptypeId == (int)GroupTypes.PublicGroup)
-            {
-                data.isaccepted = true;
-                data.accepteddatetime = DateTime.Now;
-            }
-
-            _Context.CommunityGroupMembers.Add(data);
-            await _Context.SaveChangesAsync();
-
-            model.Id = data.Id;
-            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
-        }
-        else
-        {
-            model.Id = data.Id;
-            if (!data.isaccepted)
-            {
-                message = new SystemMessageModel() { MessageCode = -160, MessageDescription = "You have been requested before", MessageData = model };
-            }
-            else
-            {
-                message = new SystemMessageModel() { MessageCode = -160, MessageDescription = "You are member of group", MessageData = model };
-            }
-        }
-    }
-    catch (Exception ex)
-    {
-        message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
-        string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
-        await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
-    }
-    return message;
-}
-
-public async Task<SystemMessageModel> DeleteCommunityGroupMember(CommunityGroupMemberDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
-{
-    SystemMessageModel message;
-    StackTrace stackTrace = new StackTrace();
-    string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
-    long SerrvieCode = 130000;
-    CommunityGroupMember data = null;
-    try
-    {
-        if (model.userId != null)
-        {
-            data = await _Context.CommunityGroupMembers.Where(x => x.communitygroupId == model.communitygroupId && x.userId == model.userId).SingleOrDefaultAsync();
-            if (data != null)
-            {
-                if ((userlogin.UserTypeId == (long)UserTypes.Admin) || (userlogin.UserTypeId == (long)UserTypes.SuperAdmin))
+                List<CommunityGroupDto> datas = await query.Skip(pageIndex - 1).Take(PageRowCount)
+                                .Include(x => x.grouptype)
+                                .Include(x => x.owneruser)
+                                .Select(x => new CommunityGroupDto()
+                                {
+                                    Id = x.Id,
+                                    owneruserid = x.owneruserid,
+                                    grouptypeId = x.grouptypeId,
+                                    createdatetime = x.createdatetime,
+                                    description = x.description,
+                                    title = x.title,
+                                    ownerusername = x.owneruser.Username,
+                                    grouptypename = x.grouptype.name,
+                                }).ToListAsync();
+                if (model.showdetail)
                 {
-                    _Context.CommunityGroupMembers.Remove(data);
-                }
-                else
-                {
-                    CommunityGroup ccproup = await _Context.CommunityGroups.Where(x => x.Id == data.communitygroupId && x.owneruserid == userlogin.userid).SingleOrDefaultAsync();
-                    if (ccproup != null)
+                    foreach (var data in datas)
                     {
-                        _Context.CommunityGroupMembers.Remove(data);
+                        data.membercount = await _Context.CommunityGroupMembers.Where(x => x.communitygroupId == data.Id).CountAsync();
+                        data.signalchannelcount = await _Context.SignalChannels.Where(x => x.communitygroupId == data.Id).CountAsync();
+                        data.messagecount = await _Context.ForumMessages.Where(x => x.communitygroupid == data.Id).CountAsync();
                     }
                 }
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
             }
-            await _Context.SaveChangesAsync();
-            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request success", MessageData = model };
-        }
-        else
-        {
-            data = await _Context.CommunityGroupMembers.Where(x => x.communitygroupId == model.communitygroupId && x.userId == userlogin.userid).SingleOrDefaultAsync();
-            if (data != null)
+            catch (Exception ex)
             {
-                _Context.CommunityGroupMembers.Remove(data);
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+
+        public async Task<SystemMessageModel> UpdateCommunityGroupImage(CommunityGroupDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                CommunityGroup data = await _Context.CommunityGroups.FindAsync(model.Id);
+                if (data != null)
+                {
+                    data.coverimage = model.coverimage;
+                }
+
+                _Context.CommunityGroups.Update(data);
                 await _Context.SaveChangesAsync();
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request success", MessageData = model };
             }
-            else
+            catch (Exception ex)
             {
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "this user is not memeber of group", MessageData = model };
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
             }
+            return message;
         }
-    }
-    catch (Exception ex)
-    {
-        message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
-        string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
-        await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
-    }
-    return message;
-}
 
-public async Task<SystemMessageModel> GetUserCommunityGroup(GroupSearchFilterDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
-{
-    SystemMessageModel message;
-    StackTrace stackTrace = new StackTrace();
-    string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
-    long SerrvieCode = 129000;
-
-    try
-    {
-        List<CommunityGroupMember> CommunityGroupList = await _Context.CommunityGroupMembers.Where(x => x.userId == userlogin.userid).ToListAsync();
-
-        List<Guid> CommunityGroupListIDs = CommunityGroupList.Select(x => x.communitygroupId).ToList();
-        List<Guid> AcceptedCommunityGroupListIDs = CommunityGroupList.Where(x => x.isaccepted == true).Select(x => x.communitygroupId).ToList();
-
-        IQueryable<CommunityGroup> query = _Context.CommunityGroups;
-
-        if (model.grouptypeId != null)
-            query = query.Where(x => x.grouptypeId == model.grouptypeId);
-
-        if (model.id != null)
-            query = query.Where(x => x.Id == model.id);
-
-        if (CommunityGroupListIDs != null && CommunityGroupListIDs.Count() > 0)
-            query = query.Where(x => CommunityGroupListIDs.Contains(x.Id));
-
-        int pageIndex = (model.pageindex == null || model.pageindex == 0) ? 1 : (int)model.pageindex;
-        int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 10 : (int)model.rowcount;
-
-
-        List<CommunityGroupDto> datas = await query.Skip(pageIndex - 1).Take(PageRowCount)
-                        .Include(x => x.grouptype)
-                        .Include(x => x.owneruser)
-                        .Select(x => new CommunityGroupDto()
-                        {
-                            Id = x.Id,
-                            owneruserid = x.owneruserid,
-                            grouptypeId = x.grouptypeId,
-                            createdatetime = x.createdatetime,
-                            description = x.description,
-                            title = x.title,
-                            ownerusername = x.owneruser.Username,
-                            grouptypename = x.grouptype.name
-                        }).ToListAsync();
-
-        foreach (CommunityGroupDto data in datas)
-            data.isaccepted = AcceptedCommunityGroupListIDs.Contains((Guid)data.Id);
-
-        if (model.showdetail)
+        public async Task<byte[]> GetCommunityGroupImage(Guid Id)
         {
-            foreach (var data in datas)
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
             {
-                data.membercount = await _Context.CommunityGroupMembers.Where(x => x.communitygroupId == data.Id).CountAsync();
-                data.signalchannelcount = await _Context.SignalChannels.Where(x => x.communitygroupId == data.Id).CountAsync();
-                data.messagecount = await _Context.ForumMessages.Where(x => x.communitygroupid == data.Id).CountAsync();
+                CommunityGroup data = await _Context.CommunityGroups.FindAsync(Id);
+
+                if (data != null && data.coverimage != null)
+                {
+                    return data.coverimage;
+                }
+                else
+                {
+                    return null;
+                }
             }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, "", "", methodpath, LogTypes.SystemError);
+            }
+            return null;
         }
-        message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
-    }
-    catch (Exception ex)
-    {
-        message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
-        string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
-        await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
-    }
-    return message;
-}
+
+        public async Task<SystemMessageModel> AcceptCommunityGroupMember(CommunityGroupMemberDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 130000;
+
+            try
+            {
+                CommunityGroupMember data = await _Context.CommunityGroupMembers.Where(x => x.communitygroupId == model.communitygroupId && x.userId == model.userId).SingleOrDefaultAsync();
+                if (data != null)
+                {
+                    if ((userlogin.UserTypeId == (long)UserTypes.Admin) || (userlogin.UserTypeId == (long)UserTypes.SuperAdmin))
+                    {
+                        data.isaccepted = true;
+                    }
+                    else
+                    {
+                        CommunityGroup ccproup = await _Context.CommunityGroups.Where(x => x.Id == data.communitygroupId && x.owneruserid == userlogin.userid).SingleOrDefaultAsync();
+                        if (ccproup != null)
+                        {
+                            data.isaccepted = true;
+                        }
+                    }
+                }
+
+                _Context.CommunityGroupMembers.Update(data);
+                await _Context.SaveChangesAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request success", MessageData = model };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<SystemMessageModel> GetCommunityGroupMember(CommunityGroupMemberDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                IQueryable<CommunityGroupMember> query = _Context.CommunityGroupMembers;
+
+                if (model.communitygroupId != null)
+                    query = query.Where(x => x.communitygroupId == model.communitygroupId);
+                if (model.isaccepted != null)
+                    query = query.Where(x => x.isaccepted == model.isaccepted);
+
+                int pageIndex = (model.pageindex == null || model.pageindex == 0) ? 1 : (int)model.pageindex;
+                int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 10 : (int)model.rowcount;
+
+
+                List<CommunityGroupMemberDto> datas = await query.Skip(pageIndex - 1).Take(PageRowCount)
+                                                    .Include(x => x.communitygroup)
+                                                    .Include(x => x.user)
+                                           .Select(x => new CommunityGroupMemberDto()
+                                           {
+                                               accepteddatetime = x.accepteddatetime,
+                                               communitygroupId = x.communitygroupId,
+                                               Id = x.Id,
+                                               isaccepted = x.isaccepted,
+                                               requestdatetime = x.requestdatetime,
+                                               userId = x.userId,
+                                               username = x.user.Username,
+                                               communitygrouptitle = x.communitygroup.title
+                                           }).ToListAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<SystemMessageModel> AddCommunityGroupMember(CommunityGroupMemberDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                long requesteduserid = (long)model.userId;
+                if (requesteduserid == null)
+                    requesteduserid = userlogin.userid;
+                CommunityGroup group = await _Context.CommunityGroups.FindAsync(model.communitygroupId);
+                CommunityGroupMember data = await _Context.CommunityGroupMembers.Where(x => x.communitygroupId == model.communitygroupId && x.userId == requesteduserid).SingleOrDefaultAsync();
+
+                if (data == null)
+                {
+                    data = new CommunityGroupMember()
+                    {
+                        Id = Guid.NewGuid(),
+                        communitygroupId = model.communitygroupId,
+                        userId = requesteduserid,
+                        requestdatetime = DateTime.Now,
+                        isaccepted = false
+                    };
+                    if (group.grouptypeId == (int)GroupTypes.PublicGroup)
+                    {
+                        data.isaccepted = true;
+                        data.accepteddatetime = DateTime.Now;
+                    }
+
+                    _Context.CommunityGroupMembers.Add(data);
+                    await _Context.SaveChangesAsync();
+
+                    model.Id = data.Id;
+                    message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
+                }
+                else
+                {
+                    model.Id = data.Id;
+                    if (!data.isaccepted)
+                    {
+                        message = new SystemMessageModel() { MessageCode = -160, MessageDescription = "You have been requested before", MessageData = model };
+                    }
+                    else
+                    {
+                        message = new SystemMessageModel() { MessageCode = -160, MessageDescription = "You are member of group", MessageData = model };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<SystemMessageModel> DeleteCommunityGroupMember(CommunityGroupMemberDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 130000;
+            CommunityGroupMember data = null;
+            try
+            {
+                if (model.userId != null)
+                {
+                    data = await _Context.CommunityGroupMembers.Where(x => x.communitygroupId == model.communitygroupId && x.userId == model.userId).SingleOrDefaultAsync();
+                    if (data != null)
+                    {
+                        if ((userlogin.UserTypeId == (long)UserTypes.Admin) || (userlogin.UserTypeId == (long)UserTypes.SuperAdmin))
+                        {
+                            _Context.CommunityGroupMembers.Remove(data);
+                        }
+                        else
+                        {
+                            CommunityGroup ccproup = await _Context.CommunityGroups.Where(x => x.Id == data.communitygroupId && x.owneruserid == userlogin.userid).SingleOrDefaultAsync();
+                            if (ccproup != null)
+                            {
+                                _Context.CommunityGroupMembers.Remove(data);
+                            }
+                        }
+                    }
+                    await _Context.SaveChangesAsync();
+                    message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request success", MessageData = model };
+                }
+                else
+                {
+                    data = await _Context.CommunityGroupMembers.Where(x => x.communitygroupId == model.communitygroupId && x.userId == userlogin.userid).SingleOrDefaultAsync();
+                    if (data != null)
+                    {
+                        _Context.CommunityGroupMembers.Remove(data);
+                        await _Context.SaveChangesAsync();
+
+                        message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request success", MessageData = model };
+                    }
+                    else
+                    {
+                        message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "this user is not memeber of group", MessageData = model };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<SystemMessageModel> GetUserCommunityGroup(GroupSearchFilterDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                List<CommunityGroupMember> CommunityGroupList = await _Context.CommunityGroupMembers.Where(x => x.userId == userlogin.userid).ToListAsync();
+
+                List<Guid> CommunityGroupListIDs = CommunityGroupList.Select(x => x.communitygroupId).ToList();
+                List<Guid> AcceptedCommunityGroupListIDs = CommunityGroupList.Where(x => x.isaccepted == true).Select(x => x.communitygroupId).ToList();
+
+                IQueryable<CommunityGroup> query = _Context.CommunityGroups;
+
+                if (model.grouptypeId != null)
+                    query = query.Where(x => x.grouptypeId == model.grouptypeId);
+
+                if (model.id != null)
+                    query = query.Where(x => x.Id == model.id);
+
+                if (CommunityGroupListIDs != null && CommunityGroupListIDs.Count() > 0)
+                    query = query.Where(x => CommunityGroupListIDs.Contains(x.Id));
+
+                int pageIndex = (model.pageindex == null || model.pageindex == 0) ? 1 : (int)model.pageindex;
+                int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 10 : (int)model.rowcount;
+
+
+                List<CommunityGroupDto> datas = await query.Skip(pageIndex - 1).Take(PageRowCount)
+                                .Include(x => x.grouptype)
+                                .Include(x => x.owneruser)
+                                .Select(x => new CommunityGroupDto()
+                                {
+                                    Id = x.Id,
+                                    owneruserid = x.owneruserid,
+                                    grouptypeId = x.grouptypeId,
+                                    createdatetime = x.createdatetime,
+                                    description = x.description,
+                                    title = x.title,
+                                    ownerusername = x.owneruser.Username,
+                                    grouptypename = x.grouptype.name
+                                }).ToListAsync();
+
+                foreach (CommunityGroupDto data in datas)
+                    data.isaccepted = AcceptedCommunityGroupListIDs.Contains((Guid)data.Id);
+
+                if (model.showdetail)
+                {
+                    foreach (var data in datas)
+                    {
+                        data.membercount = await _Context.CommunityGroupMembers.Where(x => x.communitygroupId == data.Id).CountAsync();
+                        data.signalchannelcount = await _Context.SignalChannels.Where(x => x.communitygroupId == data.Id).CountAsync();
+                        data.messagecount = await _Context.ForumMessages.Where(x => x.communitygroupid == data.Id).CountAsync();
+                    }
+                }
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
 
     }
 }

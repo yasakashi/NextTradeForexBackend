@@ -12,5 +12,5 @@ public class GroupSearchFilterDto:BaseFilterDto
     public long? owneruserid { get; set; }
     public long? grouptypeId { get; set; }
     public bool showdetail { get; set; } = false;
-
+    public string? title { get; set; }
 }

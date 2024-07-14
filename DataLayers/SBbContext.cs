@@ -27,6 +27,7 @@ namespace DataLayers
 
         //public DbSet<SystemLog> SystemLogs { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<SiteMessage> SiteMessages { get; set; }
         public DbSet<UserType> UserTypes { get; set; }        
         //public DbSet<LoginLog> LoginLogs { get; set; }
         public DbSet<BlockedIP> BlockedIPs { get; set; }        

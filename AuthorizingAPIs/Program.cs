@@ -158,6 +158,9 @@ builder.Services.AddTransient<CourseServices, CourseServices>();
 
 builder.Services.AddTransient<TicketServices, TicketServices>();
 builder.Services.AddTransient<WalletServices, WalletServices>();
+
+builder.Services.AddTransient<SiteMessageServices, SiteMessageServices>();
+
 #endregion
 
 builder.Services.AddSwaggerGen();

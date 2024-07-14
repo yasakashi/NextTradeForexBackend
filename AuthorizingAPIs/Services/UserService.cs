@@ -1147,7 +1147,7 @@ namespace NextTradeAPIs.Services
                     data.Password = model.newpassword;
                 else
                 {
-                    return new SystemMessageModel() { MessageCode = 200, MessageDescription = "old password is wrong", MessageData = model };
+                    return new SystemMessageModel() { MessageCode = 403, MessageDescription = "old password is wrong", MessageData = model };
                 }
                 _Context.Users.Update(data);
 
