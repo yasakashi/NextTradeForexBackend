@@ -1,5 +1,6 @@
 ﻿using Base.Common.Enums;
 using DataLayers;
+using DocumentFormat.OpenXml.InkML;
 using Entities.DBEntities;
 using Entities.Dtos;
 using Microsoft.EntityFrameworkCore;
@@ -39,6 +40,7 @@ namespace NextTradeAPIs.Services
                     registerdatetime = DateTime.Now,
                     isvisited = false,
                     reciveruserId = user.UserId,
+                    creatoruserId = userlogin.userid,
                     messagebody = model.messagebody,
                     messagetitle = model.messagetitle
                 };
@@ -114,7 +116,8 @@ namespace NextTradeAPIs.Services
                 List<SiteMessageDto> datas = await query
                                 .Skip(pageIndex - 1)
                                 .Take(PageRowCount)
-                                .Include(x=>x.reciveruser)
+                                .Include(x => x.reciveruser)
+                                .Include(x => x.creatoruser)
                                 .Select(x => new SiteMessageDto()
                                 {
                                     Id = x.Id,
@@ -124,10 +127,41 @@ namespace NextTradeAPIs.Services
                                     reciveruserId = x.reciveruserId,
                                     registerdatetime = x.registerdatetime,
                                     reciverusername = x.reciveruser.Username,
+                                    creatoruserId = x.creatoruserId,
+                                    creatorusername = x.creatoruser.Username,
                                     rowcount = PageRowCount,
                                     pageindex = pageIndex
                                 }).ToListAsync();
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+
+        public async Task<SystemMessageModel> RemoveSiteMessage(SiteMessageDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                SiteMessage data = await _Context.SiteMessages.FindAsync(model.Id);
+
+                if (data != null)
+                {
+                    _Context.SiteMessages.Remove(data);
+                    await _Context.SaveChangesAsync();
+                }
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
             }
             catch (Exception ex)
             {

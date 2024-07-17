@@ -16,6 +16,8 @@ namespace Entities.Dtos
         public DateTime? fromdate { get; set; }
         public DateTime? todate { get; set; }
         public long? reciveruserId { get; set; }
+        public long? creatoruserId { get; set; }
+        public string? creatorusername { get; set; }
         public bool? isvisited { get; set; }
         public string? reciverusername { get; set; }
 

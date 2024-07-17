@@ -18,7 +18,9 @@ namespace Entities.DBEntities
         public string messagebody { get; set; }
         public DateTime registerdatetime { get; set; }
         public long reciveruserId { get; set; }
+        public long creatoruserId { get; set; }
         public bool isvisited { get; set; }
         public virtual User reciveruser { get; set; }
+        public virtual User creatoruser { get; set; }
     }
 }

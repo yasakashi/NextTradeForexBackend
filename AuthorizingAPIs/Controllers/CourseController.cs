@@ -9,6 +9,7 @@ using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using NextTradeAPIs.Services;
 using System.Diagnostics;
+using System.IO;
 using System.Net;
 
 namespace NextTradeAPIs.Controllers
@@ -443,6 +444,108 @@ namespace NextTradeAPIs.Controllers
                 //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
             }
         }
+
+
+        [Route("/api/course/uploadcourseintrofile")]
+        [HttpPost]
+        public async Task<IActionResult> UploadCourseIntroFile([FromForm] FileAttachmentDto model)
+        {
+
+            if (model == null)
+            {
+                return Content("Invalid Submission!");
+            }
+            StackTrace stackTrace = new StackTrace();
+            SystemMessageModel message;
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string authHeader = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            UserModel user = null;
+            LoginLog loginLog = null;
+
+            long ApiCode = 2000;
+
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                message = await _authorizationService.CheckToken(_bearer_token, processId);
+
+                if (message.MessageCode < 0)
+                    return Unauthorized(message);
+
+                UserModel userlogin = message.MessageData as UserModel;
+
+                if (model.attachtment != null)
+                {
+
+                    if (model.attachtment.FileName == null || model.attachtment.FileName.Length == 0)
+                    {
+                        return Content("File not selected");
+                    }
+
+                    CourseDto modeldate = new CourseDto()
+                    {
+                        Id = (Guid)model.Id,
+                        courseintrofilecontenttype = model.attachtment.ContentType,
+                        courseintrofilefileextention = model.attachtment.FileName.Split('.').Last()
+                    };
+
+                    string courseintrourl = Directory.GetCurrentDirectory() + "//CourseIntro//";
+                     if (!Directory.Exists(courseintrourl))
+                        Directory.CreateDirectory(courseintrourl);
+
+                    courseintrourl += model.Id.ToString() +"."+ modeldate.courseintrofilefileextention;
+
+                    using (var ms = new MemoryStream())
+                    {
+                        model.attachtment.CopyTo(ms);
+                        FileStream fileStream = new FileStream(courseintrourl, FileMode.Create);
+                        ms.WriteTo(fileStream);
+                        fileStream.Close();
+                    }
+                    message = await _courseService.UploadCourseIntroFile(modeldate, userlogin, processId, clientip, hosturl);
+                    if (message.MessageCode < 0)
+                        return BadRequest(message);
+                }
+                else
+                {
+                    return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Erroe Canot catch file", MessageData = null });
+                }
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                string log = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, LogTypes.TokenError);
+                return Unauthorized();
+            }
+        }
+
 
         [HttpPost]
         [Route("/api/course/acceptcourse")]

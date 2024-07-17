@@ -29,4 +29,11 @@ public class CourseDto : BaseFilterDto
     public bool? isadminaccepted { get; set; }
     public bool? issitecourse { get; set; }
     public string? username { get; set; }
+    public string? coursetgas { get; set; }
+    public long? grouptypeId { get; set; }
+    public string? grouptypename { get; set; }
+    public string? courseintrofileurl { get; set; }
+    public string? courseintrofilefileextention { get; set; }
+    public string? courseintrofilecontenttype { get; set; }
+    
 }

@@ -19,3 +19,4 @@ public class SignalChannelDto : BaseFilterDto
     public string? grouptypename { get; set; }
 
 }
+

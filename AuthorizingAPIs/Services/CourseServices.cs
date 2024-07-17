@@ -54,8 +54,14 @@ namespace NextTradeAPIs.Services
                 if (model.isprelesson != null)
                     query = query.Where(x => x.isprelesson == model.isprelesson);
 
+                if (model.issitecourse != null)
+                    query = query.Where(x => x.issitecourse == model.issitecourse);
+
                 if (model.coursetypeId != null)
                     query = query.Where(x => x.coursetypeId == model.coursetypeId);
+
+                if (model.grouptypeId != null)
+                    query = query.Where(x => x.grouptypeId == model.grouptypeId);
 
                 if (model.courseleveltypeId != null)
                     query = query.Where(x => x.courseleveltypeId == model.courseleveltypeId);
@@ -90,7 +96,12 @@ namespace NextTradeAPIs.Services
                                                       rowcount = PageRowCount,
                                                       isprelesson = x.isprelesson,
                                                       isadminaccepted = x.isadminaccepted,
-                                                      startdate = x.startdate
+                                                      startdate = x.startdate,
+                                                      courseintrofileurl = x.courseintrofileurl,
+                                                      coursetgas = x.coursetgas,
+                                                      grouptypeId = x.grouptypeId,
+                                                      grouptypename = (x.grouptype != null) ? x.grouptype.name : "",
+                                                      issitecourse = x.issitecourse
                                                   }).ToListAsync();
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data };
@@ -130,7 +141,11 @@ namespace NextTradeAPIs.Services
                     registerdatetime = DateTime.Now,
                     isadminaccepted = model.isadminaccepted,
                     isprelesson = model.isprelesson,
-                    startdate = (DateTime)model.startdate
+                    startdate = (DateTime)model.startdate,
+                    grouptypeId = model.grouptypeId,
+                    issitecourse = model.issitecourse,
+                    coursetgas=model.coursetgas
+                    
                 };
 
                 await _Context.Courses.AddAsync(data);
@@ -224,6 +239,58 @@ namespace NextTradeAPIs.Services
             return message;
         }
 
+        public async Task<SystemMessageModel> UploadCourseIntroFile(CourseDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                if (model.Id == null)
+                    return new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 101) * -1), MessageDescription = "Data is wrong", MessageData = model };
+                Course data = await _Context.Courses.FindAsync(model.Id);
+
+                data.courseintrofileurl = model.courseintrofileurl;
+                data.courseintrofilefileextention = model.courseintrofilefileextention;
+                data.courseintrofilecontenttype = model.courseintrofilecontenttype;
+
+                 _Context.Courses.Update(data);
+                await _Context.SaveChangesAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request success", MessageData = new { Id = data.Id } };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<Course> GetCourseIntoFile(Guid Id)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                Course data = await _Context.Courses.FindAsync(Id);
+
+                return data;
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, "", "", methodpath, LogTypes.SystemError);
+                return null;
+            }
+        }
 
         public async Task<SystemMessageModel> AcceptCoursesByAdmin(CourseDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
