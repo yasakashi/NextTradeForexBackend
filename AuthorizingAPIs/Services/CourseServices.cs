@@ -341,16 +341,38 @@ namespace NextTradeAPIs.Services
 
             try
             {
-                CommunityGroup data = await _Context.CommunityGroups.FindAsync(model.Id);
+                Course data = await _Context.Courses.FindAsync(model.Id);
                 if (data != null)
                 {
-                    data.coverimage = model.coursecoverimage;
+                    data.coursecoverimage = model.coursecoverimage;
+
+                    _Context.Courses.Update(data);
+                    await _Context.SaveChangesAsync();
                 }
 
-                _Context.CommunityGroups.Update(data);
-                await _Context.SaveChangesAsync();
-
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request success", MessageData = model };
+                CourseDto data2 = new CourseDto()
+                {
+                    Id = Guid.NewGuid(),
+                    allowdownload = (bool)data.allowdownload,
+                    coursecoverimage = data.coursecoverimage,
+                    coursedescription = data.coursedescription,
+                    courseduringtime = (int)data.courseduringtime,
+                    coursename = data.coursename,
+                    courseleveltypeId = (int)data.courseleveltypeId,
+                    courseprice = (data.courseprice == null || data.courseprice == 0) ? 0 : (decimal)data.courseprice,
+                    coursetypeId = (int)data.coursetypeId,
+                    enddate = (DateTime)data.enddate,
+                    lessencount = (int)data.lessencount,
+                    owneruserId = userlogin.userid,
+                    registerdatetime = DateTime.Now,
+                    isadminaccepted = data.isadminaccepted ?? false,
+                    isprelesson = data.isprelesson ,
+                    startdate = (DateTime)data.startdate,
+                    grouptypeId = data.grouptypeId,
+                    issitecourse = data.issitecourse,
+                    coursetgas = data.coursetgas
+                };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request success", MessageData = data2 };
             }
             catch (Exception ex)
             {
@@ -403,12 +425,12 @@ namespace NextTradeAPIs.Services
                 {
                     Id = Guid.NewGuid(),
                     registerdatetime = DateTime.Now,
-                    author = model.author,
+                    author = model.author??"",
                     courseId = (Guid)model.courseId,
                     lessondescription = model.lessondescription,
                     endtime = (DateTime)model.endtime,
                     starttime = (DateTime)model.starttime,
-                    lessontime = (DateTime)model.starttime,
+                    lessontime = model.lessontime ?? 60,
                     lessonname = model.lessonname,
                     aoutoruserid = (string.IsNullOrEmpty(model.author)) ? model.aoutoruserid : null,
                 };

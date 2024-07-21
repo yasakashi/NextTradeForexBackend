@@ -747,7 +747,7 @@ namespace NextTradeAPIs.Controllers
 
 
         [HttpPost]
-        [Route("/api/course/addCourseLesson")]
+        [Route("/api/course/addcourselesson")]
         [AllowAnonymous]
         public async Task<IActionResult> AddCourseLesson(CourseLessonDto model)
         {

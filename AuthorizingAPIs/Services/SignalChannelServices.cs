@@ -108,7 +108,8 @@ namespace NextTradeAPIs.Services
                                         grouptypeId = x.grouptypeId,
                                         title = x.title,
                                         communitygroupname = x.communitygroup.title,
-                                        grouptypename = x.grouptype.name
+                                        grouptypename = x.grouptype.name,
+                                        description = x.description
                                     }).ToListAsync();
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data };
@@ -140,7 +141,8 @@ namespace NextTradeAPIs.Services
                     createdatetime = DateTime.Now,
                     communitygroupId = model.communitygroupId,
                     grouptypeId = (long)model.grouptypeId,
-                    title = model.title
+                    title = model.title,
+                    description = model.description
                 };
 
                 await _Context.SignalChannels.AddAsync(data);
@@ -213,6 +215,7 @@ namespace NextTradeAPIs.Services
                 SignalChannel data = await _Context.SignalChannels.FindAsync(model.Id);
                 data.isneedpaid = (bool)model.isneedpaid;
                 data.title = model.title;
+                data.description = model.description;
 
                 _Context.SignalChannels.Update(data);
                 await _Context.SaveChangesAsync();

@@ -11,6 +11,8 @@ public class SignalChannelDto : BaseFilterDto
     public Guid? Id { get; set; }
     public Guid communitygroupId { get; set; }
     public string? title { get; set; }
+    public string? description { get; set; }
+    
     public DateTime? createdatetime { get; set; }
     public long? owneruserid { get; set; }
     public bool? isneedpaid { get; set; }
