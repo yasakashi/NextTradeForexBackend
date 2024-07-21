@@ -515,10 +515,10 @@ namespace NextTradeAPIs.Controllers
                     };
 
                     string courseintrourl = Directory.GetCurrentDirectory() + "//CourseIntro//";
-                     if (!Directory.Exists(courseintrourl))
+                    if (!Directory.Exists(courseintrourl))
                         Directory.CreateDirectory(courseintrourl);
 
-                    courseintrourl += model.Id.ToString() +"."+ modeldate.courseintrofilefileextention;
+                    courseintrourl += model.Id.ToString() + "." + modeldate.courseintrofilefileextention;
 
                     using (var ms = new MemoryStream())
                     {
@@ -527,6 +527,8 @@ namespace NextTradeAPIs.Controllers
                         ms.WriteTo(fileStream);
                         fileStream.Close();
                     }
+                    modeldate.courseintrofileurl = courseintrourl;
+
                     message = await _courseService.UploadCourseIntroFile(modeldate, userlogin, processId, clientip, hosturl);
                     if (message.MessageCode < 0)
                         return BadRequest(message);
@@ -543,6 +545,30 @@ namespace NextTradeAPIs.Controllers
                 string log = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
                 _systemLogServices.InsertLogs(log, processId, clientip, hosturl, LogTypes.TokenError);
                 return Unauthorized();
+            }
+        }
+
+        [HttpPost("{id}")]
+        [HttpGet("{id}")]
+        [Route("/api/course/getcourseintrofile/{id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetCourseIntroFile(Guid id)
+        {
+            try
+            {
+                SystemMessageModel message = await _courseService.GetCourses(new CourseDto() { Id = id }, null, Guid.NewGuid().ToString(), "", "");
+
+                if (message.MessageCode > 0)
+                {
+                    CourseDto course = message.MessageData as CourseDto;
+                    var myBytes = System.IO.File.ReadAllBytes(course.courseintrofileurl);
+                    return File(myBytes, course.courseintrofilecontenttype, course.coursename + "." + course.courseintrofilefileextention);
+                }
+                else { return null; }
+            }
+            catch (Exception ex)
+            {
+                return null;
             }
         }
 
@@ -878,7 +904,7 @@ namespace NextTradeAPIs.Controllers
                 return Unauthorized();
             }
         }
-        
+
 
         [HttpPost]
         [Route("/api/course/getcourselessons")]
@@ -948,7 +974,7 @@ namespace NextTradeAPIs.Controllers
 
         [Route("/api/course/getcourselessonfilelist")]
         [HttpPost]
-        public async Task<IActionResult> GetCourseLessonFileList (CourseLessonFileDto model)
+        public async Task<IActionResult> GetCourseLessonFileList(CourseLessonFileDto model)
         {
 
             if (model == null)
@@ -1023,8 +1049,8 @@ namespace NextTradeAPIs.Controllers
             {
                 return NotFound();
             }
-            
-            return File(file.attachment, file.contenttype,file.filename);
+
+            return File(file.attachment, file.contenttype, file.filename);
         }
 
         [HttpPost]

@@ -389,10 +389,12 @@ namespace NextTradeAPIs.Services
             {
                 Signal data = await _Context.Signals.FindAsync(model.Id);
 
+                if(data != null)
                 _Context.Signals.Remove(data);
 
                 SignalFileAttachment attachment = await _Context.SignalFileAttachments.Where(x => x.signalId == model.Id).SingleOrDefaultAsync();
 
+                if(attachment!= null)
                 _Context.SignalFileAttachments.Remove(attachment);
 
                 await _Context.SaveChangesAsync();

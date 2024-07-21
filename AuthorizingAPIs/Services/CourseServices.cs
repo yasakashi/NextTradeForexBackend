@@ -57,7 +57,7 @@ namespace NextTradeAPIs.Services
                 if (model.issitecourse != null)
                     query = query.Where(x => x.issitecourse == model.issitecourse);
 
-                if (model.coursetypeId != null)
+                if (model.coursetypeId != null && model.coursetypeId > 0)
                     query = query.Where(x => x.coursetypeId == model.coursetypeId);
 
                 if (model.grouptypeId != null)
@@ -65,6 +65,12 @@ namespace NextTradeAPIs.Services
 
                 if (model.courseleveltypeId != null)
                     query = query.Where(x => x.courseleveltypeId == model.courseleveltypeId);
+
+                if (!string.IsNullOrEmpty(model.coursetgas))
+                    query = query.Where(x => x.coursetgas.Contains(model.coursetgas.Trim()));
+
+                if (!string.IsNullOrEmpty(model.coursename))
+                    query = query.Where(x => x.coursename.Contains(model.coursename.Trim()));
 
                 int pageIndex = (model.pageindex == null || model.pageindex == 0) ? 1 : (int)model.pageindex;
                 int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 50 : (int)model.rowcount;
@@ -101,7 +107,9 @@ namespace NextTradeAPIs.Services
                                                       coursetgas = x.coursetgas,
                                                       grouptypeId = x.grouptypeId,
                                                       grouptypename = (x.grouptype != null) ? x.grouptype.name : "",
-                                                      issitecourse = x.issitecourse
+                                                      issitecourse = x.issitecourse,
+                                                      courseintrofilecontenttype = x.courseintrofilecontenttype,
+                                                      courseintrofilefileextention = x.courseintrofilefileextention
                                                   }).ToListAsync();
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data };
@@ -132,20 +140,19 @@ namespace NextTradeAPIs.Services
                     coursedescription = model.coursedescription,
                     courseduringtime = (int)model.courseduringtime,
                     coursename = model.coursename,
-                    courseleveltypeId = model.courseleveltypeId,
+                    courseleveltypeId =(int) model.courseleveltypeId,
                     courseprice = (model.courseprice == null || model.courseprice == 0) ? 0 : (decimal)model.courseprice,
-                    coursetypeId = model.coursetypeId,
+                    coursetypeId = (int) model.coursetypeId,
                     enddate = (DateTime)model.enddate,
                     lessencount = (int)model.lessencount,
                     owneruserId = userlogin.userid,
                     registerdatetime = DateTime.Now,
-                    isadminaccepted = model.isadminaccepted,
-                    isprelesson = model.isprelesson,
+                    isadminaccepted = model.isadminaccepted?? false,
+                    isprelesson =  model.isprelesson?? false,
                     startdate = (DateTime)model.startdate,
                     grouptypeId = model.grouptypeId,
                     issitecourse = model.issitecourse,
                     coursetgas=model.coursetgas
-                    
                 };
 
                 await _Context.Courses.AddAsync(data);
@@ -216,12 +223,12 @@ namespace NextTradeAPIs.Services
                 data.coursedescription = model.coursedescription;
                 data.courseduringtime = (int)model.courseduringtime;
                 data.coursename = model.coursename;
-                data.courseleveltypeId = model.courseleveltypeId;
+                data.courseleveltypeId = (int) model.courseleveltypeId;
                 data.courseprice = (model.courseprice == null || model.courseprice == 0) ? 0 : (decimal)model.courseprice;
-                data.coursetypeId = model.coursetypeId;
+                data.coursetypeId = (int)model.coursetypeId;
                 data.enddate = (DateTime)model.enddate;
                 data.lessencount = (int)model.lessencount;
-                data.isprelesson = model.isprelesson;
+                data.isprelesson = model.isprelesson?? false;
                 data.startdate = (DateTime)model.startdate;
                 data.isadminaccepted = (bool)model.isadminaccepted;
 
