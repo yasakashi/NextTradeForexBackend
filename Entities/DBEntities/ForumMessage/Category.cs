@@ -15,10 +15,13 @@ public class Category
     public long Id { get; set; }
     public long? parentId { get; set; }
     public string name { get; set; }
+    public int? categorytypeid { get; set; }
+
 
 
     //public virtual List<SubCategory> SubCategories { get; set; }
     public virtual List<ForumMessage> ForumMessages { get; set; }
+    public virtual CategoryType categorytype { get; set; }
 
 }
 

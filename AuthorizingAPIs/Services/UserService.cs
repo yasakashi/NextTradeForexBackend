@@ -20,6 +20,7 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using System.Reflection.Metadata.Ecma335;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace NextTradeAPIs.Services
 {
@@ -271,10 +272,10 @@ namespace NextTradeAPIs.Services
                     PersonId = person.PersonId,
                     Mobile = model.Mobile,
                     UserTypeId = (model.UserTypeId != null) ? model.UserTypeId : (long)UserTypes.Student,
-                    financialinstrumentIds = (model.financialinstrumentIds== null)?null: string.Join(",",(List<int>)model.financialinstrumentIds),
+                    financialinstrumentIds = (model.financialinstrumentIds == null) ? null : string.Join(",", (List<int>)model.financialinstrumentIds),
                     forexexperiencelevelId = model.forexexperiencelevelId,
                     trainingmethodIds = (model.trainingmethodIds == null) ? null : string.Join(",", (List<int>)model.trainingmethodIds),
-                    targettrainerIds = (model.targettrainerIds == null) ? null : string.Join(",", (List<int>)model.targettrainerIds) ,
+                    targettrainerIds = (model.targettrainerIds == null) ? null : string.Join(",", (List<int>)model.targettrainerIds),
                     interestforexId = model.interestforexId,
                     hobbyoftradingfulltime = model.hobbyoftradingfulltime
                 };
@@ -660,7 +661,7 @@ namespace NextTradeAPIs.Services
                         };
                         List<FinancialInstrumentDto> financialinstruments = null;
                         if (!string.IsNullOrEmpty(user.financialinstrumentIds))
-                            financialinstruments = await _Context.FinancialInstruments.Where(x => user.financialinstrumentIds.Contains(x.Id.ToString())).Select(x=> new FinancialInstrumentDto() { Id = x.Id, name = x.name}).ToListAsync();
+                            financialinstruments = await _Context.FinancialInstruments.Where(x => user.financialinstrumentIds.Contains(x.Id.ToString())).Select(x => new FinancialInstrumentDto() { Id = x.Id, name = x.name }).ToListAsync();
                         userModel.financialinstruments = financialinstruments;
 
 
@@ -1172,23 +1173,27 @@ namespace NextTradeAPIs.Services
             List<UserModel> datas = null;
             long SerrvieCode = 120000;
 
+            string username = string.Empty;
             try
             {
-                IQueryable<User> query = _Context.Users;
+                //if (!string.IsNullOrEmpty(filter.username))
+                //{
+                //    User parentuser = await _Context.Users.Where(x => x.Username == filter.username).SingleOrDefaultAsync();
+                //    if (parentuser != null)
+                //        query = query.Where(x => x.ParentUserId == parentuser.UserId);
+                //}
+                //else
+                //    query = query.Where(x => x.ParentUserId == userlogin.userid);
 
-                if (!string.IsNullOrEmpty(filter.username))
+                if (string.IsNullOrEmpty(filter.username))
                 {
-                    User parentuser = await _Context.Users.Where(x => x.Username == filter.username).SingleOrDefaultAsync();
-                    if (parentuser != null)
-                        query = query.Where(x => x.ParentUserId == parentuser.UserId);
+                    filter.username = userlogin.username;
                 }
-                else
-                    query = query.Where(x => x.ParentUserId == userlogin.userid);
 
-                int pageIndex = (filter.pageindex == null || filter.pageindex == 0) ? 1 : (int)filter.pageindex;
-                int PageRowCount = (filter.rowcount == null || filter.rowcount == 0) ? 50 : (int)filter.rowcount;
+                string querystrnig = @"EXECUTE dbo.spGetUserReferalList @Username=" + filter.username;
 
-                datas = await query.Select(x => new UserModel()
+
+                datas = await _Context.Users.FromSql(FormattableStringFactory.Create( querystrnig)).Select(x => new UserModel()
                 {
                     userid = x.UserId,
                     username = x.Username,

@@ -5,8 +5,10 @@ using Entities.Dtos;
 using Entities.Dtos;
 using Entities.Systems;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Abstractions;
 using Newtonsoft.Json;
 using NextTradeAPIs.Dtos;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace NextTradeAPIs.Services;
@@ -34,36 +36,10 @@ public class UserTypeServices
 
         try
         {
-            List<UserTypeDto> datas = await _Context.UserTypes.Select(x=> new UserTypeDto() { 
-                Id = x.Id,
-                Name = x.Name
-            } ).ToListAsync();
-
-            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
-        }
-        catch (Exception ex)
-        {
-            message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
-            string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
-            await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
-        }
-        return message;
-    }
-
-    public async Task<SystemMessageModel> GetCategory(UserModel? userlogin, string processId, string clientip, string hosturl)
-    {
-        SystemMessageModel message;
-        StackTrace stackTrace = new StackTrace();
-        string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
-        long SerrvieCode = 130000;
-
-        try
-        {
-            List<CategorisDto> datas = await _Context.Categories.Select(x => new CategorisDto()
+            List<UserTypeDto> datas = await _Context.UserTypes.Select(x => new UserTypeDto()
             {
                 Id = x.Id,
-                parentId=x.parentId,
-                name = x.name
+                Name = x.Name
             }).ToListAsync();
 
             message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
@@ -77,6 +53,99 @@ public class UserTypeServices
         return message;
     }
 
+    public async Task<SystemMessageModel> GetCategory(CategorisDto filter, UserModel? userlogin, string processId, string clientip, string hosturl)
+    {
+        SystemMessageModel message;
+        StackTrace stackTrace = new StackTrace();
+        string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+        long SerrvieCode = 130000;
+
+        try
+        {
+            List<CategorisDto> datas = await _Context.Categories
+                                                     .Where(x => x.categorytypeid == 14)
+                                                     .Include(x=>x.categorytype)
+                                                     .Select(x => new CategorisDto()
+            {
+                Id = x.Id,
+                parentId = x.parentId,
+                name = x.name,
+                categorytypeid = x.categorytypeid,
+                categorytypename = (x.categorytype!= null)?x.categorytype.name:""
+            }).ToListAsync();
+
+
+
+
+            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+        }
+        catch (Exception ex)
+        {
+            message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+            string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+            await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+        }
+        return message;
+    }
+    public async Task<SystemMessageModel> GetCategoryTree(CategorisDto filter, UserModel? userlogin, string processId, string clientip, string hosturl)
+    {
+        SystemMessageModel message;
+        StackTrace stackTrace = new StackTrace();
+        string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+        long SerrvieCode = 130000;
+
+        try
+        {
+            List<long> parentIds = new List<long>() { 327, 606, 16, 2 };
+            List<Category> datalist = await _Context.Categories.Where(x => x.categorytypeid == 14 || parentIds.Contains(x.Id)).ToListAsync();
+
+            List<CategorisTreeDto> datas = datalist.Where(x => parentIds.Contains(x.Id)).Select(x => new CategorisTreeDto()
+            {
+                Id = x.Id,
+                parentId = x.parentId,
+                name = x.name,
+                categorytypeid = x.categorytypeid,
+            }).ToList();
+
+            foreach (CategorisTreeDto node in datas)
+            {
+                node.children = CreateTree(datalist, (long)node.Id);
+            }
+            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+        }
+        catch (Exception ex)
+        {
+            message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+            string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+            await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+        }
+        return message;
+    }
+
+    private List<CategorisTreeDto> CreateTree(List<Category> datalist, long parentId)
+    {
+        List<Category> datas = datalist.Where(x => x.parentId == parentId && x.Id != parentId).ToList();
+        if (datas != null && datas.Count > 0)
+        {
+            List<CategorisTreeDto> children = new List<CategorisTreeDto>();
+            foreach (Category x in datas)
+            {
+                children.Add(new CategorisTreeDto()
+                {
+                    Id = x.Id,
+                    parentId = x.parentId,
+                    name = x.name,
+                    categorytypeid = x.categorytypeid,
+                    children = CreateTree(datalist, x.Id)
+                });
+            }
+            return children;
+        }
+        else
+            return null;
+
+    }
+
     public async Task<SystemMessageModel> GetSubCategory(long? categoryid, UserModel? userlogin, string processId, string clientip, string hosturl)
     {
         SystemMessageModel message;
@@ -88,7 +157,7 @@ public class UserTypeServices
         {
             IQueryable<Category> query = _Context.Categories;
             if (categoryid != null && ((long)categoryid < 0))
-                query = query.Where(x=> x.Id == categoryid);
+                query = query.Where(x => x.Id == categoryid);
 
             List<CategorisDto> datas = await query.Select(x => new CategorisDto()
             {
@@ -151,7 +220,7 @@ public class UserTypeServices
             Category datas = new Category()
             {
                 name = model.name,
-                parentId=model.parentid
+                parentId = model.parentid
             };
             _Context.Categories.Add(datas);
             await _Context.SaveChangesAsync();

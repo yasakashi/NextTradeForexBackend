@@ -392,7 +392,10 @@ namespace NextTradeAPIs.Services
             {
                 Signal data = await _Context.Signals.FindAsync(model.Id);
 
-                if(data != null)
+                if(data == null)
+                    return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = "data removed from db" };
+
+                if (data != null)
                 _Context.Signals.Remove(data);
 
                 SignalFileAttachment attachment = await _Context.SignalFileAttachments.Where(x => x.signalId == model.Id).SingleOrDefaultAsync();
