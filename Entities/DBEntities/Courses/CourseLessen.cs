@@ -14,6 +14,7 @@ public class CourseLesson
     [Key]
     public Guid Id { get; set; }
     public Guid courseId { get; set; }
+    public Guid coursebuilderId { get; set; }
     public long? aoutoruserid { get; set; }
     public string author { get; set; }
     public string lessonname { get; set; }
@@ -24,5 +25,6 @@ public class CourseLesson
     public DateTime registerdatetime { get; set; }
 
     public virtual Course course { get; set; }
+    public virtual CourseBuilder coursebuilder { get; set; }
     public virtual User aoutoruser { get; set; }
 }

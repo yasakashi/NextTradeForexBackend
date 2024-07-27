@@ -29,6 +29,7 @@ public class Course
     public string coursedescription { get; set; }
     public bool? isadminaccepted { get; set; }
     public bool? issitecourse { get; set; }
+    public bool? allowQA { get; set; }
     public string? coursetgas { get; set; }
     public long? grouptypeId { get; set; }
     public string? courseintrofileurl { get; set; }
@@ -39,5 +40,7 @@ public class Course
     public virtual User owneruser { get; set; }
     public virtual GroupType grouptype { get; set; }
     public virtual List<CourseLesson> CourseLessons { get; set; }
+    public virtual List<CourseBuilder> CourseBuilders { get; set; }
+   
 
 }

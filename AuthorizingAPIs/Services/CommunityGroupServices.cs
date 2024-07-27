@@ -229,8 +229,101 @@ namespace NextTradeAPIs.Services
             return message;
         }
 
+        public async Task<SystemMessageModel> DeleteCommunityGroup(GroupSearchFilterDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                CommunityGroup data = await _Context.CommunityGroups.FindAsync(model.id);
+
+                if (data != null)
+                {
+                    if (userlogin.UserTypeId == (long)UserTypes.Admin || userlogin.UserTypeId == (long)UserTypes.SuperAdmin || data.owneruserid == userlogin.userid)
+                    {
+                        List<CommunityGroupMember> communityGroupMember = await _Context.CommunityGroupMembers.Where(x => x.communitygroupId == data.Id).ToListAsync();
+
+                        if (communityGroupMember != null && communityGroupMember.Count > 0)
+                        {
+                            _Context.CommunityGroupMembers.RemoveRange(communityGroupMember);
+                        }
+                        _Context.CommunityGroups.Remove(data);
+
+                        try
+                        {
+                            string _LogPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\communitygroups\\" + data.Id.ToString().Replace("-", "") + "\\";
+                            if (!Directory.Exists(_LogPath))
+                            {
+                                Directory.Delete(_LogPath, true);
+                            }
+                        }
+                        catch { }
+                        await _Context.SaveChangesAsync();
+                        message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data };
+                    }
+                    else
+                    {
+                        message = new SystemMessageModel()
+                        {
+                            MessageCode = -401,
+                            MessageDescription = "you do not have permission",
+                            MessageData = data
+                        };
+                    }
+                }
+                else
+                {
+                    message = new SystemMessageModel()
+                    {
+                        MessageCode = -503,
+                        MessageDescription = "data is wrong",
+                        MessageData = data
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
 
         public async Task<SystemMessageModel> UpdateCommunityGroupImage(CommunityGroupDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                CommunityGroup data = await _Context.CommunityGroups.FindAsync(model.Id);
+                if (data != null)
+                {
+                    data.groupimage = model.coverimage;
+                }
+
+                _Context.CommunityGroups.Update(data);
+                await _Context.SaveChangesAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request success", MessageData = model };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<SystemMessageModel> UpdateCommunityCoverImage(CommunityGroupDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
             SystemMessageModel message;
             StackTrace stackTrace = new StackTrace();
@@ -257,6 +350,57 @@ namespace NextTradeAPIs.Services
                 await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
             }
             return message;
+        }
+
+
+        public async Task<SystemMessageModel> GetCommunityGroupImageURL(Guid Id)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                string _LogPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\communitygroups\\";
+                if (!Directory.Exists(_LogPath))
+                {
+                    Directory.CreateDirectory(_LogPath);
+                }
+
+                CommunityGroup data = await _Context.CommunityGroups.FindAsync(Id);
+
+                _LogPath += data.Id.ToString().Replace("-","") + "\\";
+                if (!Directory.Exists(_LogPath))
+                {
+                    Directory.CreateDirectory(_LogPath);
+                }
+
+                string filePath = AppDomain.CurrentDomain.BaseDirectory + "/communitygroups/" + data.Id.ToString().Replace("-", "") + "/" + "coverimage.png";
+                Uri uri = new Uri("/communitygroups/" + data.Id.ToString().Replace("-", "") + "/" + "coverimage.png", UriKind.Relative);
+
+                if (data != null && data.coverimage != null)
+                {
+                    _LogPath += "coverimage.png";
+                    if (!File.Exists(_LogPath))
+                    {
+                        File.WriteAllBytes(_LogPath, data.coverimage);
+                        
+                    }
+                    return new SystemMessageModel() { MessageCode=200, MessageDescription = "Request Compeleted Successfully", MessageData = uri.ToString() } ;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, "", "", methodpath, LogTypes.SystemError);
+            }
+            return null;
         }
 
         public async Task<byte[]> GetCommunityGroupImage(Guid Id)
@@ -287,7 +431,6 @@ namespace NextTradeAPIs.Services
             }
             return null;
         }
-
         public async Task<SystemMessageModel> AcceptCommunityGroupMember(CommunityGroupMemberDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
             SystemMessageModel message;

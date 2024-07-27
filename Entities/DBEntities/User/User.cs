@@ -128,6 +128,7 @@ public class User
     public string? targettrainerIds { get; set; }
     public int? interestforexId { get; set; }
     public bool? hobbyoftradingfulltime { get; set; }
+    public int? EmployeeLevel { get; set; }
     #region [ relations ]
     public virtual UserType UserType { get; set; }
     public virtual ForexExperienceLevel forexexperiencelevel { get; set; }

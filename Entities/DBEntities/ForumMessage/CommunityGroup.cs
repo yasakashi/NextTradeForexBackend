@@ -22,6 +22,7 @@ namespace Entities.DBEntities;
     public long owneruserid { get; set; }
     //public long categoryid { get; set; }
     public byte[]? coverimage { get; set; }
+    public byte[]? groupimage { get; set; }
     public string? description { get; set; }
 
     //public virtual Category category { get; set; }

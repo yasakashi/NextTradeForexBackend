@@ -1197,11 +1197,7 @@ namespace NextTradeAPIs.Services
                 {
                     userid = x.UserId,
                     username = x.Username,
-                    fname = x.Fname,
-                    lname = x.Lname,
-                    UserTypeId = x.UserTypeId,
-                    IsActive = x.IsActive,
-                    ispaid = x.ispaied,
+                    EmployeeLevel = x.EmployeeLevel
                 }).ToListAsync();
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };

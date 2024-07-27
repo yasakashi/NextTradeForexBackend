@@ -63,6 +63,9 @@ namespace DataLayers
         public DbSet<CourseLevelType> CourseLevelTypes { get; set; }
         public DbSet<CourseType> CourseTypes { get; set; }
         public DbSet<Course> Courses { get; set; }
+        
+        public DbSet<CourseBuilder> CourseBuilders { get; set; }
+        public DbSet<CourseQuestionAnswer> CourseQuestionsAnswers { get; set; }
         public DbSet<CourseLesson> CourseLessons { get; set; }
         public DbSet<CourseMemeber> CourseMemebers { get; set; }
         public DbSet<CourseLessonFile> CourseLessonFiles { get; set; }
