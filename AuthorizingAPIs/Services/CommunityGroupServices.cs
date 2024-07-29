@@ -61,6 +61,50 @@ namespace NextTradeAPIs.Services
             return message;
         }
 
+        public async Task<SystemMessageModel> EditCommunityGroup(CommunityGroupDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                CommunityGroup data = await _Context.CommunityGroups.FindAsync(model.Id);
+                if (data != null)
+                {
+                    data.groupimage = model.coverimage;
+
+                    _Context.CommunityGroups.Update(data);
+                    await _Context.SaveChangesAsync();
+                }
+
+                CommunityGroup data = new CommunityGroup()
+                {
+                    Id = Guid.NewGuid(),
+                    grouptypeId = (model.grouptypeId == 0) ? model.grouptypeId : (int)GroupTypes.PublicGroup,
+                    owneruserid = userlogin.userid,
+                    createdatetime = DateTime.Now,
+                    description = model.description,
+                    title = model.title
+                };
+
+                _Context.CommunityGroups.Add(data);
+                await _Context.SaveChangesAsync();
+
+                model.Id = data.Id;
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
 
         public async Task<SystemMessageModel> GetCommunityGroup(GroupSearchFilterDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
@@ -307,10 +351,11 @@ namespace NextTradeAPIs.Services
                 if (data != null)
                 {
                     data.groupimage = model.coverimage;
+
+                    _Context.CommunityGroups.Update(data);
+                    await _Context.SaveChangesAsync();
                 }
 
-                _Context.CommunityGroups.Update(data);
-                await _Context.SaveChangesAsync();
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request success", MessageData = model };
             }
