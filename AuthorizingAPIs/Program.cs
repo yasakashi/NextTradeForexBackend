@@ -196,7 +196,7 @@ app.UseCors(x => x
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
-//app.UseDirectoryBrowser();
+app.UseDirectoryBrowser();
 app.UseRouting();
 
 app.UseEndpoints(endpoints =>

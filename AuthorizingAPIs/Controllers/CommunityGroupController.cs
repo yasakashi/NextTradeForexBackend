@@ -158,7 +158,7 @@ namespace NextTradeAPIs.Controllers
 
                 UserModel userlogin = message.MessageData as UserModel;
 
-                message = await _communityGroupService.DeleteCommunityGroup(model, null, processId, clientip, hosturl);
+                message = await _communityGroupService.DeleteCommunityGroup(model, userlogin, processId, clientip, hosturl);
 
                 if (message.MessageCode < 0)
                     return BadRequest(message);
@@ -565,7 +565,7 @@ namespace NextTradeAPIs.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetCoverImage(Guid id)
         {
-            var image = await _communityGroupService.GetCommunityGroupImage(id);
+            var image = await _communityGroupService.GetCommunityCoverImage(id);
             if (image == null)
             {
                 return NotFound();
@@ -580,7 +580,7 @@ namespace NextTradeAPIs.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetCoverImageURL(Guid id)
         {
-            var message = await _communityGroupService.GetCommunityGroupImageURL(id);
+            var message = await _communityGroupService.GetCommunityCoverImageURL(id);
             if (message == null)
             {
                 return NotFound();
