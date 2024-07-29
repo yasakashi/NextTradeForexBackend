@@ -75,25 +75,14 @@ namespace NextTradeAPIs.Services
                 {
                     data.groupimage = model.coverimage;
 
+                    data.grouptypeId = (model.grouptypeId == 0) ? model.grouptypeId : (int)GroupTypes.PublicGroup;
+                    data.description = model.description;
+                    data.title = model.title;
+
                     _Context.CommunityGroups.Update(data);
                     await _Context.SaveChangesAsync();
+
                 }
-
-                CommunityGroup data = new CommunityGroup()
-                {
-                    Id = Guid.NewGuid(),
-                    grouptypeId = (model.grouptypeId == 0) ? model.grouptypeId : (int)GroupTypes.PublicGroup,
-                    owneruserid = userlogin.userid,
-                    createdatetime = DateTime.Now,
-                    description = model.description,
-                    title = model.title
-                };
-
-                _Context.CommunityGroups.Add(data);
-                await _Context.SaveChangesAsync();
-
-                model.Id = data.Id;
-
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
             }
             catch (Exception ex)
@@ -415,7 +404,7 @@ namespace NextTradeAPIs.Services
 
                 CommunityGroup data = await _Context.CommunityGroups.FindAsync(Id);
 
-                _LogPath += data.Id.ToString().Replace("-","") + "\\";
+                _LogPath += data.Id.ToString().Replace("-", "") + "\\";
                 if (!Directory.Exists(_LogPath))
                 {
                     Directory.CreateDirectory(_LogPath);
@@ -430,9 +419,9 @@ namespace NextTradeAPIs.Services
                     if (!File.Exists(_LogPath))
                     {
                         File.WriteAllBytes(_LogPath, data.groupimage);
-                        
+
                     }
-                    return new SystemMessageModel() { MessageCode=200, MessageDescription = "Request Compeleted Successfully", MessageData = uri.ToString() } ;
+                    return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = uri.ToString() };
                 }
                 else
                 {

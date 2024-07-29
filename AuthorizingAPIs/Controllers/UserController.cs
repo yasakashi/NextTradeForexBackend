@@ -1012,6 +1012,97 @@ namespace NextTradeAPIs.Controllers
             }
         }
 
+
+        
+        [HttpPost]
+        [Route("/api/users/activedisactiveuser")]
+        public async Task<IActionResult> ChangeUserAccountAtivationStatus(UserSearchModel model)
+        {
+            StackTrace stackTrace = new StackTrace();
+            SystemMessageModel message = new SystemMessageModel();
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string authHeader = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            LoginLog loginLog = null;
+            SystemMessageModel tokenmessage = null;
+            long ApiCode = 10000;
+            try
+            {
+                string _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                message = await _authorizationService.CheckToken(_bearer_token);
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+
+                UserModel tokenuser = message.MessageData as UserModel;
+
+                if (tokenuser == null)
+                {
+                    message.MessageCode = -1002;
+                    message.MessageDescription = "توکن معتبر نمی باشد";
+                    message.MessageData = model;
+
+                    return BadRequest(message);
+                }
+                if (tokenuser.userid != 10001)
+                {
+                    message.MessageCode = -1003;
+                    message.MessageDescription = "سرویس درخواستی وجود ندارد";
+                    message.MessageData = model;
+
+                    return BadRequest(message);
+                }
+
+                string contex = JsonConvert.SerializeObject(new ClientInfoModel() { clientname = hostname, clientip = clientip, clinetmacaddress = clientmac, clientosinfo = clinetosinfo });
+
+                message = await _userServices.GetUser4Check(model.username, null, "", "", "");
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+
+                User user = message.MessageData as User;
+
+                message = await _userServices.ChangeUserAccountAtivationStatus(user.Username,user.IsActive, processId);
+                if (message.MessageCode > 0)
+                {
+                    //User user = await _userServices.GetUserById(usermodel.userid, processId,clientip,hosturl);
+
+                    tokenmessage = await GenerateToken(user, contex, clientip, processId, hosturl);
+
+
+                    return Ok(message);
+                }
+                return BadRequest(new SystemMessageModel() { MessageCode = -560, MessageData = model, MessageDescription = "خطا در تایید کاربر" });
+
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string log = $"'ApiCode':{ApiCode},'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, (long)LogTypes.TokenError);
+                return BadRequest(message);
+            }
+            return Ok(message);
+        }
+
         [HttpPost]
         [HttpGet]
         [Route("/api/users/getuserbyrefferalcode")]

@@ -176,7 +176,7 @@ namespace NextTradeAPIs.Controllers
         }
 
         [HttpPost]
-        [Route("/api/editcommunitygroups")]
+        [Route("/api/editcommunitygroup")]
         [AllowAnonymous]
         public async Task<IActionResult> EditCommunityGroup(CommunityGroupDto model)
         {

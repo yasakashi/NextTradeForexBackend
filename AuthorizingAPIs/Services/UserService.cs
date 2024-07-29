@@ -1210,5 +1210,41 @@ namespace NextTradeAPIs.Services
             }
             return message;
         }
+
+        public async Task<SystemMessageModel> ChangeUserAccountAtivationStatus(string username,bool accountstatus, string processId, string clientip = "")
+        {
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            SystemMessageModel message = new SystemMessageModel();
+            long SerrvieCode = 127000;
+            try
+            {
+                User data = _Context.Users.SingleOrDefault(x => x.Username == username);
+                if (data == null)
+                {
+                    return new SystemMessageModel() { MessageCode = -220, MessageDescription = "Error In doing Request", MessageData = "کاربر صحیح نیست" };
+                }
+                else
+                {
+                    data.IsActive = accountstatus;
+
+                    _Context.Users.Update(data);
+                    await _Context.SaveChangesAsync();
+
+
+                    return new SystemMessageModel() { MessageCode = 1, MessageDescription = "Request Compeleted Successfully", MessageData = new { IsActive  = accountstatus } };
+
+                }
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+                return message;
+
+            }
+        }
+
     }
 }

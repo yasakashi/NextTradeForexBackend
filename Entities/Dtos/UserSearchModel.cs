@@ -11,6 +11,7 @@ namespace Entities.Dtos
     /// </summary>
     public class UserSearchModel: BaseFilterDto
     {
+        public long? userid { get; set; }
         public string? username { get; set; }
         public string? parentid { get; set; }
         public string? fname { get; set; }
