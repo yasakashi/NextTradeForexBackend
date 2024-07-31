@@ -40,5 +40,6 @@ public class CourseDto : BaseFilterDto
     public string? targetedaudience { get; set; }
     public string? materialsincluded { get; set; }
     public string? requirementsinstructions { get; set; }
+    public bool? allowQA { get; set; }
 
 }

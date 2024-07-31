@@ -33,7 +33,7 @@ namespace NextTradeAPIs.Services
 
             try
             {
-                User user = await _Context.Users.Where(x=>x.Username == model.reciverusername).SingleOrDefaultAsync();
+                User user = await _Context.Users.Where(x => x.Username == model.reciverusername).SingleOrDefaultAsync();
                 SiteMessage data = new SiteMessage()
                 {
                     Id = Guid.NewGuid(),
@@ -84,6 +84,15 @@ namespace NextTradeAPIs.Services
                 if (model.isvisited != null)
                     query = query.Where(x => x.isvisited == model.isvisited);
 
+                if (model.reciveruserId != null)
+                    query = query.Where(x => x.reciveruserId == model.reciveruserId);
+                else if (!string.IsNullOrEmpty(model.reciverusername))
+                {
+                    User user = await _Context.Users.Where(x => x.Username == model.reciverusername).SingleOrDefaultAsync();
+                    if (user != null)
+                        query = query.Where(x => x.reciveruserId == user.UserId);
+                }
+
                 int pageIndex = (model.pageindex == null || model.pageindex == 0) ? 1 : (int)model.pageindex;
                 int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 10 : (int)model.rowcount;
 
@@ -113,6 +122,11 @@ namespace NextTradeAPIs.Services
                     }
                 }
 
+                int totaldata = query.Count();
+                if (totaldata <= 0) totaldata = 1;
+                int pagecount = (totaldata / PageRowCount);
+
+
                 List<SiteMessageDto> datas = await query
                                 .Skip((pageIndex - 1) * PageRowCount)
                                 .Take(PageRowCount)
@@ -130,7 +144,8 @@ namespace NextTradeAPIs.Services
                                     creatoruserId = x.creatoruserId,
                                     creatorusername = x.creatoruser.Username,
                                     rowcount = PageRowCount,
-                                    pageindex = pageIndex
+                                    pageindex = pageIndex,
+                                    pagecount = pagecount
                                 }).ToListAsync();
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
             }
@@ -143,6 +158,39 @@ namespace NextTradeAPIs.Services
             return message;
         }
 
+        public async Task<SystemMessageModel> GetUserSiteMessageCount(SiteMessageDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                IQueryable<SiteMessage> query = _Context.SiteMessages;
+                if (model.reciveruserId != null)
+                    query = query.Where(x => x.reciveruserId == model.reciveruserId);
+                else if (!string.IsNullOrEmpty(model.reciverusername))
+                {
+                    User user = await _Context.Users.Where(x => x.Username == model.reciverusername).SingleOrDefaultAsync();
+                    if (user != null)
+                        query = query.Where(x => x.reciveruserId == user.UserId);
+                }
+                else
+                    query = query.Where(x => x.isvisited == false || x.isvisited == null);
+
+                int messagecount = await query.CountAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = new { notreadmessagecount = messagecount } };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
 
         public async Task<SystemMessageModel> RemoveSiteMessage(SiteMessageDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
@@ -158,6 +206,34 @@ namespace NextTradeAPIs.Services
                 if (data != null)
                 {
                     _Context.SiteMessages.Remove(data);
+                    await _Context.SaveChangesAsync();
+                }
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+        public async Task<SystemMessageModel> VisitSiteMessage(SiteMessageDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                SiteMessage data = await _Context.SiteMessages.FindAsync(model.Id);
+
+                if (data != null)
+                {
+                    data.isvisited = true;
+                    _Context.SiteMessages.Update(data);
                     await _Context.SaveChangesAsync();
                 }
 

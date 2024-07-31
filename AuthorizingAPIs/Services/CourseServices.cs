@@ -91,6 +91,7 @@ namespace NextTradeAPIs.Services
                                                       courseleveltypeId = x.courseleveltypeId,
                                                       courseleveltypename = x.courseleveltype.name,
                                                       courseprice = (x.courseprice == null || x.courseprice == 0) ? 0 : x.courseprice,
+                                                      allowQA = (model.allowQA == null) ? false : (bool)model.allowQA,
                                                       coursetypeId = x.coursetypeId,
                                                       coursetypename = x.coursetype.name,
                                                       enddate = x.enddate,
@@ -157,6 +158,7 @@ namespace NextTradeAPIs.Services
                     grouptypeId = model.grouptypeId,
                     issitecourse = model.issitecourse,
                     coursetgas = model.coursetgas,
+                    allowQA = (model.allowQA == null) ? false : (bool)model.allowQA,
                     whatlearn = model.whatlearn,
                     targetedaudience = model.targetedaudience,
                     materialsincluded = model.materialsincluded,
@@ -238,11 +240,14 @@ namespace NextTradeAPIs.Services
                 data.lessencount = (int)model.lessencount;
                 data.isprelesson = model.isprelesson ?? false;
                 data.startdate = (DateTime)model.startdate;
-                data.isadminaccepted = (bool)model.isadminaccepted;
+                data.isadminaccepted = (model.isadminaccepted == null) ? false : (bool)model.isadminaccepted;
+                data.allowQA = (model.allowQA == null) ? false : (bool)model.allowQA;
+                data.grouptypeId = model.grouptypeId;
                 data.whatlearn = model.whatlearn;
                 data.targetedaudience = model.targetedaudience;
                 data.materialsincluded = model.materialsincluded;
                 data.requirementsinstructions = model.requirementsinstructions;
+
                 _Context.Courses.Update(data);
                 await _Context.SaveChangesAsync();
 
@@ -383,6 +388,7 @@ namespace NextTradeAPIs.Services
                     issitecourse = data.issitecourse,
                     coursetgas = data.coursetgas,
                     whatlearn = data.whatlearn,
+                    allowQA = data.allowQA,
                     targetedaudience = data.targetedaudience,
                     materialsincluded = data.materialsincluded,
                     requirementsinstructions = data.requirementsinstructions
