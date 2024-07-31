@@ -9,6 +9,7 @@ using NextTradeAPIs.Dtos;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Mail;
+using System.Web;
 
 namespace NextTradeAPIs.Services
 {
@@ -499,6 +500,8 @@ namespace NextTradeAPIs.Services
             try
             {
                 string _LogPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\signals\\";
+                //string _LogPath = HttpContext.Current.Server.MapPath("~/") + "\\signals\\";
+                //Path.GetDirectoryName(Application.ExecutablePath)
                 if (!Directory.Exists(_LogPath))
                 {
                     Directory.CreateDirectory(_LogPath);
