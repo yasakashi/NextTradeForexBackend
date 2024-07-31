@@ -158,8 +158,12 @@ namespace NextTradeAPIs.Services
                     }
                 }
 
+                int totaldata = query.Count();
+                if (totaldata <= 0) totaldata = 1;
+                int pagecount = (totaldata / PageRowCount);
+
                 List<CommunityGroupDto> datas = await query
-                                .Skip(pageIndex - 1)
+                                .Skip((pageIndex - 1) * PageRowCount)
                                 .Take(PageRowCount)
                                 .Include(x => x.grouptype)
                                 .Include(x => x.owneruser)
@@ -173,6 +177,7 @@ namespace NextTradeAPIs.Services
                                     title = x.title,
                                     ownerusername = x.owneruser.Username,
                                     grouptypename = x.grouptype.name,
+                                    pagecount = pagecount
                                 }).ToListAsync();
                 if (model.showdetail)
                 {
@@ -228,7 +233,11 @@ namespace NextTradeAPIs.Services
                     query = query.Where(x => topCommunityGroupIds.Contains(x.Id));
                 }
 
-                List<CommunityGroupDto> datas = await query.Skip(pageIndex - 1).Take(PageRowCount)
+                int totaldata = query.Count();
+                if (totaldata <= 0) totaldata = 1;
+                int pagecount = (totaldata / PageRowCount); 
+
+                List <CommunityGroupDto> datas = await query.Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount)
                                 .Include(x => x.grouptype)
                                 .Include(x => x.owneruser)
                                 .Select(x => new CommunityGroupDto()
@@ -241,6 +250,7 @@ namespace NextTradeAPIs.Services
                                     title = x.title,
                                     ownerusername = x.owneruser.Username,
                                     grouptypename = x.grouptype.name,
+                                    pagecount = pagecount
                                 }).ToListAsync();
                 if (model.showdetail)
                 {
@@ -607,8 +617,11 @@ namespace NextTradeAPIs.Services
                 int pageIndex = (model.pageindex == null || model.pageindex == 0) ? 1 : (int)model.pageindex;
                 int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 10 : (int)model.rowcount;
 
+                int totaldata = query.Count();
+                if (totaldata <= 0) totaldata = 1;
+                int pagecount = (totaldata / PageRowCount);
 
-                List<CommunityGroupMemberDto> datas = await query.Skip(pageIndex - 1).Take(PageRowCount)
+                List<CommunityGroupMemberDto> datas = await query.Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount)
                                                     .Include(x => x.communitygroup)
                                                     .Include(x => x.user)
                                            .Select(x => new CommunityGroupMemberDto()
@@ -620,7 +633,8 @@ namespace NextTradeAPIs.Services
                                                requestdatetime = x.requestdatetime,
                                                userId = x.userId,
                                                username = x.user.Username,
-                                               communitygrouptitle = x.communitygroup.title
+                                               communitygrouptitle = x.communitygroup.title,
+                                               pagecount = pagecount
                                            }).ToListAsync();
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
@@ -647,6 +661,8 @@ namespace NextTradeAPIs.Services
                 if (requesteduserid == null)
                     requesteduserid = userlogin.userid;
                 CommunityGroup group = await _Context.CommunityGroups.FindAsync(model.communitygroupId);
+                if (group == null)
+                    return new SystemMessageModel() {MessageCode=-123, MessageDescription="Group Id is wrong", MessageData= model };
                 CommunityGroupMember data = await _Context.CommunityGroupMembers.Where(x => x.communitygroupId == model.communitygroupId && x.userId == requesteduserid).SingleOrDefaultAsync();
 
                 if (data == null)
@@ -776,8 +792,11 @@ namespace NextTradeAPIs.Services
                 int pageIndex = (model.pageindex == null || model.pageindex == 0) ? 1 : (int)model.pageindex;
                 int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 10 : (int)model.rowcount;
 
+                int totaldata = query.Count();
+                if (totaldata <= 0) totaldata = 1;
+                int pagecount = (totaldata / PageRowCount);
 
-                List<CommunityGroupDto> datas = await query.Skip(pageIndex - 1).Take(PageRowCount)
+                List<CommunityGroupDto> datas = await query.Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount)
                                 .Include(x => x.grouptype)
                                 .Include(x => x.owneruser)
                                 .Select(x => new CommunityGroupDto()
@@ -789,7 +808,8 @@ namespace NextTradeAPIs.Services
                                     description = x.description,
                                     title = x.title,
                                     ownerusername = x.owneruser.Username,
-                                    grouptypename = x.grouptype.name
+                                    grouptypename = x.grouptype.name,
+                                    pagecount = pagecount
                                 }).ToListAsync();
 
                 foreach (CommunityGroupDto data in datas)

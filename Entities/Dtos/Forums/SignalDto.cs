@@ -48,4 +48,5 @@ public class SignalDto : BaseFilterDto
     public string? support2 { get; set; }
     public string? support3 { get; set; }
     public string? description { get; set; }
+    public int? pagecount { get; set; }
 }

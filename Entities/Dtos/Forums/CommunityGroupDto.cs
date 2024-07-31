@@ -25,6 +25,7 @@ public class CommunityGroupDto
     public int? messagecount { get; set; }
     public int? signalchannelcount { get; set; }
     public bool? isaccepted { get; set; }
+    public int? pagecount { get; set; }
 }
 
 public class CommunityGroupImageDto

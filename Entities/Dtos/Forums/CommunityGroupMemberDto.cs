@@ -17,5 +17,6 @@ public class CommunityGroupMemberDto:BaseFilterDto
     public DateTime? accepteddatetime { get; set; }
     public string? communitygrouptitle { get; set; }
     public string? username { get; set; }
-    
+    public int? pagecount { get; set; }
+
 }

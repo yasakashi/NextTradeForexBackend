@@ -56,7 +56,7 @@ namespace NextTradeAPIs.Services
                 int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 50 : (int)model.rowcount;
 
 
-                List<TicketDto> data = await query.Skip(pageIndex - 1).Take(PageRowCount)
+                List<TicketDto> data = await query.Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount)
                                     .Include(x => x.priority)
                                     .Include(x => x.creatoruser)
                                     .Include(x => x.responseuser)

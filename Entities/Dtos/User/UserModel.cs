@@ -41,6 +41,7 @@ public class UserModel
     public int? interestforexId { get; set; }
     public bool? hobbyoftradingfulltime { get; set; }
     public int? EmployeeLevel { get; set; }
+    public int? pagecount { get; set; }
 
 }
 

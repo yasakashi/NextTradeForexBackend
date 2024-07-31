@@ -19,6 +19,7 @@ public class SignalChannelDto : BaseFilterDto
     public string? communitygroupname { get; set; }
     public long? grouptypeId { get; set; }
     public string? grouptypename { get; set; }
+    public int? pagecount { get; set; }
 
 }
 

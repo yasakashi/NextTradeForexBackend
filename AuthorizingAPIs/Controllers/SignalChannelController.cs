@@ -546,13 +546,28 @@ namespace NextTradeAPIs.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetImage(Guid id)
         {
-            var image = await _signalChannelService.AddSignalImage(id);
+            var image = await _signalChannelService.GetSignalImage(id);
             if (image == null)
             {
                 return NotFound();
             }
 
             return File(image, "image/png");
+        }
+
+        [HttpPost("{id}")]
+        [HttpGet("{id}")]
+        [Route("/api/signal/getimageurl/{id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetImageURL(Guid id)
+        {
+            var message = await _signalChannelService.GetSignalImageURL(id);
+            if (message == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(message);
         }
 
 

@@ -76,7 +76,7 @@ namespace NextTradeAPIs.Services
                 int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 50 : (int)model.rowcount;
 
 
-                List<CourseDto> data = await query.Skip(pageIndex - 1).Take(PageRowCount)
+                List<CourseDto> data = await query.Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount)
                                                   .Include(x => x.owneruser)
                                                   .Include(x => x.courseleveltype)
                                                   .Include(x => x.coursetype)
@@ -109,7 +109,11 @@ namespace NextTradeAPIs.Services
                                                       grouptypename = (x.grouptype != null) ? x.grouptype.name : "",
                                                       issitecourse = x.issitecourse,
                                                       courseintrofilecontenttype = x.courseintrofilecontenttype,
-                                                      courseintrofilefileextention = x.courseintrofilefileextention
+                                                      courseintrofilefileextention = x.courseintrofilefileextention,
+                                                      whatlearn = x.whatlearn,
+                                                      targetedaudience = x.targetedaudience,
+                                                      materialsincluded = x.materialsincluded,
+                                                      requirementsinstructions = x.requirementsinstructions
                                                   }).ToListAsync();
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data };
@@ -140,19 +144,23 @@ namespace NextTradeAPIs.Services
                     coursedescription = model.coursedescription,
                     courseduringtime = (int)model.courseduringtime,
                     coursename = model.coursename,
-                    courseleveltypeId =(int) model.courseleveltypeId,
+                    courseleveltypeId = (int)model.courseleveltypeId,
                     courseprice = (model.courseprice == null || model.courseprice == 0) ? 0 : (decimal)model.courseprice,
-                    coursetypeId = (int) model.coursetypeId,
+                    coursetypeId = (int)model.coursetypeId,
                     enddate = (DateTime)model.enddate,
                     lessencount = (int)model.lessencount,
                     owneruserId = userlogin.userid,
                     registerdatetime = DateTime.Now,
-                    isadminaccepted = model.isadminaccepted?? false,
-                    isprelesson =  model.isprelesson?? false,
+                    isadminaccepted = model.isadminaccepted ?? false,
+                    isprelesson = model.isprelesson ?? false,
                     startdate = (DateTime)model.startdate,
                     grouptypeId = model.grouptypeId,
                     issitecourse = model.issitecourse,
-                    coursetgas=model.coursetgas
+                    coursetgas = model.coursetgas,
+                    whatlearn = model.whatlearn,
+                    targetedaudience = model.targetedaudience,
+                    materialsincluded = model.materialsincluded,
+                    requirementsinstructions = model.requirementsinstructions
                 };
 
                 await _Context.Courses.AddAsync(data);
@@ -218,20 +226,23 @@ namespace NextTradeAPIs.Services
                     return new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 101) * -2), MessageDescription = "Data is wrong", MessageData = model };
 
 
-                data.allowdownload = (bool) model.allowdownload;
+                data.allowdownload = (bool)model.allowdownload;
                 data.coursecoverimage = model.coursecoverimage;
                 data.coursedescription = model.coursedescription;
                 data.courseduringtime = (int)model.courseduringtime;
                 data.coursename = model.coursename;
-                data.courseleveltypeId = (int) model.courseleveltypeId;
+                data.courseleveltypeId = (int)model.courseleveltypeId;
                 data.courseprice = (model.courseprice == null || model.courseprice == 0) ? 0 : (decimal)model.courseprice;
                 data.coursetypeId = (int)model.coursetypeId;
                 data.enddate = (DateTime)model.enddate;
                 data.lessencount = (int)model.lessencount;
-                data.isprelesson = model.isprelesson?? false;
+                data.isprelesson = model.isprelesson ?? false;
                 data.startdate = (DateTime)model.startdate;
                 data.isadminaccepted = (bool)model.isadminaccepted;
-
+                data.whatlearn = model.whatlearn;
+                data.targetedaudience = model.targetedaudience;
+                data.materialsincluded = model.materialsincluded;
+                data.requirementsinstructions = model.requirementsinstructions;
                 _Context.Courses.Update(data);
                 await _Context.SaveChangesAsync();
 
@@ -263,7 +274,7 @@ namespace NextTradeAPIs.Services
                 data.courseintrofilefileextention = model.courseintrofilefileextention;
                 data.courseintrofilecontenttype = model.courseintrofilecontenttype;
 
-                 _Context.Courses.Update(data);
+                _Context.Courses.Update(data);
                 await _Context.SaveChangesAsync();
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request success", MessageData = new { Id = data.Id } };
@@ -366,11 +377,15 @@ namespace NextTradeAPIs.Services
                     owneruserId = userlogin.userid,
                     registerdatetime = DateTime.Now,
                     isadminaccepted = data.isadminaccepted ?? false,
-                    isprelesson = data.isprelesson ,
+                    isprelesson = data.isprelesson,
                     startdate = (DateTime)data.startdate,
                     grouptypeId = data.grouptypeId,
                     issitecourse = data.issitecourse,
-                    coursetgas = data.coursetgas
+                    coursetgas = data.coursetgas,
+                    whatlearn = data.whatlearn,
+                    targetedaudience = data.targetedaudience,
+                    materialsincluded = data.materialsincluded,
+                    requirementsinstructions = data.requirementsinstructions
                 };
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request success", MessageData = data2 };
             }
@@ -425,7 +440,7 @@ namespace NextTradeAPIs.Services
                 {
                     Id = Guid.NewGuid(),
                     registerdatetime = DateTime.Now,
-                    author = model.author??"",
+                    author = model.author ?? "",
                     courseId = (Guid)model.courseId,
                     lessondescription = model.lessondescription,
                     endtime = (DateTime)model.endtime,
@@ -471,7 +486,7 @@ namespace NextTradeAPIs.Services
                 int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 50 : (int)model.rowcount;
 
 
-                List<CourseLessonDto> data = await query.Skip(pageIndex - 1).Take(PageRowCount)
+                List<CourseLessonDto> data = await query.Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount)
                                                   .Include(x => x.course)
                                                   .Include(x => x.aoutoruser)
                                                   .Select(x => new CourseLessonDto()
@@ -556,7 +571,7 @@ namespace NextTradeAPIs.Services
                 int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 50 : (int)model.rowcount;
 
 
-                List<CourseLessonFileDto> data = await query.Skip(pageIndex - 1).Take(PageRowCount)
+                List<CourseLessonFileDto> data = await query.Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount)
                                                   .Include(x => x.courselesson)
                                                   .Select(x => new CourseLessonFileDto()
                                                   {
@@ -616,7 +631,7 @@ namespace NextTradeAPIs.Services
                 }
 
                 WalletTransactionDto transactionmodel = new WalletTransactionDto();
-               Course course = await _Context.Courses.FindAsync(model.courseId);
+                Course course = await _Context.Courses.FindAsync(model.courseId);
 
                 Wallet sourcewallet = await _Context.Wallets.Where(x => x.userId == userlogin.userid).SingleOrDefaultAsync();
 
@@ -632,7 +647,7 @@ namespace NextTradeAPIs.Services
                     transactionmodel.destiationwalletId = distinationwallet.Id;
                 }
 
-                
+
                 transactionmodel.transactionamount = course.courseprice;
 
                 if (transactionmodel.transactionamount > 0)
@@ -705,17 +720,17 @@ namespace NextTradeAPIs.Services
                     CourseIds = await _Context.CourseMemebers.Where(x => x.userId == userlogin.userid).Select(x => x.courseId).ToListAsync();
                 }
 
-                if(CourseIds!= null && CourseIds.Count > 0)
+                if (CourseIds != null && CourseIds.Count > 0)
                 {
                     query = query.Where(x => CourseIds.Contains(x.Id));
                 }
-            
+
 
                 int pageIndex = (model.pageindex == null || model.pageindex == 0) ? 1 : (int)model.pageindex;
                 int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 50 : (int)model.rowcount;
 
 
-                List<CourseDto> data = await query.Skip(pageIndex - 1).Take(PageRowCount)
+                List<CourseDto> data = await query.Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount)
                                                   .Include(x => x.owneruser)
                                                   .Include(x => x.courseleveltype)
                                                   .Include(x => x.coursetype)

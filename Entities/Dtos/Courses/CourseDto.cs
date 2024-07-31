@@ -35,5 +35,10 @@ public class CourseDto : BaseFilterDto
     public string? courseintrofileurl { get; set; }
     public string? courseintrofilefileextention { get; set; }
     public string? courseintrofilecontenttype { get; set; }
-    
+    public int? pagecount { get; set; }
+    public string? whatlearn { get; set; }
+    public string? targetedaudience { get; set; }
+    public string? materialsincluded { get; set; }
+    public string? requirementsinstructions { get; set; }
+
 }

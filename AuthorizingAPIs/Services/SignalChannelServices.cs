@@ -93,8 +93,12 @@ namespace NextTradeAPIs.Services
                         }
                     }
                 }
+                int totaldata = query.Count();
+                if (totaldata <= 0) totaldata = 1;
+                int pagecount = (totaldata / PageRowCount);
+
                 List<SignalChannelDto> data = await query
-                                    .Skip(pageIndex - 1)
+                                    .Skip((pageIndex - 1) * PageRowCount)
                                     .Take(PageRowCount)
                                     .Include(x => x.communitygroup)
                                     .Include(x => x.grouptype)
@@ -109,7 +113,8 @@ namespace NextTradeAPIs.Services
                                         title = x.title,
                                         communitygroupname = x.communitygroup.title,
                                         grouptypename = x.grouptype.name,
-                                        description = x.description
+                                        description = x.description,
+                                        pagecount = pagecount
                                     }).ToListAsync();
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data };
@@ -257,8 +262,11 @@ namespace NextTradeAPIs.Services
                 int pageIndex = (model.pageindex == null || model.pageindex == 0) ? 1 : (int)model.pageindex;
                 int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 50 : (int)model.rowcount;
 
+                int totaldata = query.Count();
+                if (totaldata <= 0) totaldata = 1;
+                int pagecount = (totaldata / PageRowCount);
 
-                List<SignalDto> data = await query.Skip(pageIndex - 1).Take(PageRowCount)
+                List<SignalDto> data = await query.Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount)
                     .Include(x => x.analysistype)
                     .Include(x => x.creatoruser)
                     .Include(x => x.entrypointtype)
@@ -306,7 +314,8 @@ namespace NextTradeAPIs.Services
                         tp2 = x.tp2,
                         tp3 = x.tp3,
                         pageindex = pageIndex,
-                        rowcount = PageRowCount
+                        rowcount = PageRowCount,
+                        pagecount = pagecount
                     }).ToListAsync();
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data };
@@ -478,5 +487,87 @@ namespace NextTradeAPIs.Services
             }
             return message;
         }
+
+
+        public async Task<SystemMessageModel> GetSignalImageURL(Guid Id)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                string _LogPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\signals\\";
+                if (!Directory.Exists(_LogPath))
+                {
+                    Directory.CreateDirectory(_LogPath);
+                }
+
+                SignalFileAttachment data = await _Context.SignalFileAttachments.Where(x => x.signalId == Id).SingleOrDefaultAsync();
+
+                _LogPath += data.signalId.ToString().Replace("-", "") + "\\";
+                if (!Directory.Exists(_LogPath))
+                {
+                    Directory.CreateDirectory(_LogPath);
+                }
+
+                string filePath = AppDomain.CurrentDomain.BaseDirectory + "/signals/" + data.Id.ToString().Replace("-", "") + "/" + "image.png";
+                Uri uri = new Uri("/signals/" + data.Id.ToString().Replace("-", "") + "/" + "image.png", UriKind.Relative);
+
+                if (data != null && data.attachment != null)
+                {
+                    _LogPath += "image.png";
+                    if (!File.Exists(_LogPath))
+                    {
+                        File.WriteAllBytes(_LogPath, data.attachment);
+
+                    }
+                    return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = uri.ToString() };
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, "", "", methodpath, LogTypes.SystemError);
+            }
+            return null;
+        }
+
+        public async Task<byte[]> GetSignalImage(Guid Id)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                SignalFileAttachment data = await _Context.SignalFileAttachments.Where(x=>x.signalId == Id).SingleOrDefaultAsync();
+
+                if (data != null && data.attachment != null)
+                {
+                    return data.attachment;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, "", "", methodpath, LogTypes.SystemError);
+            }
+            return null;
+        }
+
+
     }
 }

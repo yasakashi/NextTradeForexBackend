@@ -571,6 +571,13 @@ namespace NextTradeAPIs.Services
                 if (!string.IsNullOrEmpty(filter.lname))
                     query = query.Where(x => x.Lname.StartsWith(filter.lname));
 
+                int pageIndex = (filter.pageindex == null || filter.pageindex == 0) ? 1 : (int)filter.pageindex;
+                int PageRowCount = (filter.rowcount == null || filter.rowcount == 0) ? 50 : (int)filter.rowcount;
+
+                int totaldata = query.Count();
+                if (totaldata <= 0) totaldata = 1;
+                int pagecount = (totaldata / PageRowCount);
+
                 datas = await query.Select(x => new UserModel()
                 {
                     userid = x.UserId,
@@ -580,6 +587,7 @@ namespace NextTradeAPIs.Services
                     UserTypeId = x.UserTypeId,
                     IsActive = x.IsActive,
                     ispaid = x.ispaied,
+                    pagecount = pagecount
                 }).ToListAsync();
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };

@@ -10,6 +10,7 @@ namespace Entities.Dtos
     {
         public int? rowcount { get; set; }
         public int? pageindex { get; set; }
+        public int? pagecount { get; set; }
         public List<SortItem>? sortitem { get; set; }
     }
 

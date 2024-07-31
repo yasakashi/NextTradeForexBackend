@@ -35,6 +35,11 @@ public class Course
     public string? courseintrofileurl { get; set; }
     public string? courseintrofilefileextention { get; set; }
     public string? courseintrofilecontenttype { get; set; }
+    public string? whatlearn { get; set; }
+    public string? targetedaudience { get; set; }
+    public string? materialsincluded { get; set; }
+    public string? requirementsinstructions { get; set; }
+
     public virtual CourseLevelType courseleveltype { get; set; }
     public virtual CourseType coursetype { get; set; }
     public virtual User owneruser { get; set; }

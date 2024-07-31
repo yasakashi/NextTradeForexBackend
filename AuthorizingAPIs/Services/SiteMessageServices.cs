@@ -114,7 +114,7 @@ namespace NextTradeAPIs.Services
                 }
 
                 List<SiteMessageDto> datas = await query
-                                .Skip(pageIndex - 1)
+                                .Skip((pageIndex - 1) * PageRowCount)
                                 .Take(PageRowCount)
                                 .Include(x => x.reciveruser)
                                 .Include(x => x.creatoruser)

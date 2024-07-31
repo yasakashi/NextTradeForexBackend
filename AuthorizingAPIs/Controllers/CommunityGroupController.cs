@@ -647,13 +647,13 @@ namespace NextTradeAPIs.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetCoverImageURL(Guid id)
         {
-            var message = await _communityGroupService.GetCommunityCoverImageURL(id);
-            if (message == null)
-            {
-                return NotFound();
-            }
+                var message = await _communityGroupService.GetCommunityCoverImageURL(id);
+                if (message == null)
+                {
+                    return NotFound();
+                }
 
-            return Ok(message);
+                return Ok(message);
         }
 
 
@@ -739,7 +739,7 @@ namespace NextTradeAPIs.Controllers
 
                 UserModel userlogin = message.MessageData as UserModel;
 
-                message = await _communityGroupService.GetCommunityGroupMember(model, userlogin, processId, clientip, hosturl);
+                message = await _communityGroupService.AddCommunityGroupMember(model, userlogin, processId, clientip, hosturl);
 
                 if (message.MessageCode < 0)
                     return BadRequest(message);
