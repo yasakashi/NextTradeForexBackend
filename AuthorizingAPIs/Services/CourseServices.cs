@@ -42,6 +42,8 @@ namespace NextTradeAPIs.Services
             {
                 IQueryable<Course> query = _Context.Courses;
 
+                if (model.courseStatusId != null)
+                    query = query.Where(x => x.courseStatusId == model.courseStatusId);
                 if (model.Id != null)
                     query = query.Where(x => x.Id == model.Id);
 
@@ -162,7 +164,8 @@ namespace NextTradeAPIs.Services
                     whatlearn = model.whatlearn,
                     targetedaudience = model.targetedaudience,
                     materialsincluded = model.materialsincluded,
-                    requirementsinstructions = model.requirementsinstructions
+                    requirementsinstructions = model.requirementsinstructions,
+                    courseStatusId = 0,
                 };
 
                 await _Context.Courses.AddAsync(data);
@@ -247,7 +250,7 @@ namespace NextTradeAPIs.Services
                 data.targetedaudience = model.targetedaudience;
                 data.materialsincluded = model.materialsincluded;
                 data.requirementsinstructions = model.requirementsinstructions;
-
+                data.courseStatusId = model.courseStatusId;
                 _Context.Courses.Update(data);
                 await _Context.SaveChangesAsync();
 

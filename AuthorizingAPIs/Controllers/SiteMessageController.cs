@@ -27,13 +27,13 @@ namespace NextTradeAPIs.Controllers
         UserServices _userServices;
         SystemLogServices _systemLogServices;
         BlockedIPServices _blockedIPService;
-        UserTypeServices _userTypeService;
+        CategoriesServices _userTypeService;
 
         public SiteMessageController(AuthorizationService authorizationService,
                                        IHttpContextAccessor httpContextAccessor,
                                        SystemLogServices systemLogServices,
                                        BlockedIPServices blockedIPServices,
-                                       UserTypeServices userTypeServices,
+                                       CategoriesServices userTypeServices,
                                        SiteMessageServices siteMessageServices,
                                        UserServices userServices)
         {

@@ -43,6 +43,10 @@ public class UserModel
     public int? EmployeeLevel { get; set; }
     public int? pagecount { get; set; }
 
+    public List<TrainingMethodDto>? usertrainingmethods { get; set; }
+    public List<FinancialInstrumentDto>? userfinancialinstruments { get; set; }
+    public List<CourseLevelTypeDto>? usertargettrainers { get; set; }
+
 }
 
 

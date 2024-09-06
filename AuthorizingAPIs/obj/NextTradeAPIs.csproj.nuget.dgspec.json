@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Programming\\NextTradeForex\\AuthorizingAPIs\\NextTradeAPIs.csproj": {}
+    "E:\\Programming\\NextTradeForexBackend\\AuthorizingAPIs\\NextTradeAPIs.csproj": {}
   },
   "projects": {
-    "E:\\Programming\\NextTradeForex\\AuthorizingAPIs\\NextTradeAPIs.csproj": {
+    "E:\\Programming\\NextTradeForexBackend\\AuthorizingAPIs\\NextTradeAPIs.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Programming\\NextTradeForex\\AuthorizingAPIs\\NextTradeAPIs.csproj",
+        "projectUniqueName": "E:\\Programming\\NextTradeForexBackend\\AuthorizingAPIs\\NextTradeAPIs.csproj",
         "projectName": "NextTradeAPIs",
-        "projectPath": "E:\\Programming\\NextTradeForex\\AuthorizingAPIs\\NextTradeAPIs.csproj",
+        "projectPath": "E:\\Programming\\NextTradeForexBackend\\AuthorizingAPIs\\NextTradeAPIs.csproj",
         "packagesPath": "C:\\Users\\Yasa\\.nuget\\packages\\",
-        "outputPath": "E:\\Programming\\NextTradeForex\\AuthorizingAPIs\\obj\\",
+        "outputPath": "E:\\Programming\\NextTradeForexBackend\\AuthorizingAPIs\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Yasa\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -28,14 +28,14 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "E:\\Programming\\NextTradeForex\\Base.Common\\Base.Common.csproj": {
-                "projectPath": "E:\\Programming\\NextTradeForex\\Base.Common\\Base.Common.csproj"
+              "E:\\Programming\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj": {
+                "projectPath": "E:\\Programming\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj"
               },
-              "E:\\Programming\\NextTradeForex\\DataLayers\\DataLayers.csproj": {
-                "projectPath": "E:\\Programming\\NextTradeForex\\DataLayers\\DataLayers.csproj"
+              "E:\\Programming\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj": {
+                "projectPath": "E:\\Programming\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj"
               },
-              "E:\\Programming\\NextTradeForex\\Entities\\Entities.csproj": {
-                "projectPath": "E:\\Programming\\NextTradeForex\\Entities\\Entities.csproj"
+              "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj": {
+                "projectPath": "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj"
               }
             }
           }
@@ -131,14 +131,14 @@
         }
       }
     },
-    "E:\\Programming\\NextTradeForex\\Base.Common\\Base.Common.csproj": {
+    "E:\\Programming\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Programming\\NextTradeForex\\Base.Common\\Base.Common.csproj",
+        "projectUniqueName": "E:\\Programming\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj",
         "projectName": "Base.Common",
-        "projectPath": "E:\\Programming\\NextTradeForex\\Base.Common\\Base.Common.csproj",
+        "projectPath": "E:\\Programming\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj",
         "packagesPath": "C:\\Users\\Yasa\\.nuget\\packages\\",
-        "outputPath": "E:\\Programming\\NextTradeForex\\Base.Common\\obj\\",
+        "outputPath": "E:\\Programming\\NextTradeForexBackend\\Base.Common\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Yasa\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -241,14 +241,14 @@
         }
       }
     },
-    "E:\\Programming\\NextTradeForex\\DataLayers\\DataLayers.csproj": {
+    "E:\\Programming\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Programming\\NextTradeForex\\DataLayers\\DataLayers.csproj",
+        "projectUniqueName": "E:\\Programming\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj",
         "projectName": "DataLayers",
-        "projectPath": "E:\\Programming\\NextTradeForex\\DataLayers\\DataLayers.csproj",
+        "projectPath": "E:\\Programming\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj",
         "packagesPath": "C:\\Users\\Yasa\\.nuget\\packages\\",
-        "outputPath": "E:\\Programming\\NextTradeForex\\DataLayers\\obj\\",
+        "outputPath": "E:\\Programming\\NextTradeForexBackend\\DataLayers\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Yasa\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -265,8 +265,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "E:\\Programming\\NextTradeForex\\Entities\\Entities.csproj": {
-                "projectPath": "E:\\Programming\\NextTradeForex\\Entities\\Entities.csproj"
+              "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj": {
+                "projectPath": "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj"
               }
             }
           }
@@ -343,14 +343,14 @@
         }
       }
     },
-    "E:\\Programming\\NextTradeForex\\Entities\\Entities.csproj": {
+    "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Programming\\NextTradeForex\\Entities\\Entities.csproj",
+        "projectUniqueName": "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj",
         "projectName": "Entities",
-        "projectPath": "E:\\Programming\\NextTradeForex\\Entities\\Entities.csproj",
+        "projectPath": "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj",
         "packagesPath": "C:\\Users\\Yasa\\.nuget\\packages\\",
-        "outputPath": "E:\\Programming\\NextTradeForex\\Entities\\obj\\",
+        "outputPath": "E:\\Programming\\NextTradeForexBackend\\Entities\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Yasa\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -398,7 +398,7 @@
             },
             "RestSharp": {
               "target": "Package",
-              "version": "[110.2.0, )"
+              "version": "[112.0.0, )"
             },
             "SqlConnection": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",

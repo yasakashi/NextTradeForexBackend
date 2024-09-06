@@ -35,7 +35,7 @@ namespace Entities.Dtos
         public List<TrainingMethodDto>? trainingmethods { get; set; }
         public List<int>? targettrainerIds { get; set; }
         public List<TargetTrainerDto>? targettrainers { get; set; }
-        
+        public int? partnertypeId { get; set; }
         public int? interestforexId { get; set; }
         public string? interestforexname { get; set; }
         public string? forexexperiencelevelname { get; set; }
@@ -46,5 +46,7 @@ namespace Entities.Dtos
         public string? countryname { get; set; }
         public string? statename { get; set; }
         public string? cityname { get; set; }
+
+        public int? pagecount { get; set; }
     }
 }

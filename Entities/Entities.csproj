@@ -14,7 +14,7 @@
 		<PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.5" />
 		<PackageReference Include="EntityFrameworkCore.DataEncryption" Version="4.0.0" />
-		<PackageReference Include="RestSharp" Version="110.2.0" />
+		<PackageReference Include="RestSharp" Version="112.0.0" />
 		<PackageReference Include="SqlConnection" Version="1.0.4">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

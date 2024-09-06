@@ -28,9 +28,9 @@
         /// </summary>
         Admin =2,
         /// <summary>
-        /// کاربر اصلی مشتری سرویس خارجی
+        /// کاربر استاد
         /// </summary>
-        Master = 3,
+        Instructor = 3,
         /// <summary>
         /// کاربر عادی
         /// </summary>

@@ -18,6 +18,7 @@ public class CommunityGroupMember
     public long userId { get; set; }
     public DateTime requestdatetime { get; set; }
     public bool isaccepted { get; set; }
+    public bool isadmin { get; set; }
     public DateTime? accepteddatetime { get; set; }
 
     public virtual CommunityGroup communitygroup { get; set; }

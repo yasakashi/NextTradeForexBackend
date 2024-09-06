@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Programming\\NextTradeForex\\DataLayers\\DataLayers.csproj": {}
+    "E:\\Programming\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj": {}
   },
   "projects": {
-    "E:\\Programming\\NextTradeForex\\DataLayers\\DataLayers.csproj": {
+    "E:\\Programming\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Programming\\NextTradeForex\\DataLayers\\DataLayers.csproj",
+        "projectUniqueName": "E:\\Programming\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj",
         "projectName": "DataLayers",
-        "projectPath": "E:\\Programming\\NextTradeForex\\DataLayers\\DataLayers.csproj",
+        "projectPath": "E:\\Programming\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj",
         "packagesPath": "C:\\Users\\Yasa\\.nuget\\packages\\",
-        "outputPath": "E:\\Programming\\NextTradeForex\\DataLayers\\obj\\",
+        "outputPath": "E:\\Programming\\NextTradeForexBackend\\DataLayers\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Yasa\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -28,8 +28,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "E:\\Programming\\NextTradeForex\\Entities\\Entities.csproj": {
-                "projectPath": "E:\\Programming\\NextTradeForex\\Entities\\Entities.csproj"
+              "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj": {
+                "projectPath": "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj"
               }
             }
           }
@@ -104,21 +104,16 @@
           },
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.300/PortableRuntimeIdentifierGraph.json"
         }
-      },
-      "runtimes": {
-        "win-x64": {
-          "#import": []
-        }
       }
     },
-    "E:\\Programming\\NextTradeForex\\Entities\\Entities.csproj": {
+    "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Programming\\NextTradeForex\\Entities\\Entities.csproj",
+        "projectUniqueName": "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj",
         "projectName": "Entities",
-        "projectPath": "E:\\Programming\\NextTradeForex\\Entities\\Entities.csproj",
+        "projectPath": "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj",
         "packagesPath": "C:\\Users\\Yasa\\.nuget\\packages\\",
-        "outputPath": "E:\\Programming\\NextTradeForex\\Entities\\obj\\",
+        "outputPath": "E:\\Programming\\NextTradeForexBackend\\Entities\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Yasa\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -166,7 +161,7 @@
             },
             "RestSharp": {
               "target": "Package",
-              "version": "[110.2.0, )"
+              "version": "[112.0.0, )"
             },
             "SqlConnection": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
@@ -192,11 +187,6 @@
             }
           },
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.300/PortableRuntimeIdentifierGraph.json"
-        }
-      },
-      "runtimes": {
-        "win-x64": {
-          "#import": []
         }
       }
     }

@@ -17,5 +17,7 @@
         /// فایل های ضمیمه پیام
         /// </summary>
         public object? MessageData { get; set; }
+
+        public object? Meta { get; set; } 
     }
 }

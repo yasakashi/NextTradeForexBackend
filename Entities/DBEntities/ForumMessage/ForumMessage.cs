@@ -20,6 +20,7 @@ public class ForumMessage
     public string title { get; set; }
     public string messagebody { get; set; }
     public bool isneedpaid { get; set; }
+    public bool? issignaltemplate { get; set; }
     public DateTime registerdatetime { get; set; }
     public virtual List<MessageAttachement> sttachements { get; set; }
     public virtual Category category { get; set; }

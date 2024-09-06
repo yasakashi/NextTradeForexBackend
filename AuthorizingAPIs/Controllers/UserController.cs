@@ -29,15 +29,17 @@ namespace NextTradeAPIs.Controllers
         AuthorizationService _authorizationService;
         private IHttpContextAccessor _HttpContextAccessor;
         UserServices _userServices;
-        UserTypeServices _userTypeService;
+        CategoriesServices _userTypeService;
+        BaseInformationServices _baseInformationService;
         SystemLogServices _systemLogServices;
         PeopleServices _peopleService;
 
         public UserController(AuthorizationService authorizationService,
                                        IHttpContextAccessor httpContextAccessor,
                                        SystemLogServices systemLogServices,
-                                       UserTypeServices userTypeServices,
+                                       CategoriesServices userTypeServices,
                                        PeopleServices peopleServices,
+                                       BaseInformationServices baseInformationServices,
                                        UserServices userServices)
         {
             _authorizationService = authorizationService;
@@ -46,6 +48,7 @@ namespace NextTradeAPIs.Controllers
             _systemLogServices = systemLogServices;
             _peopleService = peopleServices;
             _userTypeService = userTypeServices;
+            _baseInformationService = baseInformationServices;
         }
 
 
@@ -95,7 +98,7 @@ namespace NextTradeAPIs.Controllers
 
                 //UserModel userlogin = message.MessageData as UserModel;
 
-                message = await _userTypeService.GetUserTypes(null, processId, clientip, hosturl);
+                message = await _baseInformationService.GetUserTypes(null, processId, clientip, hosturl);
 
                 if (message.MessageCode < 0)
                     return BadRequest(message);
@@ -1170,5 +1173,73 @@ namespace NextTradeAPIs.Controllers
 
         }
 
+        [HttpPost]
+        [HttpGet]
+        [Route("/api/users/getuserinstructors")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetUserInstructors(UserPartnerSearchDto model)
+        {
+            StackTrace stackTrace = new StackTrace();
+            SystemMessageModel message;
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string authHeader = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            UserModel user = null;
+            LoginLog loginLog = null;
+
+            long ApiCode = 2000;
+
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                //message = await _authorizationService.CheckToken(_bearer_token, processId);
+
+                //if (message.MessageCode < 0)
+                //    return Unauthorized(message);
+
+                //UserModel userlogin = message.MessageData as UserModel;
+                message = await _userServices.GetUserInstructors(model, null, processId, clientip, hosturl);
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(error, processId, clientip, hosturl, LogTypes.SystemError);
+
+                message = new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = $"'ProccessID':'{processId}','ErrorMessage':'{ex.Message}'" };
+                return BadRequest(message);
+            }
+
+        }
+
+        
     }
 }

@@ -33,6 +33,16 @@ public class CommunityGroupImageDto
 
     public Guid? Id { get; set; }
 
-    public IFormFile? coverPicture { get; set; }
+    public IFormFile? photofile { get; set; }
+    public IFormFile? videofile { get; set; }
+    public IFormFile? audiofile { get; set; }
 }
 
+public class CourseImageDto
+{
+
+    public Guid? Id { get; set; }
+
+    public IFormFile? coverPicture { get; set; }
+
+}

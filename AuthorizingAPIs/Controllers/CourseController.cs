@@ -548,8 +548,8 @@ namespace NextTradeAPIs.Controllers
             }
         }
 
-        [HttpPost("{id}")]
-        [HttpGet("{id}")]
+        [HttpPost()]
+        [HttpGet()]
         [Route("/api/course/getcourseintrofile/{id}")]
         [AllowAnonymous]
         public async Task<IActionResult> GetCourseIntroFile(Guid id)
@@ -642,7 +642,7 @@ namespace NextTradeAPIs.Controllers
 
         [Route("/api/course/uploadcoursepic")]
         [HttpPost]
-        public async Task<IActionResult> UploadCoursePic([FromForm] CommunityGroupImageDto model)
+        public async Task<IActionResult> UploadCoursePic([FromForm] CourseImageDto model)
         {
 
             if (model == null)
@@ -730,8 +730,8 @@ namespace NextTradeAPIs.Controllers
             }
         }
 
-        [HttpPost("{id}")]
-        [HttpGet("{id}")]
+        [HttpPost()]
+        [HttpGet()]
         [Route("/api/course/getcoursepic/{id}")]
         [AllowAnonymous]
         public async Task<IActionResult> GetCourseImage(Guid id)
@@ -1038,8 +1038,8 @@ namespace NextTradeAPIs.Controllers
         }
 
 
-        [HttpPost("{id}")]
-        [HttpGet("{id}")]
+        [HttpPost()]
+        [HttpGet()]
         [Route("/api/course/getcourseleesonfile/{id}")]
         [AllowAnonymous]
         public async Task<IActionResult> GetCourseLessonFile(Guid id)

@@ -6,6 +6,7 @@ using Entities.Dtos;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using NextTradeAPIs.Dtos;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Mail;
@@ -96,7 +97,11 @@ namespace NextTradeAPIs.Services
                 }
                 int totaldata = query.Count();
                 if (totaldata <= 0) totaldata = 1;
+                decimal pagecountd = ((decimal)totaldata / (decimal)PageRowCount);
                 int pagecount = (totaldata / PageRowCount);
+                pagecount = (pagecount <= 0) ? 1 : pagecount;
+                if (Math.Floor(pagecountd) > 0)
+                    pagecount++;
 
                 List<SignalChannelDto> data = await query
                                     .Skip((pageIndex - 1) * PageRowCount)
@@ -118,7 +123,7 @@ namespace NextTradeAPIs.Services
                                         pagecount = pagecount
                                     }).ToListAsync();
 
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data, Meta = new { pagecount = pagecount } };
             }
             catch (Exception ex)
             {
@@ -265,7 +270,11 @@ namespace NextTradeAPIs.Services
 
                 int totaldata = query.Count();
                 if (totaldata <= 0) totaldata = 1;
+                decimal pagecountd = ((decimal)totaldata / (decimal)PageRowCount);
                 int pagecount = (totaldata / PageRowCount);
+                pagecount = (pagecount <= 0) ? 1 : pagecount;
+                if (Math.Floor(pagecountd) > 0)
+                    pagecount++;
 
                 List<SignalDto> data = await query.Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount)
                     .Include(x => x.analysistype)
@@ -319,7 +328,7 @@ namespace NextTradeAPIs.Services
                         pagecount = pagecount
                     }).ToListAsync();
 
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data, Meta = new { pagecount = pagecount } };
             }
             catch (Exception ex)
             {
@@ -490,7 +499,7 @@ namespace NextTradeAPIs.Services
         }
 
 
-        public async Task<SystemMessageModel> GetSignalImageURL(Guid Id)
+        public async Task<SystemMessageModel> GetSignalImageURL(Guid Id, string sitePath)
         {
             SystemMessageModel message;
             StackTrace stackTrace = new StackTrace();
@@ -499,7 +508,7 @@ namespace NextTradeAPIs.Services
 
             try
             {
-                string _LogPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\signals\\";
+                string _LogPath = sitePath + "\\signals\\";
                 //string _LogPath = HttpContext.Current.Server.MapPath("~/") + "\\signals\\";
                 //Path.GetDirectoryName(Application.ExecutablePath)
                 if (!Directory.Exists(_LogPath))
@@ -508,29 +517,38 @@ namespace NextTradeAPIs.Services
                 }
 
                 SignalFileAttachment data = await _Context.SignalFileAttachments.Where(x => x.signalId == Id).SingleOrDefaultAsync();
-
-                _LogPath += data.signalId.ToString().Replace("-", "") + "\\";
-                if (!Directory.Exists(_LogPath))
+                if (data != null)
                 {
-                    Directory.CreateDirectory(_LogPath);
-                }
-
-                string filePath = AppDomain.CurrentDomain.BaseDirectory + "/signals/" + data.Id.ToString().Replace("-", "") + "/" + "image.png";
-                Uri uri = new Uri("/signals/" + data.Id.ToString().Replace("-", "") + "/" + "image.png", UriKind.Relative);
-
-                if (data != null && data.attachment != null)
-                {
-                    _LogPath += "image.png";
-                    if (!File.Exists(_LogPath))
+                    _LogPath += data.signalId.ToString().Replace("-", "") + "\\";
+                    if (!Directory.Exists(_LogPath))
                     {
-                        File.WriteAllBytes(_LogPath, data.attachment);
-
+                        Directory.CreateDirectory(_LogPath);
                     }
-                    return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = uri.ToString() };
+
+                    Uri uri = new Uri("/signals/" + data.signalId.ToString().Replace("-", "") + "/" + "image.png", UriKind.Relative);
+
+                    if (data != null && data.attachment != null)
+                    {
+                        _LogPath += "image.png";
+                        if (!File.Exists(_LogPath))
+                        {
+                            File.WriteAllBytes(_LogPath, data.attachment);
+                        }
+                        else
+                        {
+                            File.Delete(_LogPath);
+                            File.WriteAllBytes(_LogPath, data.attachment);
+                        }
+                        return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = uri.ToString() };
+                    }
+                    else
+                    {
+                        return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = "" };
+                    }
                 }
                 else
                 {
-                    return null;
+                    return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = "" };
                 }
             }
             catch (Exception ex)

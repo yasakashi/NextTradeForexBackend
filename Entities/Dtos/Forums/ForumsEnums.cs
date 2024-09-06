@@ -9,7 +9,8 @@ namespace Entities.Dtos;
 public enum GroupTypes : int
 {
     PublicGroup = 1,
-    PrivateGroup = 2
+    PrivateGroup = 2,
+    HiddenGroup = 3
 }
 public enum PositionTypes : int
 {

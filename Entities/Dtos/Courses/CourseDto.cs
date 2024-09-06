@@ -41,5 +41,6 @@ public class CourseDto : BaseFilterDto
     public string? materialsincluded { get; set; }
     public string? requirementsinstructions { get; set; }
     public bool? allowQA { get; set; }
+    public byte? courseStatusId { get; set; } = 0;
 
 }

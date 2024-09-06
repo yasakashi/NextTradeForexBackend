@@ -1,6 +1,7 @@
 ﻿using Base.Common.Enums;
 using DataLayers;
 using DocumentFormat.OpenXml.InkML;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Entities.DBEntities;
 using Entities.Dtos;
 using Microsoft.EntityFrameworkCore;
@@ -33,22 +34,61 @@ namespace NextTradeAPIs.Services
 
             try
             {
-                User user = await _Context.Users.Where(x => x.Username == model.reciverusername).SingleOrDefaultAsync();
-                SiteMessage data = new SiteMessage()
+                if (model.forallluser != null && (bool)model.forallluser)
                 {
-                    Id = Guid.NewGuid(),
-                    registerdatetime = DateTime.Now,
-                    isvisited = false,
-                    reciveruserId = user.UserId,
-                    creatoruserId = userlogin.userid,
-                    messagebody = model.messagebody,
-                    messagetitle = model.messagetitle
-                };
+                    if (model.communitygroupId != null)
+                    {
+                        List<long> userIds = await _Context.CommunityGroupMembers.Where(x=>x.communitygroupId == (Guid)model.communitygroupId).Select(x => x.userId).ToListAsync();
+                        foreach (long userId in userIds)
+                        {
+                            _Context.SiteMessages.Add(new SiteMessage()
+                            {
+                                Id = Guid.NewGuid(),
+                                registerdatetime = DateTime.Now,
+                                isvisited = false,
+                                reciveruserId = userId,
+                                creatoruserId = userlogin.userid,
+                                messagebody = model.messagebody,
+                                messagetitle = model.messagetitle
+                            });
+                        }
+                    }
+                    else
+                    {
+                       List<long> userIds = await _Context.Users.Select(x=>x.UserId).ToListAsync();
+                        foreach (long userId in userIds)
+                        {
+                            _Context.SiteMessages.Add(new SiteMessage()
+                            {
+                                Id = Guid.NewGuid(),
+                                registerdatetime = DateTime.Now,
+                                isvisited = false,
+                                reciveruserId = userId,
+                                creatoruserId = userlogin.userid,
+                                messagebody = model.messagebody,
+                                messagetitle = model.messagetitle
+                            });
+                        }
+                    }
+                }
+                else
+                {
+                    User user = await _Context.Users.Where(x => x.Username == model.reciverusername).SingleOrDefaultAsync();
+                    SiteMessage data = new SiteMessage()
+                    {
+                        Id = Guid.NewGuid(),
+                        registerdatetime = DateTime.Now,
+                        isvisited = false,
+                        reciveruserId = user.UserId,
+                        creatoruserId = userlogin.userid,
+                        messagebody = model.messagebody,
+                        messagetitle = model.messagetitle
+                    };
 
-                _Context.SiteMessages.Add(data);
+                    _Context.SiteMessages.Add(data);
+                }
                 await _Context.SaveChangesAsync();
 
-                model.Id = data.Id;
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
             }
@@ -124,7 +164,11 @@ namespace NextTradeAPIs.Services
 
                 int totaldata = query.Count();
                 if (totaldata <= 0) totaldata = 1;
+                decimal pagecountd = ((decimal)totaldata / (decimal)PageRowCount);
                 int pagecount = (totaldata / PageRowCount);
+                pagecount = (pagecount <= 0) ? 1 : pagecount;
+                if (Math.Floor(pagecountd) > 0)
+                    pagecount++;
 
 
                 List<SiteMessageDto> datas = await query
@@ -147,7 +191,7 @@ namespace NextTradeAPIs.Services
                                     pageindex = pageIndex,
                                     pagecount = pagecount
                                 }).ToListAsync();
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas, Meta = new { pagecount = pagecount } };
             }
             catch (Exception ex)
             {

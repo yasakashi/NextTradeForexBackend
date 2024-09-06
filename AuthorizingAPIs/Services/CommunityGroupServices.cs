@@ -73,9 +73,7 @@ namespace NextTradeAPIs.Services
                 CommunityGroup data = await _Context.CommunityGroups.FindAsync(model.Id);
                 if (data != null)
                 {
-                    data.groupimage = model.coverimage;
-
-                    data.grouptypeId = (model.grouptypeId == 0) ? model.grouptypeId : (int)GroupTypes.PublicGroup;
+                    data.grouptypeId = (model.grouptypeId != 0 && model.grouptypeId!= null) ? model.grouptypeId : (int)GroupTypes.PublicGroup;
                     data.description = model.description;
                     data.title = model.title;
 
@@ -160,7 +158,11 @@ namespace NextTradeAPIs.Services
 
                 int totaldata = query.Count();
                 if (totaldata <= 0) totaldata = 1;
+                decimal pagecountd = ((decimal)totaldata / (decimal)PageRowCount);
                 int pagecount = (totaldata / PageRowCount);
+                pagecount = (pagecount <= 0) ? 1 : pagecount;
+                if (Math.Floor(pagecountd) > 0)
+                    pagecount++;
 
                 List<CommunityGroupDto> datas = await query
                                 .Skip((pageIndex - 1) * PageRowCount)
@@ -188,7 +190,7 @@ namespace NextTradeAPIs.Services
                         data.messagecount = await _Context.ForumMessages.Where(x => x.communitygroupid == data.Id).CountAsync();
                     }
                 }
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas, Meta = new { pagecount = pagecount } };
             }
             catch (Exception ex)
             {
@@ -235,7 +237,11 @@ namespace NextTradeAPIs.Services
 
                 int totaldata = query.Count();
                 if (totaldata <= 0) totaldata = 1;
-                int pagecount = (totaldata / PageRowCount); 
+                decimal pagecountd = ((decimal)totaldata / (decimal)PageRowCount);
+                int pagecount = (totaldata / PageRowCount);
+                pagecount = (pagecount <= 0) ? 1 : pagecount;
+                if (Math.Floor(pagecountd) > 0)
+                    pagecount++;
 
                 List <CommunityGroupDto> datas = await query.Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount)
                                 .Include(x => x.grouptype)
@@ -261,7 +267,7 @@ namespace NextTradeAPIs.Services
                         data.messagecount = await _Context.ForumMessages.Where(x => x.communitygroupid == data.Id).CountAsync();
                     }
                 }
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas, Meta = new { pagecount = pagecount } };
             }
             catch (Exception ex)
             {
@@ -293,7 +299,17 @@ namespace NextTradeAPIs.Services
                         {
                             _Context.CommunityGroupMembers.RemoveRange(communityGroupMember);
                         }
+
+                        List<ForumMessage> forumMessagelist = await _Context.ForumMessages.Where(x => x.communitygroupid == data.Id).ToListAsync();
+
+                        if (forumMessagelist != null && forumMessagelist.Count > 0)
+                        {
+                            _Context.ForumMessages.RemoveRange(forumMessagelist);
+                        }
+
                         _Context.CommunityGroups.Remove(data);
+
+                        await _Context.SaveChangesAsync();
 
                         try
                         {
@@ -304,7 +320,6 @@ namespace NextTradeAPIs.Services
                             }
                         }
                         catch { }
-                        await _Context.SaveChangesAsync();
                         message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data };
                     }
                     else
@@ -380,10 +395,10 @@ namespace NextTradeAPIs.Services
                 if (data != null)
                 {
                     data.coverimage = model.coverimage;
+                    _Context.CommunityGroups.Update(data);
+                    await _Context.SaveChangesAsync();
                 }
 
-                _Context.CommunityGroups.Update(data);
-                await _Context.SaveChangesAsync();
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request success", MessageData = model };
             }
@@ -397,16 +412,19 @@ namespace NextTradeAPIs.Services
         }
 
 
-        public async Task<SystemMessageModel> GetCommunityGroupImageURL(Guid Id)
+        public async Task<SystemMessageModel> GetCommunityGroupImageURL(Guid Id, string _sitePath)
         {
             SystemMessageModel message;
             StackTrace stackTrace = new StackTrace();
             string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
             long SerrvieCode = 129000;
-
+            string servicefilepathname = "communitygroups";
             try
             {
-                string _LogPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\communitygroups\\";
+
+                //string _LogPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\communitygroups\\";
+                string _LogPath = _sitePath + "\\"+ servicefilepathname + "\\";
+                
                 if (!Directory.Exists(_LogPath))
                 {
                     Directory.CreateDirectory(_LogPath);
@@ -414,28 +432,35 @@ namespace NextTradeAPIs.Services
 
                 CommunityGroup data = await _Context.CommunityGroups.FindAsync(Id);
 
+                if(data == null )
+                    return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = null };
+
                 _LogPath += data.Id.ToString().Replace("-", "") + "\\";
                 if (!Directory.Exists(_LogPath))
                 {
                     Directory.CreateDirectory(_LogPath);
                 }
 
-                string filePath = AppDomain.CurrentDomain.BaseDirectory + "/communitygroups/" + data.Id.ToString().Replace("-", "") + "/" + "groupimage.png";
-                Uri uri = new Uri("/communitygroups/" + data.Id.ToString().Replace("-", "") + "/" + "groupimage.png", UriKind.Relative);
-
+                //string filePath = AppDomain.CurrentDomain.BaseDirectory + "/communitygroups/" + data.Id.ToString().Replace("-", "") + "/" + "groupimage.png";
+                Uri uri = new Uri("/"+ servicefilepathname + "/" + data.Id.ToString().Replace("-", "") + "/" + "groupimage.png", UriKind.Relative);
+                //VirtualPathUtility.ToAbsolute("~/");
                 if (data != null && data.groupimage != null)
                 {
                     _LogPath += "groupimage.png";
                     if (!File.Exists(_LogPath))
                     {
                         File.WriteAllBytes(_LogPath, data.groupimage);
-
+                    }
+                    else
+                    {
+                        File.Delete(_LogPath);
+                        File.WriteAllBytes(_LogPath, data.groupimage);
                     }
                     return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = uri.ToString() };
                 }
                 else
                 {
-                    return null;
+                    return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = null };
                 }
             }
             catch (Exception ex)
@@ -447,7 +472,7 @@ namespace NextTradeAPIs.Services
             return null;
         }
 
-        public async Task<SystemMessageModel> GetCommunityCoverImageURL(Guid Id)
+        public async Task<SystemMessageModel> GetCommunityCoverImageURL(Guid Id, string _sitePath)
         {
             SystemMessageModel message;
             StackTrace stackTrace = new StackTrace();
@@ -456,7 +481,7 @@ namespace NextTradeAPIs.Services
 
             try
             {
-                string _LogPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\communitygroups\\";
+                string _LogPath = _sitePath + "\\communitygroups\\";
                 if (!Directory.Exists(_LogPath))
                 {
                     Directory.CreateDirectory(_LogPath);
@@ -470,7 +495,6 @@ namespace NextTradeAPIs.Services
                     Directory.CreateDirectory(_LogPath);
                 }
 
-                string filePath = AppDomain.CurrentDomain.BaseDirectory + "/communitygroups/" + data.Id.ToString().Replace("-", "") + "/" + "coverimage.png";
                 Uri uri = new Uri("/communitygroups/" + data.Id.ToString().Replace("-", "") + "/" + "coverimage.png", UriKind.Relative);
 
                 if (data != null && data.coverimage != null)
@@ -480,6 +504,11 @@ namespace NextTradeAPIs.Services
                     {
                         File.WriteAllBytes(_LogPath, data.coverimage);
 
+                    }
+                    else
+                    {
+                        File.Delete(_LogPath);
+                        File.WriteAllBytes(_LogPath, data.coverimage);
                     }
                     return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = uri.ToString() };
                 }
@@ -570,13 +599,60 @@ namespace NextTradeAPIs.Services
                     if ((userlogin.UserTypeId == (long)UserTypes.Admin) || (userlogin.UserTypeId == (long)UserTypes.SuperAdmin))
                     {
                         data.isaccepted = true;
+                        _Context.CommunityGroupMembers.Update(data);
+                    }
+                    else
+                    {
+                        List<CommunityGroupMember> groupadmins = await _Context.CommunityGroupMembers.Where(x => x.communitygroupId == data.communitygroupId && x.userId == userlogin.UserTypeId).ToListAsync();
+                        CommunityGroup ccproup = await _Context.CommunityGroups.Where(x => x.Id == data.communitygroupId && x.owneruserid == userlogin.userid).SingleOrDefaultAsync();
+                        if (ccproup != null || (groupadmins!= null&& groupadmins.Count>0))
+                        {
+                            data.isaccepted = true;
+                            _Context.CommunityGroupMembers.Update(data);
+                        }
+                        else
+                        return new SystemMessageModel() { MessageCode = -403, MessageDescription = "you are not allowed to accept", MessageData = model };
+                    }
+                    await _Context.SaveChangesAsync();
+                    message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request success", MessageData = model };
+                }
+                else
+                {
+                    message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "this user not requested", MessageData = model };
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<SystemMessageModel> ChangeCommunityGroupMemberType(CommunityGroupMemberDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 130000;
+
+            try
+            {
+                CommunityGroupMember data = await _Context.CommunityGroupMembers.Where(x => x.communitygroupId == model.communitygroupId && x.userId == model.userId).SingleOrDefaultAsync();
+                if (data != null)
+                {
+                    if ((userlogin.UserTypeId == (long)UserTypes.Admin) || (userlogin.UserTypeId == (long)UserTypes.SuperAdmin))
+                    {
+                        data.isadmin = (bool)model.isadmin;
                     }
                     else
                     {
                         CommunityGroup ccproup = await _Context.CommunityGroups.Where(x => x.Id == data.communitygroupId && x.owneruserid == userlogin.userid).SingleOrDefaultAsync();
-                        if (ccproup != null)
+                        if (ccproup != null )
                         {
-                            data.isaccepted = true;
+                            data.isadmin = (bool)model.isadmin;
                         }
                     }
                     _Context.CommunityGroupMembers.Update(data);
@@ -619,7 +695,11 @@ namespace NextTradeAPIs.Services
 
                 int totaldata = query.Count();
                 if (totaldata <= 0) totaldata = 1;
+                decimal pagecountd = ((decimal)totaldata / (decimal)PageRowCount);
                 int pagecount = (totaldata / PageRowCount);
+                pagecount = (pagecount <= 0) ? 1 : pagecount;
+                if (Math.Floor(pagecountd) > 0)
+                    pagecount++;
 
                 List<CommunityGroupMemberDto> datas = await query.Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount)
                                                     .Include(x => x.communitygroup)
@@ -634,10 +714,11 @@ namespace NextTradeAPIs.Services
                                                userId = x.userId,
                                                username = x.user.Username,
                                                communitygrouptitle = x.communitygroup.title,
+                                               isadmin = x.isadmin,
                                                pagecount = pagecount
                                            }).ToListAsync();
 
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas, Meta = new { pagecount = pagecount } };
             }
             catch (Exception ex)
             {
@@ -657,7 +738,9 @@ namespace NextTradeAPIs.Services
 
             try
             {
-                long requesteduserid = (long)model.userId;
+                long? requesteduserid = null;
+                if (model.userId != null)
+                    requesteduserid = model.userId;
                 if (requesteduserid == null)
                     requesteduserid = userlogin.userid;
                 CommunityGroup group = await _Context.CommunityGroups.FindAsync(model.communitygroupId);
@@ -671,7 +754,7 @@ namespace NextTradeAPIs.Services
                     {
                         Id = Guid.NewGuid(),
                         communitygroupId = model.communitygroupId,
-                        userId = requesteduserid,
+                        userId =(long) requesteduserid,
                         requestdatetime = DateTime.Now,
                         isaccepted = false
                     };
@@ -794,7 +877,11 @@ namespace NextTradeAPIs.Services
 
                 int totaldata = query.Count();
                 if (totaldata <= 0) totaldata = 1;
+                decimal pagecountd = ((decimal)totaldata / (decimal)PageRowCount);
                 int pagecount = (totaldata / PageRowCount);
+                pagecount = (pagecount <= 0) ? 1 : pagecount;
+                if (Math.Floor(pagecountd) > 0)
+                    pagecount++;
 
                 List<CommunityGroupDto> datas = await query.Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount)
                                 .Include(x => x.grouptype)
@@ -824,7 +911,66 @@ namespace NextTradeAPIs.Services
                         data.messagecount = await _Context.ForumMessages.Where(x => x.communitygroupid == data.Id).CountAsync();
                     }
                 }
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas, Meta = new { pagecount = pagecount } };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+        public async Task<SystemMessageModel> GetCommunityGroupMemberWithStatus(CommunityGroupMemberDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                IQueryable<CommunityGroupMember> query = _Context.CommunityGroupMembers;
+
+                if (model.communitygroupId != null)
+                    query = query.Where(x => x.communitygroupId == model.communitygroupId);
+                if (model.isaccepted != null)
+                    query = query.Where(x => x.isaccepted == model.isaccepted);
+
+                int pageIndex = (model.pageindex == null || model.pageindex == 0) ? 1 : (int)model.pageindex;
+                int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 10 : (int)model.rowcount;
+
+                int totaldata = query.Count();
+                if (totaldata <= 0) totaldata = 1;
+                decimal pagecountd = ((decimal)totaldata / (decimal)PageRowCount);
+                int pagecount = (totaldata / PageRowCount);
+                pagecount = (pagecount <= 0) ? 1 : pagecount;
+                if (Math.Floor(pagecountd) > 0)
+                    pagecount++;
+
+                List<CommunityGroupMemberDto> datas = await query.Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount)
+                                                    .Include(x => x.communitygroup)
+                                                    .Include(x => x.user)
+                                           .Select(x => new CommunityGroupMemberDto()
+                                           {
+                                               accepteddatetime = x.accepteddatetime,
+                                               communitygroupId = x.communitygroupId,
+                                               Id = x.Id,
+                                               isaccepted = x.isaccepted,
+                                               requestdatetime = x.requestdatetime,
+                                               userId = x.userId,
+                                               username = x.user.Username,
+                                               communitygrouptitle = x.communitygroup.title,
+                                               isadmin = x.isadmin,
+                                               isonline = false,
+                                               pagecount = pagecount
+                                           }).ToListAsync();
+                foreach (CommunityGroupMemberDto data in datas)
+                {
+                    data.isonline = await _LogContext.LoginLogs.Where(x => x.UserId == data.userId && x.LogoutDate == null).AnyAsync();
+                }
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas, Meta = new { pagecount = pagecount } };
             }
             catch (Exception ex)
             {

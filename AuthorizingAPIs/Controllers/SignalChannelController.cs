@@ -24,17 +24,19 @@ namespace NextTradeAPIs.Controllers
         UserServices _userServices;
         SystemLogServices _systemLogServices;
         BlockedIPServices _blockedIPService;
-        UserTypeServices _userTypeService;
+        CategoriesServices _userTypeService;
         CommunityGroupServices _communityGroupService;
         SignalChannelServices _signalChannelService;
+        IWebHostEnvironment _webHostEnvironment;
 
         public SignalChannelController(AuthorizationService authorizationService,
                                        IHttpContextAccessor httpContextAccessor,
                                        SystemLogServices systemLogServices,
                                        BlockedIPServices blockedIPServices,
-                                       UserTypeServices userTypeServices,
+                                       CategoriesServices userTypeServices,
                                        CommunityGroupServices communityGroupServices,
                                        SignalChannelServices signalChannelServices,
+                                       IWebHostEnvironment env,
                                        UserServices userServices)
         {
             _authorizationService = authorizationService;
@@ -45,6 +47,7 @@ namespace NextTradeAPIs.Controllers
             _userTypeService = userTypeServices;
             _communityGroupService = communityGroupServices;
             _signalChannelService = signalChannelServices;
+            _webHostEnvironment = env;
         }
 
 
@@ -503,10 +506,10 @@ namespace NextTradeAPIs.Controllers
 
                 UserModel userlogin = message.MessageData as UserModel;
 
-                if (model.coverPicture != null)
+                if (model.photofile != null)
                 {
 
-                    if (model.coverPicture.FileName == null || model.coverPicture.FileName.Length == 0)
+                    if (model.photofile.FileName == null || model.photofile.FileName.Length == 0)
                     {
                         return Content("File not selected");
                     }
@@ -518,7 +521,7 @@ namespace NextTradeAPIs.Controllers
 
                     using (var ms = new MemoryStream())
                     {
-                        model.coverPicture.CopyTo(ms);
+                        model.photofile.CopyTo(ms);
                         modeldate.attachment = ms.ToArray();
                     }
                     message = await _signalChannelService.AddImageToSigal(modeldate, userlogin, processId, clientip, hosturl);
@@ -561,7 +564,8 @@ namespace NextTradeAPIs.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetImageURL(Guid id)
         {
-            var message = await _signalChannelService.GetSignalImageURL(id);
+            var sitePath = _webHostEnvironment.WebRootPath;
+            var message = await _signalChannelService.GetSignalImageURL(id, sitePath);
             if (message == null)
             {
                 return NotFound();

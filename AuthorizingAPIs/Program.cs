@@ -149,17 +149,22 @@ builder.Services.AddTransient<SystemLogServices, SystemLogServices>();
 builder.Services.AddTransient<PeopleServices, PeopleServices>();
 builder.Services.AddTransient<BlockedIPServices, BlockedIPServices>();
 
-builder.Services.AddTransient<UserTypeServices, UserTypeServices>();
+builder.Services.AddTransient<CategoriesServices, CategoriesServices>();
 
 builder.Services.AddTransient<ForumsServices, ForumsServices>();
 builder.Services.AddTransient<CommunityGroupServices, CommunityGroupServices>();
 builder.Services.AddTransient<SignalChannelServices, SignalChannelServices>();
 builder.Services.AddTransient<CourseServices, CourseServices>();
+builder.Services.AddTransient<UserTypeServices, UserTypeServices>();
+
 
 builder.Services.AddTransient<TicketServices, TicketServices>();
 builder.Services.AddTransient<WalletServices, WalletServices>();
 
 builder.Services.AddTransient<SiteMessageServices, SiteMessageServices>();
+builder.Services.AddTransient<CommunityGroupGalleryServices, CommunityGroupGalleryServices>();
+builder.Services.AddTransient<CommunityGroupsMessageServices, CommunityGroupsMessageServices>();
+
 
 #endregion
 

@@ -23,15 +23,17 @@ namespace NextTradeAPIs.Controllers
         UserServices _userServices;
         SystemLogServices _systemLogServices;
         BlockedIPServices _blockedIPService;
-        UserTypeServices _userTypeService;
+        CategoriesServices _userTypeService;
         CommunityGroupServices _communityGroupService;
+        IWebHostEnvironment _webHostEnvironment;
 
         public CommunityGroupControllerController(AuthorizationService authorizationService,
                                        IHttpContextAccessor httpContextAccessor,
                                        SystemLogServices systemLogServices,
                                        BlockedIPServices blockedIPServices,
-                                       UserTypeServices userTypeServices,
+                                       CategoriesServices userTypeServices,
                                        CommunityGroupServices communityGroupServices,
+                                       IWebHostEnvironment env,
                                        UserServices userServices)
         {
             _authorizationService = authorizationService;
@@ -41,6 +43,7 @@ namespace NextTradeAPIs.Controllers
             _blockedIPService = blockedIPServices;
             _userTypeService = userTypeServices;
             _communityGroupService = communityGroupServices;
+            _webHostEnvironment = env;
         }
 
         [HttpPost]
@@ -498,10 +501,10 @@ namespace NextTradeAPIs.Controllers
 
                 UserModel userlogin = message.MessageData as UserModel;
 
-                if (model.coverPicture != null)
+                if (model.photofile != null)
                 {
 
-                    if (model.coverPicture.FileName == null || model.coverPicture.FileName.Length == 0)
+                    if (model.photofile.FileName == null || model.photofile.FileName.Length == 0)
                     {
                         return Content("File not selected");
                     }
@@ -513,7 +516,7 @@ namespace NextTradeAPIs.Controllers
 
                     using (var ms = new MemoryStream())
                     {
-                        model.coverPicture.CopyTo(ms);
+                        model.photofile.CopyTo(ms);
                         modeldate.coverimage = ms.ToArray();
                     }
                     message = await _communityGroupService.UpdateCommunityGroupImage(modeldate, userlogin, processId, clientip, hosturl);
@@ -588,10 +591,10 @@ namespace NextTradeAPIs.Controllers
 
                 UserModel userlogin = message.MessageData as UserModel;
 
-                if (model.coverPicture != null)
+                if (model.photofile != null)
                 {
 
-                    if (model.coverPicture.FileName == null || model.coverPicture.FileName.Length == 0)
+                    if (model.photofile.FileName == null || model.photofile.FileName.Length == 0)
                     {
                         return Content("File not selected");
                     }
@@ -603,7 +606,7 @@ namespace NextTradeAPIs.Controllers
 
                     using (var ms = new MemoryStream())
                     {
-                        model.coverPicture.CopyTo(ms);
+                        model.photofile.CopyTo(ms);
                         modeldate.coverimage = ms.ToArray();
                     }
                     message = await _communityGroupService.UpdateCommunityCoverImage(modeldate, userlogin, processId, clientip, hosturl);
@@ -647,13 +650,14 @@ namespace NextTradeAPIs.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetCoverImageURL(Guid id)
         {
-                var message = await _communityGroupService.GetCommunityCoverImageURL(id);
-                if (message == null)
-                {
-                    return NotFound();
-                }
+            var sitePath = _webHostEnvironment.WebRootPath;
+            var message = await _communityGroupService.GetCommunityCoverImageURL(id, sitePath);
+            if (message == null)
+            {
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "not find", MessageData = "" };
+            }
 
-                return Ok(message);
+            return Ok(message);
         }
 
 
@@ -678,13 +682,14 @@ namespace NextTradeAPIs.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetImageURL(Guid id)
         {
-            var message = await _communityGroupService.GetCommunityGroupImageURL(id);
+            var sitePath = _webHostEnvironment.WebRootPath;
+            var message = await _communityGroupService.GetCommunityGroupImageURL(id, sitePath);
             if (message == null)
             {
-                return NotFound();
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "not find", MessageData = "" };
             }
 
-            return Ok(message); 
+            return Ok(message);
         }
 
 
@@ -823,6 +828,73 @@ namespace NextTradeAPIs.Controllers
             }
         }
 
+
+        [HttpPost]
+        [Route("/api/changecommunitygroupmembertype")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ChangeCommunityGroupMemberType(CommunityGroupMemberDto model)
+        {
+            StackTrace stackTrace = new StackTrace();
+            SystemMessageModel message;
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string authHeader = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            UserModel user = null;
+            LoginLog loginLog = null;
+
+            long ApiCode = 2000;
+
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                message = await _authorizationService.CheckToken(_bearer_token, processId);
+
+                if (message.MessageCode < 0)
+                    return Unauthorized(message);
+
+                UserModel userlogin = message.MessageData as UserModel;
+
+                message = await _communityGroupService.ChangeCommunityGroupMemberType(model, userlogin, processId, clientip, hosturl);
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                string log = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, LogTypes.TokenError);
+                return Unauthorized();
+                //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
+            }
+        }
+
         [HttpPost]
         [Route("/api/removecommunitygroupmember")]
         [AllowAnonymous]
@@ -941,6 +1013,74 @@ namespace NextTradeAPIs.Controllers
                 UserModel userlogin = message.MessageData as UserModel;
 
                 message = await _communityGroupService.GetCommunityGroupMember(model, userlogin, processId, clientip, hosturl);
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                string log = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, LogTypes.TokenError);
+                return Unauthorized();
+                //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("/api/getcommunitygroupmemberwithstatus")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetCommunityGroupMemberWithStatus(CommunityGroupMemberDto model)
+        {
+            StackTrace stackTrace = new StackTrace();
+            SystemMessageModel message;
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string authHeader = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            UserModel user = null;
+            LoginLog loginLog = null;
+
+            long ApiCode = 2000;
+
+            try
+            {
+                //CommunityGroupMemberDto model = new CommunityGroupMemberDto() { communitygroupId = new Guid("05ff7d38-07f8-44e0-987b-a56d2b0d550f"), userId = 12 };
+
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                message = await _authorizationService.CheckToken(_bearer_token, processId);
+
+                if (message.MessageCode < 0)
+                    return Unauthorized(message);
+
+                UserModel userlogin = message.MessageData as UserModel;
+
+                message = await _communityGroupService.GetCommunityGroupMemberWithStatus(model, userlogin, processId, clientip, hosturl);
 
                 if (message.MessageCode < 0)
                     return BadRequest(message);

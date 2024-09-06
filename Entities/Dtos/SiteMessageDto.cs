@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Entities.Dtos
 {
-    public class SiteMessageDto:BaseFilterDto
+    public class SiteMessageDto : BaseFilterDto
     {
         public Guid? Id { get; set; }
         public string? messagetitle { get; set; }
@@ -20,6 +20,8 @@ namespace Entities.Dtos
         public string? creatorusername { get; set; }
         public bool? isvisited { get; set; }
         public string? reciverusername { get; set; }
+        public bool? forallluser { get; set; }
+        public Guid? communitygroupId { get; set; }
 
     }
 }

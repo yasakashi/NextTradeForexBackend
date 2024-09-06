@@ -286,6 +286,20 @@ namespace NextTradeAPIs.Services
 
                 model.userid = data.UserId;
 
+                foreach (int financialinstrumentid in (List<int>)model.financialinstrumentIds)
+                {
+                    _Context.UserFinancialInstruments.Add(new UserFinancialInstrument() { financialinstrumentId = financialinstrumentid, userId = data.UserId });
+                }
+                foreach (int trainingmethodid in (List<int>)model.trainingmethodIds)
+                {
+                    _Context.UserTrainingmethods.Add(new UserTrainingmethod() { trainingmethodId = trainingmethodid, userId = data.UserId });
+                }
+                foreach (int targettrainerid in (List<int>)model.targettrainerIds)
+                {
+                    _Context.UserTargetTrainers.Add(new UserTargetTrainer { targettrainerId = targettrainerid, userId = data.UserId });
+                }
+                await _Context.SaveChangesAsync();
+
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
             }
             catch (Exception ex)
@@ -576,7 +590,11 @@ namespace NextTradeAPIs.Services
 
                 int totaldata = query.Count();
                 if (totaldata <= 0) totaldata = 1;
+                decimal pagecountd = ((decimal)totaldata / (decimal)PageRowCount);
                 int pagecount = (totaldata / PageRowCount);
+                pagecount = (pagecount <= 0) ? 1 : pagecount;
+                if (Math.Floor(pagecountd) > 0)
+                    pagecount++;
 
                 datas = await query.Select(x => new UserModel()
                 {
@@ -590,7 +608,7 @@ namespace NextTradeAPIs.Services
                     pagecount = pagecount
                 }).ToListAsync();
 
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas, Meta = new { pagecount = pagecount } };
             }
             catch (Exception ex)
             {
@@ -681,7 +699,7 @@ namespace NextTradeAPIs.Services
 
                         List<TargetTrainerDto> targettrainers = null;
                         if (!string.IsNullOrEmpty(user.targettrainerIds))
-                            targettrainers = await _Context.TrainingMethods.Where(x => user.targettrainerIds.Contains(x.Id.ToString())).Select(x => new TargetTrainerDto() { Id = x.Id, name = x.name }).ToListAsync();
+                            targettrainers = await _Context.UserTargetTrainers.Where(x => x.userId == user.UserId).Include(x => x.targettrainer).Select(x => new TargetTrainerDto() { Id = x.targettrainerId, name = x.targettrainer.name }).ToListAsync();
                         userModel.targettrainers = targettrainers;
                     }
                     else
@@ -1201,7 +1219,7 @@ namespace NextTradeAPIs.Services
                 string querystrnig = @"EXECUTE dbo.spGetUserReferalList @Username=" + filter.username;
 
 
-                datas = await _Context.Users.FromSql(FormattableStringFactory.Create( querystrnig)).Select(x => new UserModel()
+                datas = await _Context.Users.FromSql(FormattableStringFactory.Create(querystrnig)).Select(x => new UserModel()
                 {
                     userid = x.UserId,
                     username = x.Username,
@@ -1219,7 +1237,7 @@ namespace NextTradeAPIs.Services
             return message;
         }
 
-        public async Task<SystemMessageModel> ChangeUserAccountAtivationStatus(string username,bool accountstatus, string processId, string clientip = "")
+        public async Task<SystemMessageModel> ChangeUserAccountAtivationStatus(string username, bool accountstatus, string processId, string clientip = "")
         {
             StackTrace stackTrace = new StackTrace();
             string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
@@ -1240,7 +1258,7 @@ namespace NextTradeAPIs.Services
                     await _Context.SaveChangesAsync();
 
 
-                    return new SystemMessageModel() { MessageCode = 1, MessageDescription = "Request Compeleted Successfully", MessageData = new { IsActive  = accountstatus } };
+                    return new SystemMessageModel() { MessageCode = 1, MessageDescription = "Request Compeleted Successfully", MessageData = new { IsActive = accountstatus } };
 
                 }
             }
@@ -1252,6 +1270,134 @@ namespace NextTradeAPIs.Services
                 return message;
 
             }
+        }
+
+        /// <summary>
+        /// لیست  کاربران استاد
+        /// </summary>
+        /// <param name="filter">اطلاعات دریافت کاربران</param>
+        /// <param name="password">رمز عبور</param>
+        /// <returns></returns>
+        public async Task<SystemMessageModel> GetUserInstructors(UserPartnerSearchDto filter, UserModel userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            List<UserPersonModel> datas = null;
+            long SerrvieCode = 120000;
+
+            try
+            {
+                IQueryable<User> query = _Context.Users;
+                IQueryable<Person> queryperson = _Context.People;
+                bool HasPeronFilter = false;
+
+                if (!string.IsNullOrEmpty(filter.username))
+                    query = query.Where(x => x.Username == filter.username);
+
+                if (!string.IsNullOrEmpty(filter.fname))
+                    query = query.Where(x => x.Fname.StartsWith(filter.fname));
+
+                if (!string.IsNullOrEmpty(filter.lname))
+                    query = query.Where(x => x.Lname.StartsWith(filter.lname));
+
+                if (!string.IsNullOrEmpty(filter.name))
+                    query = query.Where(x => x.Lname.Contains(filter.name)|| x.Fname.Contains(filter.name));
+
+
+                if (filter.countryId != null)
+                {
+                    queryperson = queryperson.Where(x => x.countryId == filter.countryId);
+                    HasPeronFilter = true;
+                }
+                if (filter.stateId != null)
+                {
+                    queryperson = queryperson.Where(x => x.stateId == filter.stateId);
+                    HasPeronFilter = true;
+                }
+                if (filter.cityId != null)
+                {
+                    queryperson = queryperson.Where(x => x.cityId == filter.cityId);
+                    HasPeronFilter = true;
+                }
+
+                if (HasPeronFilter)
+                {
+                    List<long> personIds = await queryperson.Select(x => x.PersonId).ToListAsync();
+                    if (personIds != null && personIds.Count > 0)
+                        query = query.Where(x => personIds.Contains((long)x.PersonId));
+                }
+
+
+                if (filter.partnertypeIds != null)
+                {
+                    query = query.Where(x => filter.partnertypeIds.Contains((int)x.partnertypeId));
+                }
+                if (filter.financialinstrumentIds != null)
+                {
+                    List<long> financialinstrumentUserIds = await _Context.UserFinancialInstruments.Where(x => filter.financialinstrumentIds.Contains(x.financialinstrumentId)).Select(x => x.userId).ToListAsync();
+                    if (financialinstrumentUserIds != null && financialinstrumentUserIds.Count > 0)
+                        query = query.Where(x => financialinstrumentUserIds.Contains(x.UserId));
+
+                }
+                if (filter.targettrainerIds != null)
+                {
+                    List<long> targettrainerUserIds = await _Context.UserTargetTrainers.Where(x => filter.targettrainerIds.Contains(x.targettrainerId)).Select(x => x.userId).ToListAsync();
+                    if (targettrainerUserIds != null && targettrainerUserIds.Count > 0)
+                        query = query.Where(x => targettrainerUserIds.Contains(x.UserId));
+                }
+                if (filter.trainingmethodIds != null)
+                {
+                    List<long> trainingmethodUserIds = await _Context.UserTrainingmethods.Where(x => filter.trainingmethodIds.Contains(x.trainingmethodId)).Select(x => x.userId).ToListAsync();
+                    if (trainingmethodUserIds != null && trainingmethodUserIds.Count > 0)
+                        query = query.Where(x => trainingmethodUserIds.Contains(x.UserId));
+                }
+
+                query = query.Where(x => x.UserTypeId == (long)UserTypes.Instructor);
+
+                int pageIndex = (filter.pageindex == null || filter.pageindex == 0) ? 1 : (int)filter.pageindex;
+                int PageRowCount = (filter.rowcount == null || filter.rowcount == 0) ? 50 : (int)filter.rowcount;
+
+                int totaldata = query.Count();
+                if (totaldata <= 0) totaldata = 1;
+                decimal pagecountd = ((decimal)totaldata / (decimal)PageRowCount);
+                int pagecount = (totaldata / PageRowCount);
+                pagecount = (pagecount <= 0) ? 1 : pagecount;
+                if (Math.Floor(pagecountd) > 0)
+                    pagecount++;
+
+                datas = await query
+                                .Include(x => x.Person)
+                                .Include(x => x.Person.city)
+                                .Select(x => new UserPersonModel()
+                                {
+                                    userid = x.UserId,
+                                    username = x.Username,
+                                    fname = x.Fname,
+                                    lname = x.Lname,
+                                    partnertypeId = x.partnertypeId,
+                                    address = x.Person.Address,
+                                    BirthDate = x.Person.BirthDate,
+                                    cityId = x.Person.cityId,
+                                    cityname = x.Person.city.name
+                                }).ToListAsync();
+
+                foreach (UserPersonModel data in datas)
+                {
+                    data.trainingmethods = await _Context.UserTrainingmethods.Where(x => x.userId == data.userid).Include(x => x.trainingmethod).Select(x => new TrainingMethodDto() { Id = x.trainingmethodId, name = x.trainingmethod.name }).ToListAsync();
+                    data.targettrainers = await _Context.UserTargetTrainers.Where(x => x.userId == data.userid).Include(x => x.targettrainer).Select(x => new TargetTrainerDto() { Id = x.targettrainerId, name = x.targettrainer.name }).ToListAsync();
+                    data.financialinstruments = await _Context.UserFinancialInstruments.Where(x => x.userId == data.userid).Include(x => x.financialinstrument).Select(x => new FinancialInstrumentDto() { Id = x.financialinstrumentId, name = x.financialinstrument.name }).ToListAsync();
+                }
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas , Meta=new { pagecount = pagecount} };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
         }
 
     }

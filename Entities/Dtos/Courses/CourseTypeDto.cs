@@ -8,6 +8,6 @@ namespace Entities.Dtos;
 
 public class CourseTypeDto
 {
-    public int? Id { get; set; }
+    public int? Id { get; set; }  
     public string? name { get; set; }
 }

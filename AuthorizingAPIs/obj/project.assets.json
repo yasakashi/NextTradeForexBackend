@@ -2649,18 +2649,15 @@
           "lib/net6.0/QRCoder.dll": {}
         }
       },
-      "RestSharp/110.2.0": {
+      "RestSharp/112.0.0": {
         "type": "package",
-        "dependencies": {
-          "System.Text.Json": "7.0.2"
-        },
         "compile": {
-          "lib/net7.0/RestSharp.dll": {
+          "lib/net8.0/RestSharp.dll": {
             "related": ".xml"
           }
         },
         "runtime": {
-          "lib/net7.0/RestSharp.dll": {
+          "lib/net8.0/RestSharp.dll": {
             "related": ".xml"
           }
         }
@@ -4686,7 +4683,7 @@
           "EntityFrameworkCore.DataEncryption": "4.0.0",
           "Microsoft.AspNetCore.Http.Features": "5.0.17",
           "Microsoft.EntityFrameworkCore": "8.0.5",
-          "RestSharp": "110.2.0"
+          "RestSharp": "112.0.0"
         },
         "compile": {
           "bin/placeholder/Entities.dll": {}
@@ -7799,22 +7796,27 @@
         "qrcoder.nuspec"
       ]
     },
-    "RestSharp/110.2.0": {
-      "sha512": "FXGw0IMcqY7yO/hzS9QrD3iNswNgb9UxJnxWmfOxmGs4kRlZWqdtBoGPLuhlbgsDzX1RFo4WKui8TGGKXWKalw==",
+    "RestSharp/112.0.0": {
+      "sha512": "vezxJ6DLk0eDx+rmXwVHQvJ3elZCJfnLd8neRrkA+IvTs9falf2CEAolsjI1YKkkHTOvG13xWTnHK7gU0zgaaw==",
       "type": "package",
-      "path": "restsharp/110.2.0",
+      "path": "restsharp/112.0.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
+        "README.md",
         "lib/net471/RestSharp.dll",
         "lib/net471/RestSharp.xml",
+        "lib/net48/RestSharp.dll",
+        "lib/net48/RestSharp.xml",
         "lib/net6.0/RestSharp.dll",
         "lib/net6.0/RestSharp.xml",
         "lib/net7.0/RestSharp.dll",
         "lib/net7.0/RestSharp.xml",
+        "lib/net8.0/RestSharp.dll",
+        "lib/net8.0/RestSharp.xml",
         "lib/netstandard2.0/RestSharp.dll",
         "lib/netstandard2.0/RestSharp.xml",
-        "restsharp.110.2.0.nupkg.sha512",
+        "restsharp.112.0.0.nupkg.sha512",
         "restsharp.nuspec",
         "restsharp.png"
       ]
@@ -12502,11 +12504,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\Programming\\NextTradeForex\\AuthorizingAPIs\\NextTradeAPIs.csproj",
+      "projectUniqueName": "E:\\Programming\\NextTradeForexBackend\\AuthorizingAPIs\\NextTradeAPIs.csproj",
       "projectName": "NextTradeAPIs",
-      "projectPath": "E:\\Programming\\NextTradeForex\\AuthorizingAPIs\\NextTradeAPIs.csproj",
+      "projectPath": "E:\\Programming\\NextTradeForexBackend\\AuthorizingAPIs\\NextTradeAPIs.csproj",
       "packagesPath": "C:\\Users\\Yasa\\.nuget\\packages\\",
-      "outputPath": "E:\\Programming\\NextTradeForex\\AuthorizingAPIs\\obj\\",
+      "outputPath": "E:\\Programming\\NextTradeForexBackend\\AuthorizingAPIs\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Yasa\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -12523,14 +12525,14 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "E:\\Programming\\NextTradeForex\\Base.Common\\Base.Common.csproj": {
-              "projectPath": "E:\\Programming\\NextTradeForex\\Base.Common\\Base.Common.csproj"
+            "E:\\Programming\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj": {
+              "projectPath": "E:\\Programming\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj"
             },
-            "E:\\Programming\\NextTradeForex\\DataLayers\\DataLayers.csproj": {
-              "projectPath": "E:\\Programming\\NextTradeForex\\DataLayers\\DataLayers.csproj"
+            "E:\\Programming\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj": {
+              "projectPath": "E:\\Programming\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj"
             },
-            "E:\\Programming\\NextTradeForex\\Entities\\Entities.csproj": {
-              "projectPath": "E:\\Programming\\NextTradeForex\\Entities\\Entities.csproj"
+            "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj": {
+              "projectPath": "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj"
             }
           }
         }
