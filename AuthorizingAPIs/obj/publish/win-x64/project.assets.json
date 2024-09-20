@@ -17952,11 +17952,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\Programming\\NextTradeForex\\AuthorizingAPIs\\NextTradeAPIs.csproj",
+      "projectUniqueName": "E:\\Programming\\NextTradeForexBackend\\AuthorizingAPIs\\NextTradeAPIs.csproj",
       "projectName": "NextTradeAPIs",
-      "projectPath": "E:\\Programming\\NextTradeForex\\AuthorizingAPIs\\NextTradeAPIs.csproj",
+      "projectPath": "E:\\Programming\\NextTradeForexBackend\\AuthorizingAPIs\\NextTradeAPIs.csproj",
       "packagesPath": "C:\\Users\\Yasa\\.nuget\\packages\\",
-      "outputPath": "E:\\Programming\\NextTradeForex\\AuthorizingAPIs\\obj\\publish\\win-x64\\",
+      "outputPath": "E:\\Programming\\NextTradeForexBackend\\AuthorizingAPIs\\obj\\publish\\win-x64\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Yasa\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -17973,14 +17973,14 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "E:\\Programming\\NextTradeForex\\Base.Common\\Base.Common.csproj": {
-              "projectPath": "E:\\Programming\\NextTradeForex\\Base.Common\\Base.Common.csproj"
+            "E:\\Programming\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj": {
+              "projectPath": "E:\\Programming\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj"
             },
-            "E:\\Programming\\NextTradeForex\\DataLayers\\DataLayers.csproj": {
-              "projectPath": "E:\\Programming\\NextTradeForex\\DataLayers\\DataLayers.csproj"
+            "E:\\Programming\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj": {
+              "projectPath": "E:\\Programming\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj"
             },
-            "E:\\Programming\\NextTradeForex\\Entities\\Entities.csproj": {
-              "projectPath": "E:\\Programming\\NextTradeForex\\Entities\\Entities.csproj"
+            "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj": {
+              "projectPath": "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj"
             }
           }
         }

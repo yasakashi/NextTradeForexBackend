@@ -38,7 +38,7 @@ public class CategoriesServices
         try
         {
             List<CategorisDto> datas = await _Context.Categories
-                                                     .Where(x => x.categorytypeid == 14)
+                                                     //.Where(x => x.categorytypeid == 14)
                                                      .Include(x=>x.categorytype)
                                                      .Select(x => new CategorisDto()
             {
@@ -93,7 +93,7 @@ public class CategoriesServices
             {
                 node.children = CreateTree(datalist, (long)node.Id);
             }
-            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas, Meta = new { totalitem = categories.Count() } };
         }
         catch (Exception ex)
         {

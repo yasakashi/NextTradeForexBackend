@@ -215,7 +215,7 @@ namespace NextTradeAPIs.Services
                                         pagecount = pagecount
                                     }).ToListAsync();
 
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data, Meta = new { pagecount = pagecount } };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data, Meta = new { pagecount = pagecount, totalitem = totaldata } };
             }
             catch (Exception ex)
             {

@@ -778,5 +778,493 @@ namespace NextTradeAPIs.Services
             }
             return message;
         }
+
+
+        #region course_topics
+        public async Task<SystemMessageModel> EditCourseTopic(CourseTopicDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                if (model.Id == null)
+                    return new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 101) * -1), MessageDescription = "Data is wrong", MessageData = model };
+                CourseTopic data = await _Context.CoursTopics.FindAsync(model.Id);
+
+                if (data == null)
+                    return new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 101) * -2), MessageDescription = "Data is wrong", MessageData = model };
+
+
+                data.name = model.name;
+
+
+                _Context.CoursTopics.Update(data);
+                await _Context.SaveChangesAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<SystemMessageModel> GetCourseTopics(CourseTopicDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+            try
+            {
+                IQueryable<CourseTopic> query = _Context.CoursTopics;
+
+                if (model.Id != null)
+                    query = query.Where(x => x.Id == model.Id);
+
+                if (model.courseId != null)
+                    query = query.Where(x => x.courseId == model.courseId);
+
+                int pageIndex = (model.pageindex == null || model.pageindex == 0) ? 1 : (int)model.pageindex;
+                int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 50 : (int)model.rowcount;
+
+
+                List<CourseTopicDto> data = await query.Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount)
+
+                                                  .Select(x => new CourseTopicDto()
+                                                  {
+                                                      Id = x.Id,
+                                                      courseId = x.courseId,
+                                                      name = x.name,
+                                                      pageindex = pageIndex,
+                                                      registerdatetime = x.registerdatetime,
+                                                      rowcount = PageRowCount
+                                                  }).ToListAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+
+
+            return message;
+        }
+
+
+        public async Task<SystemMessageModel> AddCourseTopic(CourseTopicDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                CourseTopic data = new CourseTopic()
+                {
+                    Id = Guid.NewGuid(),
+                    registerdatetime = DateTime.Now,
+                    name = model.name,
+                    courseId = (Guid)model.courseId,
+
+                };
+
+                model.Id = data.Id;
+                await _Context.CoursTopics.AddAsync(data);
+                await _Context.SaveChangesAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        #endregion
+
+
+        #region course_meets
+        public async Task<SystemMessageModel> EditCourseMeet(CourseMeetDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                if (model.Id == null)
+                    return new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 101) * -1), MessageDescription = "Data is wrong", MessageData = model };
+                CourseMeet data = await _Context.CourseMeets.FindAsync(model.Id);
+
+                if (data == null)
+                    return new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 101) * -2), MessageDescription = "Data is wrong", MessageData = model };
+
+
+                data.name = model.name;
+                data.duedatetime = model.duedatetime ?? DateTime.Now;
+
+                _Context.CourseMeets.Update(data);
+                await _Context.SaveChangesAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<SystemMessageModel> GetCourseMeets(CourseMeetDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+            try
+            {
+                IQueryable<CourseMeet> query = _Context.CourseMeets;
+
+                if (model.Id != null)
+                    query = query.Where(x => x.Id == model.Id);
+
+                if (model.courseId != null)
+                    query = query.Where(x => x.courseId == model.courseId);
+                if (model.duedatetime != null)
+                    query = query.Where(x => x.duedatetime == model.duedatetime);
+
+                int pageIndex = (model.pageindex == null || model.pageindex == 0) ? 1 : (int)model.pageindex;
+                int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 50 : (int)model.rowcount;
+
+
+                List<CourseMeetDto> data = await query.Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount)
+
+                                                  .Select(x => new CourseMeetDto()
+                                                  {
+                                                      Id = x.Id,
+                                                      courseId = x.courseId,
+                                                      duedatetime = x.duedatetime,
+                                                      name = x.name,
+                                                      pageindex = pageIndex,
+                                                      registerdatetime = x.registerdatetime,
+                                                      rowcount = PageRowCount
+                                                  }).ToListAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+
+
+            return message;
+        }
+
+
+        public async Task<SystemMessageModel> AddCourseMeet(CourseMeetDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                CourseMeet data = new CourseMeet()
+                {
+                    Id = Guid.NewGuid(),
+                    registerdatetime = DateTime.Now,
+                    duedatetime = model.duedatetime ?? DateTime.Now,
+                    name = model.name,
+                    courseId = (Guid)model.courseId,
+
+                };
+
+                model.Id = data.Id;
+                await _Context.CourseMeets.AddAsync(data);
+                await _Context.SaveChangesAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        #endregion
+
+
+
+        #region course_pdfs
+        public async Task<SystemMessageModel> EditCoursePDF(CoursePDFDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                if (model.Id == null)
+                    return new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 101) * -1), MessageDescription = "Data is wrong", MessageData = model };
+                CoursePDF data = await _Context.CoursePDFs.FindAsync(model.Id);
+
+                if (data == null)
+                    return new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 101) * -2), MessageDescription = "Data is wrong", MessageData = model };
+
+
+                data.name = model.name;
+                data.duedatetime = model.duedatetime ?? DateTime.Now;
+
+                _Context.CoursePDFs.Update(data);
+                await _Context.SaveChangesAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<SystemMessageModel> GetCoursePDFs(CoursePDFDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+            try
+            {
+                IQueryable<CoursePDF> query = _Context.CoursePDFs;
+
+                if (model.Id != null)
+                    query = query.Where(x => x.Id == model.Id);
+
+                if (model.courseId != null)
+                    query = query.Where(x => x.courseId == model.courseId);
+                if (model.duedatetime != null)
+                    query = query.Where(x => x.duedatetime == model.duedatetime);
+                if (model.allowDownload != null)
+                    query = query.Where(x => x.allowDownload == model.allowDownload);
+
+                int pageIndex = (model.pageindex == null || model.pageindex == 0) ? 1 : (int)model.pageindex;
+                int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 50 : (int)model.rowcount;
+
+
+                List<CoursePDFDto> data = await query.Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount)
+
+                                                  .Select(x => new CoursePDFDto()
+                                                  {
+                                                      Id = x.Id,
+                                                      courseId = x.courseId,
+                                                      duedatetime = x.duedatetime,
+                                                      name = x.name,
+                                                      allowDownload = x.allowDownload,
+                                                      pageindex = pageIndex,
+                                                      registerdatetime = x.registerdatetime,
+                                                      rowcount = PageRowCount
+                                                  }).ToListAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+
+
+            return message;
+        }
+
+
+        public async Task<SystemMessageModel> AddCoursePDF(CoursePDFDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                CoursePDF data = new CoursePDF()
+                {
+                    Id = Guid.NewGuid(),
+                    registerdatetime = DateTime.Now,
+                    duedatetime = model.duedatetime ?? DateTime.Now,
+                    name = model.name,
+                    courseId = (Guid)model.courseId,
+                    allowDownload = model.allowDownload ?? false,
+                };
+
+                model.Id = data.Id;
+                await _Context.CoursePDFs.AddAsync(data);
+                await _Context.SaveChangesAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        #endregion
+
+
+
+        #region course_videos
+        public async Task<SystemMessageModel> EditCourseVideo(CourseVideoDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                if (model.Id == null)
+                    return new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 101) * -1), MessageDescription = "Data is wrong", MessageData = model };
+                CourseVideo data = await _Context.CourseVideos.FindAsync(model.Id);
+
+                if (data == null)
+                    return new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 101) * -2), MessageDescription = "Data is wrong", MessageData = model };
+
+
+                data.name = model.name;
+                data.duedatetime = model.duedatetime ?? DateTime.Now;
+
+                _Context.CourseVideos.Update(data);
+                await _Context.SaveChangesAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<SystemMessageModel> GetCourseVideos(CourseVideoDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+            try
+            {
+                IQueryable<CourseVideo> query = _Context.CourseVideos;
+
+                if (model.Id != null)
+                    query = query.Where(x => x.Id == model.Id);
+
+                if (model.courseId != null)
+                    query = query.Where(x => x.courseId == model.courseId);
+                if (model.duedatetime != null)
+                    query = query.Where(x => x.duedatetime == model.duedatetime);
+                if (model.allowDownload != null)
+                    query = query.Where(x => x.allowDownload == model.allowDownload);
+
+                int pageIndex = (model.pageindex == null || model.pageindex == 0) ? 1 : (int)model.pageindex;
+                int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 50 : (int)model.rowcount;
+
+
+                List<CourseVideoDto> data = await query.Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount)
+
+                                                  .Select(x => new CourseVideoDto()
+                                                  {
+                                                      Id = x.Id,
+                                                      courseId = x.courseId,
+                                                      duedatetime = x.duedatetime,
+                                                      name = x.name,
+                                                      allowDownload = x.allowDownload,
+                                                      pageindex = pageIndex,
+                                                      registerdatetime = x.registerdatetime,
+                                                      rowcount = PageRowCount
+                                                  }).ToListAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+
+
+            return message;
+        }
+
+
+        public async Task<SystemMessageModel> AddCourseVideo(CourseVideoDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                CourseVideo data = new CourseVideo()
+                {
+                    Id = Guid.NewGuid(),
+                    registerdatetime = DateTime.Now,
+                    duedatetime = model.duedatetime ?? DateTime.Now,
+                    name = model.name,
+                    courseId = (Guid)model.courseId,
+                    allowDownload = model.allowDownload ?? false,
+                };
+
+                model.Id = data.Id;
+                await _Context.CourseVideos.AddAsync(data);
+                await _Context.SaveChangesAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        #endregion
     }
 }

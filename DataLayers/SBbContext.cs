@@ -90,6 +90,7 @@ namespace DataLayers
         public DbSet<CourseLessonFile> CourseLessonFiles { get; set; }
         public DbSet<CourseMeetFile> CourseMeetFiles { get; set; }
 
+        public DbSet<CourseTopic> CoursTopics { get; set; }
         #endregion [ Course ]
 
         #region [  TicketType ]

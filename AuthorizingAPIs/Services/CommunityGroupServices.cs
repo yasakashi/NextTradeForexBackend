@@ -399,6 +399,7 @@ namespace NextTradeAPIs.Services
                     await _Context.SaveChangesAsync();
                 }
 
+                model.coverimage = null;
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request success", MessageData = model };
             }

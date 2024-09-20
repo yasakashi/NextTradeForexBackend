@@ -231,7 +231,7 @@ namespace NextTradeAPIs.Services
                     //catch { }
                 }
 
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas, Meta = new {pagecount  = pagecount } };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas, Meta = new {pagecount  = pagecount, totalitem = totaldata } };
             }
             catch (Exception ex)
             {
