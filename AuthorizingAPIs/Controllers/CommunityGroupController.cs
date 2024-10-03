@@ -20,30 +20,30 @@ namespace NextTradeAPIs.Controllers
     {
         AuthorizationService _authorizationService;
         private IHttpContextAccessor _HttpContextAccessor;
+        IWebHostEnvironment _webHostEnvironment;
         UserServices _userServices;
         SystemLogServices _systemLogServices;
         BlockedIPServices _blockedIPService;
         CategoriesServices _userTypeService;
         CommunityGroupServices _communityGroupService;
-        IWebHostEnvironment _webHostEnvironment;
 
         public CommunityGroupControllerController(AuthorizationService authorizationService,
                                        IHttpContextAccessor httpContextAccessor,
+                                       IWebHostEnvironment env,
                                        SystemLogServices systemLogServices,
                                        BlockedIPServices blockedIPServices,
                                        CategoriesServices userTypeServices,
                                        CommunityGroupServices communityGroupServices,
-                                       IWebHostEnvironment env,
                                        UserServices userServices)
         {
             _authorizationService = authorizationService;
             _userServices = userServices;
             _HttpContextAccessor = httpContextAccessor;
+            _webHostEnvironment = env;
             _systemLogServices = systemLogServices;
             _blockedIPService = blockedIPServices;
             _userTypeService = userTypeServices;
             _communityGroupService = communityGroupServices;
-            _webHostEnvironment = env;
         }
 
         [HttpPost]
@@ -658,136 +658,6 @@ namespace NextTradeAPIs.Controllers
                 return Unauthorized();
             }
         }
-
-
-        [Route("/api/community/setcommunitycoverpic")]
-        [HttpPost]
-        [AllowAnonymous]
-        public async Task<IActionResult> CreateCommunityCoverPic2([FromForm] CommunityGroupImageDto model)
-        {
-
-            if (model == null)
-            {
-                return Ok(new SystemMessageModel()
-                {
-                    MessageCode = -501,
-                    MessageDescription = "Invalid Submission!",
-                    MessageData = null,
-                    Meta = new
-                    {
-                        ApiCode = "file"
-                    }
-                });
-                // return Content("Invalid Submission!");
-            }
-            StackTrace stackTrace = new StackTrace();
-            SystemMessageModel message;
-            string processId = Guid.NewGuid().ToString();
-            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
-            string authHeader = string.Empty;
-            string clientip = string.Empty;
-            string hosturl = string.Empty;
-            string hostname = string.Empty;
-            UserModel user = null;
-            LoginLog loginLog = null;
-
-            long ApiCode = 2000;
-
-            try
-            {
-                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
-                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
-                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
-
-                try
-                {
-                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
-                }
-                catch
-                {
-                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
-                }
-
-                string clientmac = NetworkFunctions.GetClientMAC(clientip);
-
-                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
-
-                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}'";
-
-
-                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
-
-                message = await _authorizationService.CheckToken(_bearer_token, processId);
-
-                if (message.MessageCode < 0)
-                {
-                    //return Unauthorized(message);
-                    return Ok(new SystemMessageModel()
-                    {
-                        MessageCode = -405,
-                        MessageDescription = "Erroe Canot catch file",
-                        MessageData = null,
-                        Meta = new
-                        {
-                            ApiCode = ApiCode
-                        }
-                    });
-                }
-                UserModel userlogin = message.MessageData as UserModel;
-
-                ApiCode = 5000;
-
-                if (model.photofile != null)
-                {
-
-                    if (model.photofile.FileName == null || model.photofile.FileName.Length == 0)
-                    {
-                        return Content("File not selected");
-                    }
-                    ApiCode = 5001;
-                    CommunityGroupDto modeldate = new CommunityGroupDto()
-                    {
-                        Id = model.Id,
-                    };
-                    ApiCode = 5002;
-                    using (var ms = new MemoryStream())
-                    {
-                        model.photofile.CopyTo(ms);
-                        modeldate.coverimage = ms.ToArray();
-                    }
-                    ApiCode = 5003;
-                    message = await _communityGroupService.UpdateCommunityCoverImage(modeldate, userlogin, processId, clientip, hosturl);
-                    ApiCode = 5004;
-                    if (message.MessageCode < 0)
-                    {
-                        message.MessageData = ApiCode;
-                        return Ok(message);
-                    }
-                }
-                else
-                {
-                    return Ok(new SystemMessageModel()
-                    {
-                        MessageCode = -501,
-                        MessageDescription = "Erroe Canot catch file",
-                        MessageData = null,
-                        Meta = new
-                        {
-                            ApiCode = ApiCode
-                        }
-                    });
-                }
-
-                return Ok(message);
-            }
-            catch (Exception ex)
-            {
-                string log = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
-                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, LogTypes.TokenError);
-                return Unauthorized();
-            }
-        }
-
 
 
         [HttpPost("{id}")]
