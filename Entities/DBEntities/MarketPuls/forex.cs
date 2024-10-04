@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Entities.DBEntities
 {
     [Table("tblMarketPuls_Forex")]
-    public class forex
+    public class Forex
     {
         [Key]
         public Guid id { get; set; }

@@ -120,7 +120,7 @@ namespace DataLayers
         public DbSet<FirstCountryData> FirstCountryDatas { get; set; }
         public DbSet<FlexibleBlock> FlexibleBlocks { get; set; }
         public DbSet<SecondCountryData> SecondCountryDatas { get; set; }
-        public DbSet<forex> Forexs { get; set; }
+        public DbSet<Forex> Forexs { get; set; }
         #endregion [ Market Puls Forex ]
 
         #region OnModelCreating
