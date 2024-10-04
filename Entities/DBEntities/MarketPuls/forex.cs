@@ -1,74 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Entities.DBEntities.MarketPuls
+namespace Entities.DBEntities
 {
     [Table("tblMarketPuls_Forex")]
     public class forex
     {
-        (<id, uniqueidentifier,>
-           ,<categoryid, bigint,>
-           ,<createdatetime, datetime,>
-           ,<creatoruserid, bigint,>
-           ,<price, decimal (18,2),>
-           ,<isvisible, bit,>
-           ,<courseleveltypeId, int,>
-           ,<coursetitle, nvarchar(3000),>
-           ,<oneyeardescription, ntext,>
-           ,<chartdescription, ntext,>
-           ,<firstcountryheading, nvarchar(2000),>
-           ,<firstcountrydescription, ntext,>
-           ,<secondcountryheading, nvarchar(2000),>
-           ,<secondcountrydescription, ntext,>
-           ,<bottomdescription, ntext,>
-           ,<maindescription, ntext,>
-           ,<singlepagechartimage, nvarchar(3000),>
-           ,<instrumentname, nvarchar(3000),>
-           ,<fundamentalheading, nvarchar(3000),>
-           ,<technicalheading, nvarchar(3000),>
-           ,<marketsessiontitle, nvarchar(3000),>
-           ,<marketsessionscript, ntext,>
-           ,<marketsentimentstitle, nvarchar(3000),>
-           ,<marketsentimentsscript, ntext,>
-           ,<privatenotes, ntext,>
-           ,<excerpt, ntext,>
-           ,<author, nvarchar(500),>)
-    }
+        [Key]
+        public Guid id { get; set; }
 
-    [Table("tblMarketPuls_Forex_SecondCountryDatas")]
-    public class a
-    {
-        <id, uniqueidentifier,>
-           ,<marketpulsforexid, uniqueidentifier,>
-           ,<countries, nvarchar(700),>
-           ,<centralbank, nvarchar(700),>
-           ,<nickname, nvarchar(700),>
-           ,<avragedaily, nvarchar(700),>
+        public long categoryid { get; set; }
+        public DateTime createdatetime { get; set; }
+        public long creatoruserid { get; set; }
+        public decimal price { get; set; }
+        public bool isvisible { get; set; }
+        public int courseleveltypeId { get; set; }
+        public string coursetitle { get; set; }
+        public string oneyeardescription { get; set; }
+        public string chartdescription { get; set; }
+        public string firstcountryheading { get; set; }
+        public string firstcountrydescription { get; set; }
+        public string secondcountryheading { get; set; }
+        public string secondcountrydescription { get; set; }
+        public string bottomdescription { get; set; }
+        public string maindescription { get; set; }
+        public string singlepagechartimage { get; set; }
+        public string instrumentname { get; set; }
+        public string fundamentalheading { get; set; }
+        public string technicalheading { get; set; }
+        public string marketsessiontitle { get; set; }
+        public string marketsessionscript { get; set; }
+        public string marketsentimentstitle { get; set; }
+        public string marketsentimentsscript { get; set; }
+        public string privatenotes { get; set; }
+        public string excerpt { get; set; }
+        public string author { get; set; }
     }
-
-    [Table("tblMarketPuls_Forex_FlexibleBlocks")]
-    public class b
-    { 
-    <id, uniqueidentifier,>
-           ,<marketpulsforexid, uniqueidentifier,>
-           ,<MainTitle, nvarchar(700),>
-           ,<countries, nvarchar(700),>
-           ,<pairsthatcorrelate, nvarchar(700),>
-           ,<highslows, nvarchar(700),>
-           ,<pairtype, nvarchar(700),>
-           ,<dailyavrage, nvarchar(700),>}
 }
-
-[Table("tblMarketPuls_Forex_FirstCountryDatas")]
-public class b
-{ 
-<id, uniqueidentifier,>
-           ,<marketpulsforexid, uniqueidentifier,>
-           ,<countries, nvarchar(700),>
-           ,<centralbank, nvarchar(700),>
-           ,<nickname, nvarchar(700),>
-           ,<avragedaily, nvarchar(700),>}

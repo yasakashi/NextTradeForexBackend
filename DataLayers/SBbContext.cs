@@ -110,6 +110,19 @@ namespace DataLayers
         public DbSet<CommunityGroupGalleryAccessLevel> CommunityGroupGalleryAccessLevels { get; set; }
         #endregion [ Gallery ] 
 
+        #region [ Market Puls Forex ]
+        public DbSet<URLSection> URLSections { get; set; }
+        public DbSet<PDFSection> PDFSections { get; set; }
+        public DbSet<TechnicalBreakingNews> TechnicalBreakingNewss { get; set; }
+        public DbSet<TechnicalTabs> TechnicalTabss { get; set; }
+        public DbSet<NewsMainContent> NewsMainContents { get; set; }
+        public DbSet<FundamentalNewsSection> FundamentalNewsSections { get; set; }
+        public DbSet<FirstCountryData> FirstCountryDatas { get; set; }
+        public DbSet<FlexibleBlock> FlexibleBlocks { get; set; }
+        public DbSet<SecondCountryData> SecondCountryDatas { get; set; }
+        public DbSet<forex> Forexs { get; set; }
+        #endregion [ Market Puls Forex ]
+
         #region OnModelCreating
         protected override void OnModelCreating(ModelBuilder builder)
         {
