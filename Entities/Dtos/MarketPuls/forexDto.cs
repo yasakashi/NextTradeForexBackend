@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Entities.Dtos
 {
-    public class ForexDto
+    public class ForexDto: BaseFilterDto
     {
         public Guid? id { get; set; }
 
