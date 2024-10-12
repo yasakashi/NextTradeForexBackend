@@ -74,6 +74,15 @@ namespace DataLayers
         public DbSet<Signal> Signals { get; set; }
 
         #region [ Course ]
+
+        public DbSet<CourseBuilderCourse> CourseBuilderCourses { get; set; }
+        public DbSet<CourseCategory> CourseCategories { get; set; }
+        public DbSet<CourseBuilderMeeting> CourseBuilderMeetings { get; set; }
+        public DbSet<CourseBuildeVideoPdfUrl> CourseBuildeVideoPdfUrls { get; set; }
+        public DbSet<CourseBuilderTopic> CourseBuilderTopics { get; set; }
+        
+
+
         public DbSet<CourseLevelType> CourseLevelTypes { get; set; }
         public DbSet<CourseType> CourseTypes { get; set; }
         public DbSet<Course> Courses { get; set; }

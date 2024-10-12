@@ -166,6 +166,9 @@ builder.Services.AddTransient<CommunityGroupGalleryServices, CommunityGroupGalle
 builder.Services.AddTransient<CommunityGroupsMessageServices, CommunityGroupsMessageServices>();
 
 builder.Services.AddTransient<MarketPulsForexServices, MarketPulsForexServices>();
+
+builder.Services.AddTransient<CourseBuilderServices, CourseBuilderServices>();
+
 #endregion
 
 builder.Services.AddSwaggerGen();
