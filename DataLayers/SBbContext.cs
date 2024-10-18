@@ -80,7 +80,16 @@ namespace DataLayers
         public DbSet<CourseBuilderMeeting> CourseBuilderMeetings { get; set; }
         public DbSet<CourseBuildeVideoPdfUrl> CourseBuildeVideoPdfUrls { get; set; }
         public DbSet<CourseBuilderTopic> CourseBuilderTopics { get; set; }
-        
+        public DbSet<CourseBuilderLesson> CourseBuilderLessons { get; set; }
+        public DbSet<CourseBuilderLessonFile> CourseBuilderLessonFiles { get; set; }
+        public DbSet<QuestionOption> QuestionOptions { get; set; }
+        public DbSet<CourseBuilderQuiz> CourseBuilderQuizs { get; set; }
+        public DbSet<QuertionType> QuertionTypes { get; set; }
+
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<QuestionOption> QuestionOption { get; set; }
+        public DbSet<AdvancedSetting>AdvancedSettings { get; set; }
+
 
 
         public DbSet<CourseLevelType> CourseLevelTypes { get; set; }

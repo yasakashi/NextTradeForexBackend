@@ -18,11 +18,15 @@ namespace Entities.DBEntities
         public string? lessonName { get; set; }
         public string? lessonDescription { get; set; }
         public string? lessonFilename { get; set; }
+        public string? lessonFilecontenttype { get; set; }
         public string? lessonFilepath { get; set; }
         public string? featureImagename { get; set; }
         public string? featureImagepath { get; set; }
+        public string? featureImagecontenttype { get; set; }
         public string? videoSource { get; set; }
         public int videoPlaybackTime { get; set; }
-        public string attachments { get; set; }
+        public List<CourseBuilderLessonFile> attachments { get; set; }
     }
+
+
 }
