@@ -21,6 +21,8 @@ namespace Entities.DBEntities
         public bool hideQuestionNumber { get; set; }
         public int shortAnswerCharactersLimit { get; set; }
         public int openEndedEssayQuestionsAnswerCharactersLimit { get; set; }
+
+        public virtual CourseBuilderQuiz coursebuilderquiz { get; set; }
     }
 
 }

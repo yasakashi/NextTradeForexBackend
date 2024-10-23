@@ -18,9 +18,12 @@ namespace Entities.DBEntities
         public string? meetingTitle { get; set; }
         public string? meetingDescription { get; set; }
         public string? meetingFilename { get; set; }
+        public string? meetingfilecontetnttype { get; set; }
         public string? meetingFilepath { get; set; }
         public string? meetingURL { get; set; }
         public DateTime? meetingDateTime { get; set; }
+
+        public virtual CourseBuilderCourse course { get; set; }
     }
 
 }

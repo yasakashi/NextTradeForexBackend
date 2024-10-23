@@ -170,6 +170,199 @@ namespace NextTradeAPIs.Controllers
         }
 
         [HttpPost]
+        [Route("/api/coursebuilder/addcoursemeeting")]
+        [AllowAnonymous]
+        public async Task<IActionResult> InsertCourseMeeting([FromForm] CourseBuilderMeetingDto model)
+        {
+            StackTrace stackTrace = new StackTrace();
+            SystemMessageModel message;
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string authHeader = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            UserModel user = null;
+            LoginLog loginLog = null;
+
+            long ApiCode = 2000;
+
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                message = await _authorizationService.CheckToken(_bearer_token, processId);
+
+                if (message.MessageCode < 0)
+                    return Unauthorized(message);
+
+                UserModel userlogin = message.MessageData as UserModel;
+
+                model.Id = Guid.NewGuid();
+
+                var sitePath = _webHostEnvironment.WebRootPath;
+
+                if (model.meetingFile != null)
+                {
+
+                    if (model.meetingFile.FileName == null || model.meetingFile.FileName.Length == 0)
+                    {
+                        // return Content("File not selected");
+                    }
+
+                    using (var ms = new MemoryStream())
+                    {
+                        model.meetingfilecontetnttype = model.meetingFile.ContentType;
+                        model.meetingFilename = model.meetingFile.FileName;
+
+                        model.meetingFile.CopyTo(ms);
+                        message = await _thisService.SaveCourseMeetingFile(ms.ToArray(), model, userlogin.userid, model.meetingFile.FileName, sitePath);
+                    }
+                    if (message.MessageCode < 0)
+                        return BadRequest(message);
+
+                    FileActionDto _fileinfo = message.MessageData as FileActionDto;
+                    model.meetingFilepath = _fileinfo.filepath;
+
+                    if (message.MessageCode < 0)
+                        return BadRequest(message);
+                }
+
+                message = await _thisService.AddNewCourseMeetings(model, null, processId, clientip, hosturl);
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                string log = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, LogTypes.TokenError);
+                return Unauthorized();
+                //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("/api/coursebuilder/addcoursevideopdfurl")]
+        [AllowAnonymous]
+        public async Task<IActionResult> InsertCourseVideoPdfUrl([FromForm] CourseBuildeVideoPdfUrlDto model)
+        {
+            StackTrace stackTrace = new StackTrace();
+            SystemMessageModel message;
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string authHeader = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            UserModel user = null;
+            LoginLog loginLog = null;
+
+            long ApiCode = 2000;
+
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                message = await _authorizationService.CheckToken(_bearer_token, processId);
+
+                if (message.MessageCode < 0)
+                    return Unauthorized(message);
+
+                UserModel userlogin = message.MessageData as UserModel;
+
+                model.Id = Guid.NewGuid();
+
+                var sitePath = _webHostEnvironment.WebRootPath;
+
+                if (model.pdfFile != null)
+                {
+
+                    if (model.pdfFile.FileName == null || model.pdfFile.FileName.Length == 0)
+                    {
+                        // return Content("File not selected");
+                    }
+
+                    using (var ms = new MemoryStream())
+                    {
+                        model.pdfFilecontenttype = model.pdfFile.ContentType;
+                        model.pdfFilename = model.pdfFile.FileName;
+
+                        model.pdfFile.CopyTo(ms);
+                        message = await _thisService.SaveCourseVideoPdfUrlFile(ms.ToArray(), model, userlogin.userid, model.pdfFile.FileName, sitePath);
+                    }
+                    if (message.MessageCode < 0)
+                        return BadRequest(message);
+
+                    FileActionDto _fileinfo = message.MessageData as FileActionDto;
+                    model.pdfFilepath = _fileinfo.filepath;
+
+                    if (message.MessageCode < 0)
+                        return BadRequest(message);
+                }
+
+
+                message = await _thisService.AddNewCourseVideoPdfUrls(model, null, processId, clientip, hosturl);
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                string log = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, LogTypes.TokenError);
+                return Unauthorized();
+                //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
+            }
+        }
+
+        [HttpPost]
         [Route("/api/coursebuilder/getcourses")]
         [AllowAnonymous]
         public async Task<IActionResult> GetCourses(CourseBuilderCourseDto model)
@@ -602,9 +795,9 @@ namespace NextTradeAPIs.Controllers
 
 
         [HttpPost]
-        [Route("/api/coursebuilder/addlessonQuiz")]
+        [Route("/api/coursebuilder/addlessonquiz")]
         [AllowAnonymous]
-        public async Task<IActionResult> InsertLessonQuiz([FromForm] CourseBuilderQuizDto model)
+        public async Task<IActionResult> InsertLessonQuiz( CourseBuilderQuizDto model)
         {
             StackTrace stackTrace = new StackTrace();
             SystemMessageModel message;
@@ -672,9 +865,9 @@ namespace NextTradeAPIs.Controllers
         }
 
         [HttpPost]
-        [Route("/api/coursebuilder/getLessonQuizs")]
+        [Route("/api/coursebuilder/getLessonquizs")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetLessonQuizs(CourseBuilderQuizDto model)
+        public async Task<IActionResult> GetLessonQuizs(CourseBuilderQuizFilterDto model)
         {
             StackTrace stackTrace = new StackTrace();
             SystemMessageModel message;
@@ -720,10 +913,7 @@ namespace NextTradeAPIs.Controllers
 
                 UserModel userlogin = message.MessageData as UserModel;
 
-                model.Id = Guid.NewGuid();
-
                 var sitePath = _webHostEnvironment.WebRootPath;
-
 
                 message = await _thisService.GetCourseLessonQuezs(model, null, processId, clientip, hosturl);
 

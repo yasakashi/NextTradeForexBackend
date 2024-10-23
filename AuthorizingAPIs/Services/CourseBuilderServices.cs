@@ -68,7 +68,6 @@ namespace NextTradeAPIs.Services
                 };
                 await _Context.CourseBuilderCourses.AddAsync(data);
 
-
                 List<CourseCategory> CourseCategoryList = new List<CourseCategory>();
                 foreach (long cId in model.courseCategoryIds)
                 {
@@ -81,6 +80,7 @@ namespace NextTradeAPIs.Services
                 }
                 if (CourseCategoryList.Count() > 0)
                     await _Context.CourseCategories.AddRangeAsync(CourseCategoryList);
+                await _Context.SaveChangesAsync();
 
                 List<CourseBuilderMeeting> meetingList = new List<CourseBuilderMeeting>();
                 foreach (CourseBuilderMeetingDto item in model.meetings)
@@ -97,7 +97,7 @@ namespace NextTradeAPIs.Services
                         meetingURL = item.meetingURL
                     });
                 }
-                if (CourseCategoryList.Count() > 0)
+                if (meetingList.Count() > 0)
                     await _Context.CourseBuilderMeetings.AddRangeAsync(meetingList);
 
                 List<CourseBuildeVideoPdfUrl> videoPdfUrllist = new List<CourseBuildeVideoPdfUrl>();
@@ -115,7 +115,7 @@ namespace NextTradeAPIs.Services
                         pdfTitle = item.pdfTitle
                     });
                 }
-                if (CourseCategoryList.Count() > 0)
+                if (videoPdfUrllist.Count() > 0)
                     await _Context.CourseBuildeVideoPdfUrls.AddRangeAsync(videoPdfUrllist);
 
                 await _Context.SaveChangesAsync();
@@ -132,6 +132,78 @@ namespace NextTradeAPIs.Services
             return message;
         }
 
+        public async Task<SystemMessageModel> AddNewCourseMeetings(CourseBuilderMeetingDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+
+                CourseBuilderMeeting data = new CourseBuilderMeeting()
+                {
+                    Id = Guid.NewGuid(),
+                    courseId = (Guid)model.courseId,
+                    meetingDateTime = model.meetingDateTime,
+                    meetingDescription = model.meetingDescription,
+                    meetingFilename = model.meetingFilename,
+                    meetingFilepath = model.meetingFilepath,
+                    meetingfilecontetnttype = model.meetingfilecontetnttype,
+                    meetingTitle = model.meetingTitle,
+                    meetingURL = model.meetingURL
+                };
+                await _Context.CourseBuilderMeetings.AddAsync(data);
+                await _Context.SaveChangesAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model.Id };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<SystemMessageModel> AddNewCourseVideoPdfUrls(CourseBuildeVideoPdfUrlDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+
+                CourseBuildeVideoPdfUrl videoPdfUrllist = new CourseBuildeVideoPdfUrl()
+                {
+                    Id = Guid.NewGuid(),
+                    courseId = (Guid)model.courseId,
+                    downloadable = model.downloadable ?? false,
+                    pdfDescription = model.pdfDescription,
+                    pdfFilename = model.pdfFilename,
+                    pdfFilepath = model.pdfFilepath,
+                    pdfFilecontenttype = model.pdfFilecontenttype,
+                    pdfTitle = model.pdfTitle
+                };
+                await _Context.CourseBuildeVideoPdfUrls.AddAsync(videoPdfUrllist);
+
+                await _Context.SaveChangesAsync();
+
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = videoPdfUrllist.Id };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
 
         public async Task<SystemMessageModel> GetCourses(CourseBuilderCourseDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
@@ -635,41 +707,55 @@ namespace NextTradeAPIs.Services
                 if (model.questions != null && model.questions.Count > 0)
                 {
                     List<Question> qlist = new List<Question>();
+                    List<QuestionOption> qoplist = new List<QuestionOption>();
                     foreach (QuestionDto item in model.questions)
                     {
-                        qlist.Add(new Question()
+                        Question _question = new Question()
                         {
                             Id = Guid.NewGuid(),
                             coursebuilderquizId = data.Id,
-                            displayPoints = item.displayPoints?? false,
-                            isAnswerRequired = item.isAnswerRequired?? false,
-                            isRandomized = item.isRandomized?? false,
-                            points = (int) item.points,
+                            displayPoints = item.displayPoints ?? false,
+                            isAnswerRequired = item.isAnswerRequired ?? false,
+                            isRandomized = item.isRandomized ?? false,
+                            points = (int)item.points,
                             questionDescription = item.questionDescription,
                             questionTitle = item.questionTitle,
                             questionType = (int)item.questionType
-                        });
+                        };
+                        
+                        foreach (QuestionOptionDto questionOption in item.qoptions)
+                        {
+                            qoplist.Add(new QuestionOption() { 
+                                Id = Guid.NewGuid(),
+                                isAnswer = questionOption.isAnswer,
+                                questionId = _question.Id,
+                                option = questionOption.option
+                            });
+                        }
+                        qlist.Add(_question);
                     }
+                    await _Context.QuestionOptions.AddRangeAsync(qoplist);
                     await _Context.Questions.AddRangeAsync(qlist);
                 }
+                await _Context.SaveChangesAsync();
 
-                if (model.advancedSettings != null )
+                if (model.advancedSettings != null)
                 {
-                    AdvancedSetting _advancedSetting= new AdvancedSetting()
+                    AdvancedSetting _advancedSetting = new AdvancedSetting()
                     {
                         Id = Guid.NewGuid(),
                         coursebuilderquizId = data.Id,
-                        hideQuestionNumber = model.advancedSettings.hideQuestionNumber??false,
+                        hideQuestionNumber = model.advancedSettings.hideQuestionNumber ?? false,
                         openEndedEssayQuestionsAnswerCharactersLimit = (int)model.advancedSettings.openEndedEssayQuestionsAnswerCharactersLimit,
                         questionsOrderId = (Guid)model.advancedSettings.questionsOrderId,
-                        quizAutoStart = model.advancedSettings.quizAutoStart??false,
+                        quizAutoStart = model.advancedSettings.quizAutoStart ?? false,
                         quizLayoutId = (Guid)model.advancedSettings.quizLayoutId,
                         shortAnswerCharactersLimit = (int)model.advancedSettings.shortAnswerCharactersLimit
                     };
-  
+
                     await _Context.AdvancedSettings.AddRangeAsync(_advancedSetting);
                 }
-                
+
 
 
                 await _Context.SaveChangesAsync();
@@ -685,7 +771,7 @@ namespace NextTradeAPIs.Services
             return message;
 
         }
-        public async Task<SystemMessageModel> GetCourseLessonQuezs(CourseBuilderQuizDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        public async Task<SystemMessageModel> GetCourseLessonQuezs(CourseBuilderQuizFilterDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
             SystemMessageModel message;
             StackTrace stackTrace = new StackTrace();
@@ -701,7 +787,7 @@ namespace NextTradeAPIs.Services
 
                 if (model.courseId != null)
                     query = query.Where(x => x.courseId == model.courseId);
-                
+
                 if (model.topicId != null)
                     query = query.Where(x => x.topicId == model.topicId);
 
@@ -744,9 +830,9 @@ namespace NextTradeAPIs.Services
                     {
                         QuizId = x.coursebuilderquizId,
                         Id = x.Id,
-                        displayPoints = x.displayPoints,    
-                        isAnswerRequired = x.isAnswerRequired,  
-                        isRandomized = x.isRandomized,  
+                        displayPoints = x.displayPoints,
+                        isAnswerRequired = x.isAnswerRequired,
+                        isRandomized = x.isRandomized,
                         points = x.points,
                         questionDescription = x.questionDescription,
                         questionTitle = x.questionTitle,
@@ -766,7 +852,8 @@ namespace NextTradeAPIs.Services
 
                     foreach (QuestionDto qitem in item.questions)
                     {
-                        qitem.options = await _Context.QuestionOptions.Where(x => x.questionId == qitem.Id).Select(x => new QuestionOptionDto() { 
+                        qitem.qoptions = await _Context.QuestionOptions.Where(x => x.questionId == qitem.Id).Select(x => new QuestionOptionDto()
+                        {
                             Id = x.Id,
                             isAnswer = x.isAnswer,
                             questionId = x.questionId,
@@ -776,7 +863,7 @@ namespace NextTradeAPIs.Services
                     }
                 }
 
-                
+
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data, Meta = new { pageIndex = pageIndex, PageRowCount = PageRowCount, totaldata = totaldata, pagecount = pagecount } };
             }
             catch (Exception ex)
@@ -788,6 +875,74 @@ namespace NextTradeAPIs.Services
             return message;
         }
 
-        
+        public async Task<SystemMessageModel> SaveCourseMeetingFile(byte[] filecontent, CourseBuilderMeetingDto model, long userid, string FileName, string sitePath)
+        {
+            string filegroupname = "coursesmeetingfile";
+            try
+            {
+                if (filecontent != null)
+                {
+                    string _filePath = sitePath + "\\" + filegroupname + "\\" + model.Id.ToString().Replace("-", "") + "\\";
+                    if (!Directory.Exists(_filePath))
+                        Directory.CreateDirectory(_filePath);
+
+                    _filePath += FileName;
+                    string fileurl = AppDomain.CurrentDomain.BaseDirectory + "/" + filegroupname + "/" + model.Id.ToString().Replace("-", "") + "/" + FileName;
+                    Uri uri = new Uri(fileurl, UriKind.Relative);
+
+                    if (!File.Exists(_filePath))
+                    {
+                        File.WriteAllBytes(_filePath, filecontent);
+                    }
+                    FileActionDto dto = new FileActionDto()
+                    {
+                        filepath = _filePath,
+                        fileurl = fileurl
+                    };
+                    return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = dto };
+                }
+                else
+                {
+                    return new SystemMessageModel() { MessageCode = -501, MessageDescription = "File Error", MessageData = null };
+                }
+            }
+            catch (Exception ex) { return new SystemMessageModel() { MessageCode = -501, MessageDescription = "File saving Error", MessageData = ex.Message }; }
+        }
+
+        public async Task<SystemMessageModel> SaveCourseVideoPdfUrlFile(byte[] filecontent, CourseBuildeVideoPdfUrlDto model, long userid, string FileName, string sitePath)
+        {
+            string filegroupname = "coursesvideopdffile";
+            try
+            {
+                if (filecontent != null)
+                {
+                    string _filePath = sitePath + "\\" + filegroupname + "\\" + model.Id.ToString().Replace("-", "") + "\\";
+                    if (!Directory.Exists(_filePath))
+                        Directory.CreateDirectory(_filePath);
+
+                    _filePath += FileName;
+                    string fileurl = AppDomain.CurrentDomain.BaseDirectory + "/" + filegroupname + "/" + model.Id.ToString().Replace("-", "") + "/" + FileName;
+                    Uri uri = new Uri(fileurl, UriKind.Relative);
+
+                    if (!File.Exists(_filePath))
+                    {
+                        File.WriteAllBytes(_filePath, filecontent);
+                    }
+                    FileActionDto dto = new FileActionDto()
+                    {
+                        filepath = _filePath,
+                        fileurl = fileurl
+                    };
+                    return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = dto };
+                }
+                else
+                {
+                    return new SystemMessageModel() { MessageCode = -501, MessageDescription = "File Error", MessageData = null };
+                }
+            }
+            catch (Exception ex) { return new SystemMessageModel() { MessageCode = -501, MessageDescription = "File saving Error", MessageData = ex.Message }; }
+        }
+
     }
 }
+

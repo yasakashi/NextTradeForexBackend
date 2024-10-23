@@ -1,0 +1,106 @@
+// api/coursebuilder/addcourse
+//api/coursebuilder/getcourses
+[
+  {
+    "courseName": "string (required)",
+    "courseDescription": "string (optional)",
+    "courseFile": "string (optional)",
+    "meetings": [
+      {
+        "meetingTitle": "string (required)",
+        "meetingDescription": "string (optional)",
+        "meetingFile": "formData (optional)",
+        "meetingURL": "string (required)",
+        "meetingDateTime": "Date & Time (e.g., 16/10/2024 12:00 AM)"
+      }
+    ],
+    "videoPdfUrls": [
+      {
+        "pdfTitle": "string (required)",
+        "pdfDescription": "string (optional)",
+        "pdfFile": "formData (required)",
+        "viewPdfFile": "string (optional)",
+        "downloadable": "boolean (default: true)"
+      }
+    ],
+    "excerpt": "string (optional)",
+    "authorId": "author ID",
+    "maximumStudents": "number (required)",
+    "difficultyLevelId": "ID of the difficulty level",
+    "isPublicCourse": "boolean (default: false)",
+    "allowQA": "boolean (default: false)",
+    "coursePrice": "number",
+    "whatWillILearn": "string",
+    "targetedAudience": "string",
+    "courseDuration": "number (in minutes)",
+    "materialsIncluded": "string",
+    "requirementsInstructions": "string",
+    "courseIntroVideo": "string (accepts YouTube link)",
+    "courseCategoryIds": "array of category IDs",
+    "courseTags": "array of strings",
+    "featuredImage": "formData (optional)"
+  }
+]
+
+
+// Course Builder - Add New Topic
+//api/coursebuilder/addcoursetopic
+//api/coursebuilder/getcoursetopics
+{
+  "courseId": "ID of the course",
+  "topicName": "string (required)",
+  "topicSummary": "string (optional)"
+}
+//api/coursebuilder/addlesson
+//api/coursebuilder/getLessons
+// Course Builder - Add Lesson
+{
+  "courseId": "ID of the course",
+  "topicId": "ID of the topic",
+  "lessonName": "string (required)",
+  "lessonDescription": "string (optional)",
+  "lessonFile": "formData (optional)",
+  "featureImage": "formData (optional)",
+  "videoSource": "string (accepts video URL)",
+  "videoPlaybackTime": "number (in seconds)",
+  "attachments": "array of files (formData)"
+}
+
+// Course Builder - Add Quiz
+{
+  "courseId": "ID of the course",
+  "topicId": "ID of the topic",
+  "quizTitle": "string (required)",
+  "quizDescription": "string (optional)",
+  "questions": [
+    {
+      "questionTitle": "string (required)",
+      "questionType": "ID of type ['true/false', 'single choice', 'multiple choice', 'open-ended', 'fill in the blanks', 'short answer', 'matching', 'image matching', 'image answering', 'ordering']",
+      "isAnswerRequired": "boolean",
+      "isRandomized": "boolean",
+      "points": "number",
+      "displayPoints": "boolean",
+      "questionDescription": "string (optional)",
+      "options": [
+        {
+          "option": "string",
+          "isAnswer": "boolean"
+        }
+      ]
+    }
+  ],
+  "timeLimit": "number (in minutes)",
+  "displayQuizTime": "boolean",
+  "quizFeedbackModeId": "ID of feedback mode",
+  "attemptsAllowed": "number (between 1 and 20)",
+  "passingGrade": "number (between 1 and 100%)",
+  "maxQuestionsAllowedToAnswer": "number",
+  "advancedSettings": {
+    "quizAutoStart": "boolean",
+    "quizLayoutId": "ID of layout",
+    "questionsOrderId": "ID of question order",
+    "hideQuestionNumber": "boolean",
+    "shortAnswerCharactersLimit": "number",
+    "openEndedEssayQuestionsAnswerCharactersLimit": "number"
+  }
+}

@@ -17,7 +17,8 @@ namespace Entities.DBEntities
         public Guid courseId { get; set; }
         public long categoryId { get; set; }
 
-        public Category category { get; set; }
+        public virtual Category category { get; set; }
+        public virtual CourseBuilderCourse course { get; set; }
 
     }
 }

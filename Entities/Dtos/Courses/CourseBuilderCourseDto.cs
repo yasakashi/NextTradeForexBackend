@@ -40,8 +40,8 @@ namespace Entities.Dtos
         public string? featuredImagepath { get; set; }
         public string? featuredImagecontent { get; set; }
         public DateTime? registerdatetime { get; set; }
-        public List<CourseBuilderMeetingDto> meetings { get; set; }
-        public List<CourseBuildeVideoPdfUrlDto> videoPdfUrls { get; set; }
-        public List<CourseCategoryDto> courseCategorys { get; set; }
+        public List<CourseBuilderMeetingDto>? meetings { get; set; }
+        public List<CourseBuildeVideoPdfUrlDto>? videoPdfUrls { get; set; }
+        public List<CourseCategoryDto>? courseCategorys { get; set; }
     }
 }

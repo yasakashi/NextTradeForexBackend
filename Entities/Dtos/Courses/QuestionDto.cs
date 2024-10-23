@@ -18,6 +18,6 @@ namespace Entities.Dtos
         public int? points { get; set; }
         public bool? displayPoints { get; set; }
         public string? questionDescription { get; set; }
-        public List<QuestionOptionDto> options { get; set; }
+        public List<QuestionOptionDto>? qoptions { get; set; }
     }
 }

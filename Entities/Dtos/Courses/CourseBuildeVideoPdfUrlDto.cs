@@ -16,6 +16,7 @@ namespace Entities.Dtos
         public IFormFile? pdfFile{ get; set; }
         public string? pdfFilename { get; set; }
         public string? pdfFilepath { get; set; }
+        public string? pdfFilecontenttype { get; set; }
         public string? viewPdfFile { get; set; }
         public bool? downloadable { get; set; }
     }

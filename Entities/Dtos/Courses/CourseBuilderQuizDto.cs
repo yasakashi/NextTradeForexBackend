@@ -22,6 +22,14 @@ namespace Entities.Dtos
         public decimal? passingGrade { get; set; }
         public int? maxQuestionsAllowedToAnswer { get; set; }
         public AdvancedSettingDto? advancedSettings { get; set; }
-        public List<QuestionDto> questions { get; set; }
+        public List<QuestionDto>? questions { get; set; }
+    }
+
+    public class CourseBuilderQuizFilterDto : BaseFilterDto
+    {
+        public Guid? Id { get; set; }
+        public Guid? courseId { get; set; }
+        public Guid? topicId { get; set; }
+        public string? quizTitle { get; set; }
     }
 }
