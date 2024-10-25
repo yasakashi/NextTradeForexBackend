@@ -4,6 +4,7 @@ using Entities.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using NextTradeAPIs.Services;
@@ -411,12 +412,10 @@ namespace NextTradeAPIs.Controllers
 
                 UserModel userlogin = message.MessageData as UserModel;
 
-                model.Id = Guid.NewGuid();
-
                 var sitePath = _webHostEnvironment.WebRootPath;
 
 
-                message = await _thisService.GetCourses(model, null, processId, clientip, hosturl);
+                message = await _thisService.GetCourses(model, null, processId, clientip, hosturl, false);
 
                 if (message.MessageCode < 0)
                     return BadRequest(message);
@@ -553,10 +552,7 @@ namespace NextTradeAPIs.Controllers
 
                 UserModel userlogin = message.MessageData as UserModel;
 
-                model.Id = Guid.NewGuid();
-
                 var sitePath = _webHostEnvironment.WebRootPath;
-
 
                 message = await _thisService.GetCourseTopics(model, null, processId, clientip, hosturl);
 
@@ -725,7 +721,76 @@ namespace NextTradeAPIs.Controllers
         [HttpPost]
         [Route("/api/coursebuilder/getLessons")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetLessons(CourseBuilderLessonDto model)
+        public async Task<IActionResult> GetLessons(CourseBuilderLessonFilterDto model)
+        {
+            StackTrace stackTrace = new StackTrace();
+            SystemMessageModel message;
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string authHeader = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            UserModel user = null;
+            LoginLog loginLog = null;
+
+            long ApiCode = 2000;
+
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                message = await _authorizationService.CheckToken(_bearer_token, processId);
+
+                if (message.MessageCode < 0)
+                    return Unauthorized(message);
+                
+                UserModel userlogin = message.MessageData as UserModel;
+
+
+                var sitePath = _webHostEnvironment.WebRootPath;
+
+                message = await _thisService.GetCourseLessons(model, null, processId, clientip, hosturl, false);
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                string log = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, LogTypes.TokenError);
+                return Unauthorized();
+                //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("/api/coursebuilder/getLessonfiles")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetLessonAttachedFiles(CourseBuilderLessonFilterDto model)
         {
             StackTrace stackTrace = new StackTrace();
             SystemMessageModel message;
@@ -771,12 +836,10 @@ namespace NextTradeAPIs.Controllers
 
                 UserModel userlogin = message.MessageData as UserModel;
 
-                model.Id = Guid.NewGuid();
 
                 var sitePath = _webHostEnvironment.WebRootPath;
 
-
-                message = await _thisService.GetCourseLessons(model, null, processId, clientip, hosturl);
+                message = await _thisService.GetCourseLessonAttachedFiles(model, null, processId, clientip, hosturl, false);
 
                 if (message.MessageCode < 0)
                     return BadRequest(message);
@@ -792,6 +855,7 @@ namespace NextTradeAPIs.Controllers
                 //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
             }
         }
+
 
 
         [HttpPost]
@@ -930,6 +994,258 @@ namespace NextTradeAPIs.Controllers
                 return Unauthorized();
                 //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
             }
+        }
+
+
+
+        [HttpPost("{id}")]
+        [HttpGet("{id}")]
+        [Route("/api/coursebuilder/getcoursefileurl/{id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetFileURL(Guid id)
+        {
+            var sitePath = _webHostEnvironment.WebRootPath;
+            string hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+            var message = await _thisService.GetCourseFileURL(id, sitePath);
+            if (message == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                CourseBuilderCourse data = message.MessageData as CourseBuilderCourse;
+                string relativePath = hosturl + data.courseFilepath.Substring(data.courseFilepath.IndexOf("wwwroot\\")).Replace("wwwroot", "").Replace("\\", "/");
+
+                data.courseFilepath = relativePath;
+
+                FileActionDto fileInfo = new FileActionDto() { fileurl = relativePath, filename = data.courseFilename, filecontent = data.courseFilecontent };
+
+                message.MessageData = fileInfo;
+            }
+
+            return Ok(message);
+        }
+
+        [HttpPost("{id}")]
+        [HttpGet("{id}")]
+        [Route("/api/coursebuilder/getcoursefile/{id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetFile(Guid id)
+        {
+            var sitePath = _webHostEnvironment.WebRootPath;
+            string hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+            var message = await _thisService.GetCourseFileURL(id, sitePath);
+            if (message == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                CourseBuilderCourse data = message.MessageData as CourseBuilderCourse;
+                var messagefile = await _thisService.GetFileByteArray(data.courseFilepath);
+                byte[] filearray = messagefile.MessageData as byte[];
+                return File(filearray, data.courseFilecontent, data.courseFilename);
+            }           
+        }
+
+        [HttpPost("{id}")]
+        [HttpGet("{id}")]
+        [Route("/api/coursebuilder/getcoursefeaturedimageurl/{id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetImageFileURL(Guid id)
+        {
+            var sitePath = _webHostEnvironment.WebRootPath;
+            string hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+            var message = await _thisService.GetCourseFileURL(id, sitePath);
+            if (message == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                CourseBuilderCourse data = message.MessageData as CourseBuilderCourse;
+                string relativePath = hosturl + data.courseFilepath.Substring(data.featuredImagepath.IndexOf("wwwroot\\")).Replace("wwwroot", "").Replace("\\", "/");
+
+                data.courseFilepath = relativePath;
+
+                FileActionDto fileInfo = new FileActionDto() { fileurl = relativePath, filename = data.courseFilename, filecontent = data.courseFilecontent };
+
+                message.MessageData = fileInfo;
+            }
+
+            return Ok(message);
+        }
+
+        [HttpPost("{id}")]
+        [HttpGet("{id}")]
+        [Route("/api/coursebuilder/getcoursefeaturedimage/{id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetImageFile(Guid id)
+        {
+            var sitePath = _webHostEnvironment.WebRootPath;
+            string hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+            var message = await _thisService.GetCourseFileURL(id, sitePath);
+            if (message == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                CourseBuilderCourse data = message.MessageData as CourseBuilderCourse;
+                var messagefile = await _thisService.GetFileByteArray(data.featuredImagepath);
+                byte[] filearray = messagefile.MessageData as byte[];
+                return File(filearray, data.courseFilecontent, data.featuredImagecontent);
+            }
+        }
+
+        [HttpPost("{id}")]
+        [HttpGet("{id}")]
+        [Route("/api/coursebuilder/getlessonfeaturedimageurl/{id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetLessonfeatureImageURL(Guid id)
+        {
+            var sitePath = _webHostEnvironment.WebRootPath;
+            string hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+            var message = await _thisService.GetLessonFileURL(id, sitePath);
+            if (message == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                CourseBuilderLesson data = message.MessageData as CourseBuilderLesson;
+                string relativePath = hosturl + data.featureImagepath.Substring(data.featureImagepath.IndexOf("wwwroot\\")).Replace("wwwroot", "").Replace("\\", "/");
+
+                data.featureImagepath = relativePath;
+
+                FileActionDto fileInfo = new FileActionDto() { fileurl = relativePath, filename = data.featureImagename, filecontent = data.featureImagecontenttype };
+
+                message.MessageData = fileInfo;
+            }
+
+            return Ok(message);
+        }
+
+        [HttpPost("{id}")]
+        [HttpGet("{id}")]
+        [Route("/api/coursebuilder/getlessonfeaturedimage/{id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetLessonImageFile(Guid id)
+        {
+            var sitePath = _webHostEnvironment.WebRootPath;
+            string hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+            var message = await _thisService.GetLessonFileURL(id, sitePath);
+            if (message == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                CourseBuilderLesson data = message.MessageData as CourseBuilderLesson;
+                var messagefile = await _thisService.GetFileByteArray(data.featureImagepath);
+                byte[] filearray = messagefile.MessageData as byte[];
+                return File(filearray, data.featureImagecontenttype, data.featureImagename);
+            }
+        }
+
+        [HttpPost("{id}")]
+        [HttpGet("{id}")]
+        [Route("/api/coursebuilder/getlessonfileurl/{id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetLessonFileURL(Guid id)
+        {
+            var sitePath = _webHostEnvironment.WebRootPath;
+            string hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+            var message = await _thisService.GetLessonFileURL(id, sitePath);
+            if (message == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                CourseBuilderLesson data = message.MessageData as CourseBuilderLesson;
+                string relativePath = hosturl + data.lessonFilepath.Substring(data.lessonFilepath.IndexOf("wwwroot\\")).Replace("wwwroot", "").Replace("\\", "/");
+
+                data.lessonFilepath = relativePath;
+
+                FileActionDto fileInfo = new FileActionDto() { fileurl = relativePath, filename = data.lessonFilename, filecontent = data.lessonFilecontenttype };
+
+                message.MessageData = fileInfo;
+            }
+
+            return Ok(message);
+        }
+
+        [HttpPost("{id}")]
+        [HttpGet("{id}")]
+        [Route("/api/coursebuilder/getlessonfile/{id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetLessonFile(Guid id)
+        {
+            var sitePath = _webHostEnvironment.WebRootPath;
+            string hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+            var message = await _thisService.GetLessonFileURL(id, sitePath);
+            if (message == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                CourseBuilderLesson data = message.MessageData as CourseBuilderLesson;
+                var messagefile = await _thisService.GetFileByteArray(data.lessonFilepath);
+                byte[] filearray = messagefile.MessageData as byte[];
+                return File(filearray, data.lessonFilecontenttype, data.lessonFilename);
+            }
+        }
+
+        [HttpPost("{id}")]
+        [HttpGet("{id}")]
+        [Route("/api/coursebuilder/getlessonattachedfile/{id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetLessonAttachedFile(Guid id)
+        {
+            var sitePath = _webHostEnvironment.WebRootPath;
+            string hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+            var message = await _thisService.GetLessonAttachmentFileURL(id, sitePath);
+            if (message == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                CourseBuilderLessonFile data = message.MessageData as CourseBuilderLessonFile;
+                var messagefile = await _thisService.GetFileByteArray(data.lessonFilepath);
+                byte[] filearray = messagefile.MessageData as byte[];
+                return File(filearray, data.lessonFilecontenttype, data.lessonFilename);
+            }
+        }
+
+        [HttpPost("{id}")]
+        [HttpGet("{id}")]
+        [Route("/api/coursebuilder/getlessonattachedfileurl/{id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetLessonAttachedFileURL(Guid id)
+        {
+            var sitePath = _webHostEnvironment.WebRootPath;
+            string hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+            var message = await _thisService.GetLessonAttachmentFileURL(id, sitePath);
+            if (message == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                CourseBuilderLessonFile data = message.MessageData as CourseBuilderLessonFile;
+                string relativePath = hosturl + data.lessonFilepath.Substring(data.lessonFilepath.IndexOf("wwwroot\\")).Replace("wwwroot", "").Replace("\\", "/");
+
+                data.lessonFilepath = relativePath;
+
+                FileActionDto fileInfo = new FileActionDto() { fileurl = relativePath, filename = data.lessonFilename, filecontent = data.lessonFilecontenttype };
+
+                message.MessageData = fileInfo;
+            }
+
+            return Ok(message);
         }
 
         /*

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Entities.Dtos
 {
-    public class CourseBuilderQuizDto : BaseFilterDto
+    public class CourseBuilderQuizDto 
     {
         public Guid? Id { get; set; }
         public Guid? courseId { get; set; }

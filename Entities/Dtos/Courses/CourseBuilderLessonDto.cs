@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Entities.Dtos
 {
-    public class CourseBuilderLessonDto : BaseFilterDto
+    public class CourseBuilderLessonDto 
     {
         public Guid? Id { get; set; }
         public Guid? courseId { get; set; }
@@ -26,6 +26,14 @@ namespace Entities.Dtos
         public int videoPlaybackTime { get; set; }
         public List<IFormFile> attachments { get; set; }
         public List<CourseBuilderLessonFileDto> fileattachments { get; set; }
+    }
+
+    public class CourseBuilderLessonFilterDto : BaseFilterDto
+    {
+        public Guid? Id { get; set; }
+        public Guid? courseId { get; set; }
+        public Guid? topicId { get; set; }
+        public string? lessonName { get; set; }
     }
 
     public class CourseBuilderLessonFileDto

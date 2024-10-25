@@ -5,6 +5,7 @@ using DocumentFormat.OpenXml.Office2010.Excel;
 using Entities.DBEntities;
 using Entities.Dtos;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 using Newtonsoft.Json;
 using NextTradeAPIs.Dtos;
 using System.Diagnostics;
@@ -205,7 +206,7 @@ namespace NextTradeAPIs.Services
             return message;
         }
 
-        public async Task<SystemMessageModel> GetCourses(CourseBuilderCourseDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        public async Task<SystemMessageModel> GetCourses(CourseBuilderCourseDto model, UserModel? userlogin, string processId, string clientip, string hosturl, bool sendfilepath = true)
         {
             SystemMessageModel message;
             StackTrace stackTrace = new StackTrace();
@@ -262,7 +263,7 @@ namespace NextTradeAPIs.Services
                                                       courseName = x.courseName,
                                                       courseDescription = x.courseDescription,
                                                       courseFilename = x.courseFilename,
-                                                      courseFilepath = x.courseFilepath,
+                                                      courseFilepath = (sendfilepath == true) ? x.courseFilepath : "",
                                                       excerpt = x.excerpt,
                                                       authorId = x.authorId,
                                                       maximumStudents = x.maximumStudents ?? 1,
@@ -278,7 +279,7 @@ namespace NextTradeAPIs.Services
                                                       courseIntroVideo = x.courseIntroVideo,
                                                       courseTags = x.courseTags,
                                                       featuredImagename = x.featuredImagename,
-                                                      featuredImagepath = x.featuredImagepath,
+                                                      featuredImagepath = (sendfilepath == true) ? x.featuredImagepath : "",
                                                       registerdatetime = x.registerdatetime,
                                                       courseFilecontent = x.courseFilecontent,
                                                       featuredImagecontent = x.featuredImagecontent
@@ -475,7 +476,7 @@ namespace NextTradeAPIs.Services
         }
 
 
-        public async Task<SystemMessageModel> GetCourseLessons(CourseBuilderLessonDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        public async Task<SystemMessageModel> GetCourseLessons(CourseBuilderLessonFilterDto model, UserModel? userlogin, string processId, string clientip, string hosturl, bool showfilepath = true)
         {
             SystemMessageModel message;
             StackTrace stackTrace = new StackTrace();
@@ -514,11 +515,11 @@ namespace NextTradeAPIs.Services
                                                       courseId = x.courseId,
                                                       featureImagename = x.featureImagename,
                                                       featureImagecontenttype = x.featureImagecontenttype,
-                                                      featureImagepath = x.featureImagepath,
+                                                      featureImagepath = (showfilepath == true) ? x.featureImagepath : "",
                                                       lessonDescription = x.lessonDescription,
                                                       lessonFilecontenttype = x.lessonFilecontenttype,
                                                       lessonFilename = x.lessonFilename,
-                                                      lessonFilepath = x.lessonFilepath,
+                                                      lessonFilepath = (showfilepath == true) ? x.lessonFilepath : "",
                                                       lessonName = x.lessonName,
                                                       topicId = x.topicId,
                                                       videoPlaybackTime = x.videoPlaybackTime,
@@ -534,7 +535,7 @@ namespace NextTradeAPIs.Services
                         Id = x.Id,
                         lessonFilecontenttype = x.lessonFilecontenttype,
                         lessonFilename = x.lessonFilename,
-                        lessonFilepath = x.lessonFilepath
+                        lessonFilepath = (showfilepath == true) ? x.lessonFilepath : ""
                     }).ToListAsync();
                 }
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data, Meta = new { pageIndex = pageIndex, PageRowCount = PageRowCount, totaldata = totaldata, pagecount = pagecount } };
@@ -548,6 +549,126 @@ namespace NextTradeAPIs.Services
             return message;
         }
 
+
+        public async Task<SystemMessageModel> GetCourseLessonAttachedFiles(CourseBuilderLessonFilterDto model, UserModel? userlogin, string processId, string clientip, string hosturl, bool showfilepath = true)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                IQueryable<CourseBuilderLesson> query = _Context.CourseBuilderLessons;
+
+                if (model.Id != null)
+                    query = query.Where(x => x.Id == model.Id);
+
+                if (model.courseId != null)
+                    query = query.Where(x => x.courseId == model.courseId);
+
+                if (!string.IsNullOrEmpty(model.lessonName))
+                    query = query.Where(x => x.lessonName.Contains(model.lessonName.Trim()));
+
+                CourseBuilderLesson lesson = await query.FirstOrDefaultAsync();
+
+                if (lesson != null)
+                {
+
+                    List<CourseBuilderLessonFileDto> data = await _Context.CourseBuilderLessonFiles.Where(x => x.lessonId == lesson.Id).Select(x => new CourseBuilderLessonFileDto()
+                    {
+                        lessonId = x.lessonId,
+                        Id = x.Id,
+                        lessonFilecontenttype = x.lessonFilecontenttype,
+                        lessonFilename = x.lessonFilename,
+                        lessonFilepath = (showfilepath == true) ? x.lessonFilepath : ""
+                    }).ToListAsync();
+
+                    message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data, Meta = new { pageIndex = 1, PageRowCount = data.Count(), totaldata = data.Count(), pagecount = 1 } };
+                }
+                else
+                {
+                    message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = null, Meta = new { pageIndex = 1, PageRowCount = 0, totaldata = 0, pagecount = 1 } };
+                }
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<SystemMessageModel> GetCourseFileURL(Guid Id, string sitePath)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                CourseBuilderCourse data = await _Context.CourseBuilderCourses.FindAsync(Id);
+                if (data != null)
+                {
+                    return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data };
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, "", "", methodpath, LogTypes.SystemError);
+            }
+            return null;
+        }
+
+        public async Task<SystemMessageModel> GetLessonFileURL(Guid Id, string sitePath)
+        {
+            try
+            {
+                CourseBuilderLesson data = await _Context.CourseBuilderLessons.FindAsync(Id);
+                if (data != null)
+                {
+                    return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data };
+                }
+                else
+                {
+                    return null;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return null; //new SystemMessageModel() { MessageCode = -501, MessageDescription = "File saving Error", MessageData = ex.Message };
+            }
+        }
+
+        public async Task<SystemMessageModel> GetLessonAttachmentFileURL(Guid Id, string sitePath)
+        {
+            try
+            {
+                CourseBuilderLessonFile data = await _Context.CourseBuilderLessonFiles.FindAsync(Id);
+                if (data != null)
+                {
+                    return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data };
+                }
+                else
+                {
+                    return null;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return null; //new SystemMessageModel() { MessageCode = -501, MessageDescription = "File saving Error", MessageData = ex.Message };
+            }
+        }
 
 
         public async Task<SystemMessageModel> SaveCourseFile(byte[] filecontent, CourseBuilderCourseDto model, long userid, string FileName, string sitePath)
@@ -722,10 +843,11 @@ namespace NextTradeAPIs.Services
                             questionTitle = item.questionTitle,
                             questionType = (int)item.questionType
                         };
-                        
+
                         foreach (QuestionOptionDto questionOption in item.qoptions)
                         {
-                            qoplist.Add(new QuestionOption() { 
+                            qoplist.Add(new QuestionOption()
+                            {
                                 Id = Guid.NewGuid(),
                                 isAnswer = questionOption.isAnswer,
                                 questionId = _question.Id,
@@ -934,6 +1056,23 @@ namespace NextTradeAPIs.Services
                         fileurl = fileurl
                     };
                     return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = dto };
+                }
+                else
+                {
+                    return new SystemMessageModel() { MessageCode = -501, MessageDescription = "File Error", MessageData = null };
+                }
+            }
+            catch (Exception ex) { return new SystemMessageModel() { MessageCode = -501, MessageDescription = "File saving Error", MessageData = ex.Message }; }
+        }
+
+        public async Task<SystemMessageModel> GetFileByteArray(string filepath)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(filepath))
+                {
+                    byte[] file = await File.ReadAllBytesAsync(filepath);
+                    return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = file };
                 }
                 else
                 {
