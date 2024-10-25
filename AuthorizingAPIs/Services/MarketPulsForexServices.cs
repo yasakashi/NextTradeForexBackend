@@ -61,9 +61,11 @@ namespace NextTradeAPIs.Services
                     marketsentimentsscript = model.marketsentimentsscript,
                     privatenotes = model.privatenotes,
                     excerpt = model.excerpt,
-                    author = model.author
+                    author = model.author,
+                    createdatetime = DateTime.Now
                 };
                 await _Context.Forexs.AddAsync(data);
+
 
                 if (model.URLSectionlist != null && model.URLSectionlist.Count() > 0)
                 {
@@ -96,7 +98,6 @@ namespace NextTradeAPIs.Services
                     await _Context.TechnicalTabss.AddRangeAsync(TechnicalTabslist);
                 }
 
-
                 if (model.TechnicalBreakingNewslist != null && model.TechnicalBreakingNewslist.Count() > 0)
                 {
                     List<TechnicalBreakingNews> TechnicalBreakingNewslist = new List<TechnicalBreakingNews>();
@@ -112,7 +113,6 @@ namespace NextTradeAPIs.Services
                     }
                     await _Context.TechnicalBreakingNewss.AddRangeAsync(TechnicalBreakingNewslist);
                 }
-
 
 
                 if (model.SecondCountryDatalist != null && model.SecondCountryDatalist.Count() > 0)
@@ -133,7 +133,6 @@ namespace NextTradeAPIs.Services
                     await _Context.SecondCountryDatas.AddRangeAsync(SecondCountryDatalist);
                 }
 
-
                 if (model.PDFSectionlist != null && model.PDFSectionlist.Count() > 0)
                 {
                     List<PDFSection> PDFSectionlist = new List<PDFSection>();
@@ -152,7 +151,6 @@ namespace NextTradeAPIs.Services
                     await _Context.PDFSections.AddRangeAsync(PDFSectionlist);
                 }
 
-
                 if (model.NewsMainContentlist != null && model.NewsMainContentlist.Count() > 0)
                 {
                     List<NewsMainContent> NewsMainContentlist = new List<NewsMainContent>();
@@ -169,7 +167,6 @@ namespace NextTradeAPIs.Services
                     await _Context.NewsMainContents.AddRangeAsync(NewsMainContentlist);
                 }
 
-
                 if (model.FundamentalNewsSectionlist != null && model.FundamentalNewsSectionlist.Count() > 0)
                 {
                     List<FundamentalNewsSection> FundamentalNewsSectionlist = new List<FundamentalNewsSection>();
@@ -185,7 +182,6 @@ namespace NextTradeAPIs.Services
                     }
                     await _Context.FundamentalNewsSections.AddRangeAsync(FundamentalNewsSectionlist);
                 }
-
 
                 if (model.FlexibleBlocklist != null && model.FlexibleBlocklist.Count() > 0)
                 {
@@ -207,7 +203,6 @@ namespace NextTradeAPIs.Services
                     await _Context.FlexibleBlocks.AddRangeAsync(FlexibleBlocklist);
                 }
 
-
                 if (model.FirstCountryDatalist != null && model.FirstCountryDatalist.Count() > 0)
                 {
                     List<FirstCountryData> FirstCountryDatalist = new List<FirstCountryData>();
@@ -228,6 +223,8 @@ namespace NextTradeAPIs.Services
 
                 await _Context.SaveChangesAsync();
 
+                model.id = data.id;
+
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
             }
             catch (Exception ex)
@@ -238,7 +235,7 @@ namespace NextTradeAPIs.Services
             }
             return message;
         }
-        public async Task<SystemMessageModel> GetForexItem(ForexDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        public async Task<SystemMessageModel> GetForexItem(ForexFilterDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
             SystemMessageModel message;
             StackTrace stackTrace = new StackTrace();

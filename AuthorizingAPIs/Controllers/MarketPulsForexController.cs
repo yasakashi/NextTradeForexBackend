@@ -110,7 +110,7 @@ namespace NextTradeAPIs.Controllers
 
         [HttpPost]
         [Route("/api/marketpuls/getforexitems")]
-        public async Task<IActionResult> GetForexItems(ForexDto model)
+        public async Task<IActionResult> GetForexItems(ForexFilterDto model)
         {
             StackTrace stackTrace = new StackTrace();
             SystemMessageModel message;
