@@ -645,9 +645,6 @@ namespace NextTradeAPIs.Controllers
 
                     FileActionDto _fileinfo = message.MessageData as FileActionDto;
                     model.lessonFilepath = _fileinfo.filepath;
-
-                    if (message.MessageCode < 0)
-                        return BadRequest(message);
                 }
 
                 if (model.featureImage != null)
@@ -672,8 +669,6 @@ namespace NextTradeAPIs.Controllers
                     FileActionDto _fileinfo = message.MessageData as FileActionDto;
                     model.featureImagepath = _fileinfo.filepath;
 
-                    if (message.MessageCode < 0)
-                        return BadRequest(message);
                 }
 
                 if (model.attachments != null)
@@ -692,10 +687,13 @@ namespace NextTradeAPIs.Controllers
                                 attach.CopyTo(ms);
                                 message = await _thisService.SaveCourseLessonAttachFile(ms.ToArray(), model, userlogin.userid, attach.FileName, sitePath);
                             }
-                            FileActionDto _fileinfo = message.MessageData as FileActionDto;
-                            fileattachment.lessonFilepath = _fileinfo.filepath;
+                            if (message.MessageCode > 0)
+                            {
+                                FileActionDto _fileinfo = message.MessageData as FileActionDto;
+                                fileattachment.lessonFilepath = _fileinfo.filepath;
 
-                            model.fileattachments.Add(fileattachment);
+                                model.fileattachments.Add(fileattachment);
+                            }
                         }
                     }
 

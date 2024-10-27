@@ -17,5 +17,7 @@ namespace Entities.DBEntities
         public string? lessonFilename { get; set; }
         public string? lessonFilecontenttype { get; set; }
         public string? lessonFilepath { get; set; }
+
+        public virtual CourseBuilderLesson lesson { get; set; }
     }
 }

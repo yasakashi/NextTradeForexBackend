@@ -438,7 +438,7 @@ namespace NextTradeAPIs.Services
                     lessonFilecontenttype = model.lessonFilecontenttype,
                     lessonFilename = model.lessonFilename,
                     lessonName = model.lessonName,
-                    videoPlaybackTime = model.videoPlaybackTime,
+                    videoPlaybackTime = model.videoPlaybackTime??1,
                     lessonFilepath = model.lessonFilepath,
                     videoSource = model.videoSource
                 };
