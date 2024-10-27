@@ -14,7 +14,7 @@ namespace Entities.DBEntities
         [Key]
         public Guid id { get; set; }
         public Guid marketpulsforexid { get; set; }
-
+        public Guid technicaltabid { get; set; }
         public string maintitle { get; set; }
         public string script { get; set; }
     }

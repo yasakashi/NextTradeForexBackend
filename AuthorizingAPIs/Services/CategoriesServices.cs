@@ -73,25 +73,26 @@ public class CategoriesServices
         {
             IQueryable<Category> categories = _Context.Categories;
 
+            List<Category> alldatalist = await _Context.Categories.ToListAsync();
+
             if (filter.parentId != null)
                 categories = categories.Where(x => x.parentId == (long)filter.parentId);
 
             if (filter.categorytypeid != null)
                 categories = categories.Where(x => x.categorytypeid == (int)filter.categorytypeid);
 
-            List<Category> datalist = await categories.ToListAsync();
-
-            List<CategorisTreeDto> datas = datalist.Where(x => x.parentId == null).Select(x => new CategorisTreeDto()
+            List<CategorisTreeDto> datas = await categories.Select(x => new CategorisTreeDto()
             {
                 Id = x.Id,
                 parentId = x.parentId,
                 name = x.name,
                 categorytypeid = x.categorytypeid,
-            }).ToList();
+            }).ToListAsync(); 
+
 
             foreach (CategorisTreeDto node in datas)
             {
-                node.children = CreateTree(datalist, (long)node.Id);
+                node.children = CreateTree(alldatalist, (long)node.Id);
             }
             message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas, Meta = new { totalitem = categories.Count() } };
         }

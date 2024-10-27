@@ -41,7 +41,6 @@ public class ForexDto
 
     public List<URLSectionDto> URLSectionlist { get; set; }
     public List<TechnicalTabsDto> TechnicalTabslist { get; set; }
-    public List<TechnicalBreakingNewsDto> TechnicalBreakingNewslist { get; set; }
     public List<SecondCountryDataDto> SecondCountryDatalist { get; set; }
     public List<PDFSectionDto> PDFSectionlist { get; set; }
     public List<NewsMainContentDto> NewsMainContentlist { get; set; }
@@ -55,5 +54,5 @@ public class ForexFilterDto : BaseFilterDto
 {
     public Guid? id { get; set; }
 
-    public long categoryid { get; set; }
+    public long? categoryid { get; set; }
 }

@@ -34,6 +34,9 @@ namespace NextTradeAPIs.Services
 
             try
             {
+                if (await _Context.Forexs.Where(x => x.categoryid == model.categoryid).AnyAsync())
+                    await DeleteForexItem(new ForexFilterDto() {id = model.id, categoryid = model.categoryid }, userlogin, processId, clientip, hosturl);
+
                 Forex data = new Forex()
                 {
                     id = Guid.NewGuid(),
@@ -87,31 +90,34 @@ namespace NextTradeAPIs.Services
                     List<TechnicalTabs> TechnicalTabslist = new List<TechnicalTabs>();
                     foreach (TechnicalTabsDto x in model.TechnicalTabslist)
                     {
-                        TechnicalTabslist.Add(new TechnicalTabs()
+                        TechnicalTabs _technicalTabs = new TechnicalTabs()
                         {
                             maintitle = x.maintitle,
                             script = x.script,
                             id = Guid.NewGuid(),
                             marketpulsforexid = data.id
-                        });
+                        };
+
+                        if (x.TechnicalBreakingNewslist != null && x.TechnicalBreakingNewslist.Count() > 0)
+                        {
+                            List<TechnicalBreakingNews> TechnicalBreakingNewslist = new List<TechnicalBreakingNews>();
+                            foreach (TechnicalBreakingNewsDto xn in x.TechnicalBreakingNewslist)
+                            {
+                                TechnicalBreakingNewslist.Add(new TechnicalBreakingNews()
+                                {
+                                    maintitle = xn.maintitle,
+                                    script = xn.script,
+                                    id = Guid.NewGuid(),
+                                    technicaltabid = _technicalTabs.id,
+                                    marketpulsforexid = data.id
+                                });
+                            }
+                            await _Context.TechnicalBreakingNewss.AddRangeAsync(TechnicalBreakingNewslist);
+                        }
+                        TechnicalTabslist.Add(_technicalTabs);
+
                     }
                     await _Context.TechnicalTabss.AddRangeAsync(TechnicalTabslist);
-                }
-
-                if (model.TechnicalBreakingNewslist != null && model.TechnicalBreakingNewslist.Count() > 0)
-                {
-                    List<TechnicalBreakingNews> TechnicalBreakingNewslist = new List<TechnicalBreakingNews>();
-                    foreach (TechnicalBreakingNewsDto x in model.TechnicalBreakingNewslist)
-                    {
-                        TechnicalBreakingNewslist.Add(new TechnicalBreakingNews()
-                        {
-                            maintitle = x.maintitle,
-                            script = x.script,
-                            id = Guid.NewGuid(),
-                            marketpulsforexid = data.id
-                        });
-                    }
-                    await _Context.TechnicalBreakingNewss.AddRangeAsync(TechnicalBreakingNewslist);
                 }
 
 
@@ -248,7 +254,7 @@ namespace NextTradeAPIs.Services
                 IQueryable<Forex> query = _Context.Forexs;
 
                 if (model.id != null)
-                    query = query.Where(x=>x.id == model.id);
+                    query = query.Where(x => x.id == model.id);
 
                 if (model.categoryid != null)
                     query = query.Where(x => x.categoryid == model.categoryid);
@@ -328,7 +334,10 @@ namespace NextTradeAPIs.Services
 
                     data.TechnicalTabslist = await _Context.TechnicalTabss.Where(x => x.marketpulsforexid == data.id).Select(x => new TechnicalTabsDto() { maintitle = x.maintitle, script = x.script, id = x.id, marketpulsforexid = x.marketpulsforexid }).ToListAsync();
 
-                    data.TechnicalBreakingNewslist = await _Context.TechnicalBreakingNewss.Where(x => x.marketpulsforexid == data.id).Select(x => new TechnicalBreakingNewsDto() { maintitle = x.maintitle, script = x.script, id = x.id, marketpulsforexid = x.marketpulsforexid }).ToListAsync();
+                    foreach (TechnicalTabsDto tabitem in data.TechnicalTabslist)
+                    {
+                        tabitem.TechnicalBreakingNewslist = await _Context.TechnicalBreakingNewss.Where(x => x.marketpulsforexid == data.id && x.technicaltabid == tabitem.id ).Select(x => new TechnicalBreakingNewsDto() { maintitle = x.maintitle, script = x.script, id = x.id, marketpulsforexid = x.marketpulsforexid, technicaltabid = x.technicaltabid }).ToListAsync();
+                    }
 
                     data.SecondCountryDatalist = await _Context.SecondCountryDatas.Where(x => x.marketpulsforexid == data.id).Select(x => new SecondCountryDataDto() { avragedaily = x.avragedaily, centralbank = x.centralbank, countries = x.countries, nickname = x.nickname, id = x.id, marketpulsforexid = x.marketpulsforexid }).ToListAsync();
 
@@ -343,7 +352,9 @@ namespace NextTradeAPIs.Services
                     data.FirstCountryDatalist = await _Context.FirstCountryDatas.Where(x => x.marketpulsforexid == data.id).Select(x => new FirstCountryDataDto() { avragedaily = x.avragedaily, centralbank = x.centralbank, countries = x.countries, nickname = x.nickname, id = x.id, marketpulsforexid = x.marketpulsforexid }).ToListAsync();
 
                 }
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas, Meta = new { pagecount = pagecount, rowcount = PageRowCount,pageindex = pageIndex } };
+
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas, Meta = new { pagecount = pagecount, rowcount = PageRowCount, pageindex = pageIndex } };
             }
             catch (Exception ex)
             {
@@ -353,5 +364,72 @@ namespace NextTradeAPIs.Services
             }
             return message;
         }
+
+        public async Task<SystemMessageModel> DeleteForexItem(ForexFilterDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                Forex data;
+                IQueryable<Forex> query = _Context.Forexs;
+
+                if (model.id != null)
+                    query = query.Where(x => x.id == model.id);
+
+                if (model.categoryid != null)
+                    query = query.Where(x => x.categoryid == model.categoryid);
+
+                data = await query.FirstOrDefaultAsync();
+
+                _Context.Forexs.Remove(data);
+
+                List<URLSection> URLSectionlist = await _Context.URLSections.Where(x => x.marketpulsforexid == data.id).ToListAsync();
+                _Context.URLSections.RemoveRange(URLSectionlist);
+
+                List<TechnicalTabs> TechnicalTabslist = await _Context.TechnicalTabss.Where(x => x.marketpulsforexid == data.id).ToListAsync();
+                _Context.TechnicalTabss.RemoveRange(TechnicalTabslist);
+
+
+                List<TechnicalBreakingNews> TechnicalBreakingNewslist = await _Context.TechnicalBreakingNewss.Where(x => x.marketpulsforexid == data.id).ToListAsync();
+                _Context.TechnicalBreakingNewss.RemoveRange(TechnicalBreakingNewslist);
+
+
+                List<SecondCountryData> SecondCountryDatalist = await _Context.SecondCountryDatas.Where(x => x.marketpulsforexid == data.id).ToListAsync();
+                _Context.SecondCountryDatas.RemoveRange(SecondCountryDatalist);
+
+
+                List<PDFSection> PDFSectionlist = await _Context.PDFSections.Where(x => x.marketpulsforexid == data.id).ToListAsync();
+                _Context.PDFSections.RemoveRange(PDFSectionlist);
+
+                List<NewsMainContent> NewsMainContentlist = await _Context.NewsMainContents.Where(x => x.marketpulsforexid == data.id).ToListAsync();
+                _Context.NewsMainContents.RemoveRange(NewsMainContentlist);
+
+                List<FundamentalNewsSection> FundamentalNewsSectionlist = await _Context.FundamentalNewsSections.Where(x => x.marketpulsforexid == data.id).ToListAsync();
+                _Context.FundamentalNewsSections.RemoveRange(FundamentalNewsSectionlist);
+
+
+                List<FlexibleBlock> FlexibleBlocklist = await _Context.FlexibleBlocks.Where(x => x.marketpulsforexid == data.id).ToListAsync();
+                _Context.FlexibleBlocks.RemoveRange(FlexibleBlocklist);
+
+                List<FirstCountryData> FirstCountryDatalist = await _Context.FirstCountryDatas.Where(x => x.marketpulsforexid == data.id).ToListAsync();
+                _Context.FirstCountryDatas.RemoveRange(FirstCountryDatalist);
+
+                await _Context.SaveChangesAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model, Meta = null };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
     }
 }

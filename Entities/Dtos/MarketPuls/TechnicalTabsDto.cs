@@ -16,6 +16,7 @@ namespace Entities.Dtos
         public string? maintitle { get; set; }
 
         public string? script { get; set; }
+        public List<TechnicalBreakingNewsDto> TechnicalBreakingNewslist { get; set; }
 
     }
 }

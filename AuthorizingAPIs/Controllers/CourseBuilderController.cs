@@ -1015,7 +1015,9 @@ namespace NextTradeAPIs.Controllers
             {
                 CourseBuilderCourse data = message.MessageData as CourseBuilderCourse;
                 string relativePath = hosturl + data.courseFilepath.Substring(data.courseFilepath.IndexOf("wwwroot\\")).Replace("wwwroot", "").Replace("\\", "/");
-
+                Uri physicalUri = new Uri(data.courseFilepath);
+                Uri baseUri = new Uri(sitePath);
+                Uri relativeUri = physicalUri.MakeRelativeUri(baseUri);
                 data.courseFilepath = relativePath;
 
                 FileActionDto fileInfo = new FileActionDto() { fileurl = relativePath, filename = data.courseFilename, filecontent = data.courseFilecontent };
