@@ -37,9 +37,16 @@ namespace Entities.DBEntities
         public string? featuredImagepath { get; set; }
         public string? featuredImagecontent { get; set; }
         public DateTime registerdatetime { get; set; }
-        public List<CourseBuilderMeeting> meetings { get; set; }
-        public List<CourseBuildeVideoPdfUrl> videoPdfUrls { get; set; }
-        public List<CourseCategory> courseCategorys { get; set; }
+
+        public int? coursestatusid { get; set; }
+
+        public DateTime? changestatusdate { get; set; }
+
+        public virtual User author { get; set; }
+        public virtual CourseStatus coursestatus { get; set; }
+        public virtual List<CourseBuilderMeeting>? meetings { get; set; }
+        public virtual List<CourseBuildeVideoPdfUrl>? videoPdfUrls { get; set; }
+        public virtual List<CourseCategory>? courseCategorys { get; set; }
     }
 
 

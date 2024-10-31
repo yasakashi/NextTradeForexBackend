@@ -49,4 +49,16 @@ namespace Entities.Dtos
 
         public int? pagecount { get; set; }
     }
+
+
+    public class UserPersonLookupModel
+    {
+        public long? userid { get; set; }
+        /// <summary>
+        /// نام کاربری
+        /// </summary>
+        public string? username { get; set; }
+        public string? fname { get; set; }
+        public string? lname { get; set; }
+    }
 }

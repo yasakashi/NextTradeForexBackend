@@ -157,34 +157,38 @@ namespace NextTradeAPIs.Services
                     await _Context.PDFSections.AddRangeAsync(PDFSectionlist);
                 }
 
-                if (model.NewsMainContentlist != null && model.NewsMainContentlist.Count() > 0)
-                {
-                    List<NewsMainContent> NewsMainContentlist = new List<NewsMainContent>();
-                    foreach (NewsMainContentDto x in model.NewsMainContentlist)
-                    {
-                        NewsMainContentlist.Add(new NewsMainContent()
-                        {
-                            maintitle = x.maintitle,
-                            script = x.script,
-                            id = Guid.NewGuid(),
-                            marketpulsforexid = data.id
-                        });
-                    }
-                    await _Context.NewsMainContents.AddRangeAsync(NewsMainContentlist);
-                }
 
                 if (model.FundamentalNewsSectionlist != null && model.FundamentalNewsSectionlist.Count() > 0)
                 {
                     List<FundamentalNewsSection> FundamentalNewsSectionlist = new List<FundamentalNewsSection>();
                     foreach (FundamentalNewsSectionDto x in model.FundamentalNewsSectionlist)
                     {
-                        FundamentalNewsSectionlist.Add(new FundamentalNewsSection()
+                        FundamentalNewsSection _fundamentalNewsSection = new FundamentalNewsSection()
                         {
                             maintitle = x.maintitle,
                             script = x.script,
                             id = Guid.NewGuid(),
                             marketpulsforexid = data.id
-                        });
+                        };
+
+
+                        if (x.NewsMainContentlist != null && x.NewsMainContentlist.Count() > 0)
+                        {
+                            List<NewsMainContent> NewsMainContentlist = new List<NewsMainContent>();
+                            foreach (NewsMainContentDto xn in x.NewsMainContentlist)
+                            {
+                                NewsMainContentlist.Add(new NewsMainContent()
+                                {
+                                    maintitle = xn.maintitle,
+                                    script = xn.script,
+                                    id = Guid.NewGuid(),
+                                    marketpulsforexid = data.id,
+                                    fundamentalnewssectionid = _fundamentalNewsSection.id
+                                });
+                            }
+                            await _Context.NewsMainContents.AddRangeAsync(NewsMainContentlist);
+                        }
+                        FundamentalNewsSectionlist.Add(_fundamentalNewsSection);
                     }
                     await _Context.FundamentalNewsSections.AddRangeAsync(FundamentalNewsSectionlist);
                 }
@@ -343,9 +347,12 @@ namespace NextTradeAPIs.Services
 
                     data.PDFSectionlist = await _Context.PDFSections.Where(x => x.marketpulsforexid == data.id).Select(x => new PDFSectionDto() { author = x.author, pdfshortcodeid = x.pdfshortcodeid, pdftitle = x.pdftitle, shortdescription = x.shortdescription, id = x.id, marketpulsforexid = x.marketpulsforexid }).ToListAsync();
 
-                    data.NewsMainContentlist = await _Context.NewsMainContents.Where(x => x.marketpulsforexid == data.id).Select(x => new NewsMainContentDto() { maintitle = x.maintitle, script = x.script, id = x.id, marketpulsforexid = x.marketpulsforexid }).ToListAsync();
-
                     data.FundamentalNewsSectionlist = await _Context.FundamentalNewsSections.Where(x => x.marketpulsforexid == data.id).Select(x => new FundamentalNewsSectionDto() { maintitle = x.maintitle, script = x.script, id = x.id, marketpulsforexid = x.marketpulsforexid }).ToListAsync();
+
+                    foreach (FundamentalNewsSectionDto nitem in data.FundamentalNewsSectionlist)
+                    {
+                        nitem.NewsMainContentlist = await _Context.NewsMainContents.Where(x => x.marketpulsforexid == data.id && x.fundamentalnewssectionid == nitem.id).Select(x => new NewsMainContentDto() { maintitle = x.maintitle, script = x.script, id = x.id, marketpulsforexid = x.marketpulsforexid }).ToListAsync();
+                    }
 
                     data.FlexibleBlocklist = await _Context.FlexibleBlocks.Where(x => x.marketpulsforexid == data.id).Select(x => new FlexibleBlockDto() { countries = x.countries, dailyavrage = x.dailyavrage, highslows = x.highslows, MainTitle = x.MainTitle, pairsthatcorrelate = x.pairsthatcorrelate, pairtype = x.pairtype, id = x.id, marketpulsforexid = x.marketpulsforexid }).ToListAsync();
 

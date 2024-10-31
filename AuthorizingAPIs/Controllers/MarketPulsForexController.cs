@@ -1,8 +1,10 @@
 ﻿using Base.Common.Enums;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using Entities.DBEntities;
 using Entities.Dtos;
 using Entities.Dtos;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
@@ -25,6 +27,7 @@ namespace NextTradeAPIs.Controllers
         BlockedIPServices _blockedIPService;
         MarketPulsForexServices _service;
         CategoriesServices _baseInformationService;
+        ForumsServices _forumsService;
 
         public MarketPulsForexController(AuthorizationService authorizationService,
                                        IHttpContextAccessor httpContextAccessor,
@@ -32,7 +35,8 @@ namespace NextTradeAPIs.Controllers
                                        BlockedIPServices blockedIPServices,
                                        MarketPulsForexServices marketPulsForexServices,
                                        CategoriesServices baseInformationServices,
-                                       UserServices userServices)
+                                       ForumsServices forumsServices,
+        UserServices userServices)
         {
             _authorizationService = authorizationService;
             _userServices = userServices;
@@ -41,6 +45,7 @@ namespace NextTradeAPIs.Controllers
             _blockedIPService = blockedIPServices;
             _service = marketPulsForexServices;
             _baseInformationService = baseInformationServices;
+            _forumsService = forumsServices;
         }
 
         [HttpPost]
@@ -92,7 +97,7 @@ namespace NextTradeAPIs.Controllers
 
                 UserModel userlogin = message.MessageData as UserModel;
 
-                message = await _service.SaveForexItem(model,userlogin, processId, clientip, hosturl);
+                message = await _service.SaveForexItem(model, userlogin, processId, clientip, hosturl);
 
                 if (message.MessageCode < 0)
                     return BadRequest(message);
@@ -358,6 +363,142 @@ namespace NextTradeAPIs.Controllers
 
                 model.categoryid = 895;
                 message = await _baseInformationService.GetCategory4MarketPulsForex(model, null, processId, clientip, hosturl, false);
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                string log = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, LogTypes.TokenError);
+                return Unauthorized();
+                //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        [HttpGet]
+        [Route("/api/marketpuls/getforexcurrencies")]
+        public async Task<IActionResult> GetForexCurrencies(ForexFilterDto model)
+        {
+            StackTrace stackTrace = new StackTrace();
+            SystemMessageModel message;
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string authHeader = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            UserModel user = null;
+            LoginLog loginLog = null;
+
+            long ApiCode = 2000;
+
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                //message = await _authorizationService.CheckToken(_bearer_token, processId);
+
+                //if (message.MessageCode < 0)
+                //    return Unauthorized(message);
+
+                //UserModel userlogin = message.MessageData as UserModel;
+
+                message = await _baseInformationService.GetCategoryCurrency4MarketPulsForex(model, null, processId, clientip, hosturl, false);
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                string log = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, LogTypes.TokenError);
+                return Unauthorized();
+                //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
+            }
+        }
+
+
+
+        [HttpPost("{id}")]
+        [HttpGet("{id}")]
+        [HttpPost]
+        [Route("/api/marketpuls/getforummessages")]
+        public async Task<IActionResult> GetForumMessages(ForexFilterDto model)
+        {
+            StackTrace stackTrace = new StackTrace();
+            SystemMessageModel message;
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string authHeader = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            UserModel user = null;
+            LoginLog loginLog = null;
+
+            long ApiCode = 2000;
+
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                message = await _authorizationService.CheckToken(_bearer_token, processId);
+
+                //if (message.MessageCode < 0)
+                //    return Unauthorized(message);
+
+                //UserModel userlogin = message.MessageData as UserModel;
+
+                message = await _forumsService.GetForumMessage4MarketPuls(model, null, processId, clientip, hosturl);
 
                 if (message.MessageCode < 0)
                     return BadRequest(message);

@@ -12,6 +12,7 @@ namespace Entities.Dtos
     {
         public Guid? id { get; set; }
         public Guid? marketpulsforexid { get; set; }
+        public Guid? fundamentalnewssectionid { get; set; }
 
         public string? maintitle { get; set; }
 

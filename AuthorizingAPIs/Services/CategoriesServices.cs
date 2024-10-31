@@ -39,15 +39,15 @@ public class CategoriesServices
         {
             List<CategorisDto> datas = await _Context.Categories
                                                      //.Where(x => x.categorytypeid == 14)
-                                                     .Include(x=>x.categorytype)
+                                                     .Include(x => x.categorytype)
                                                      .Select(x => new CategorisDto()
-            {
-                Id = x.Id,
-                parentId = x.parentId,
-                name = x.name,
-                categorytypeid = x.categorytypeid,
-                categorytypename = (x.categorytype!= null)?x.categorytype.name:""
-            }).ToListAsync();
+                                                     {
+                                                         Id = x.Id,
+                                                         parentId = x.parentId,
+                                                         name = x.name,
+                                                         categorytypeid = x.categorytypeid,
+                                                         categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
+                                                     }).ToListAsync();
 
 
 
@@ -68,7 +68,7 @@ public class CategoriesServices
         StackTrace stackTrace = new StackTrace();
         string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
         long SerrvieCode = 130000;
-        
+
         try
         {
             IQueryable<Category> categories = _Context.Categories;
@@ -87,7 +87,7 @@ public class CategoriesServices
                 parentId = x.parentId,
                 name = x.name,
                 categorytypeid = x.categorytypeid,
-            }).ToListAsync(); 
+            }).ToListAsync();
 
 
             foreach (CategorisTreeDto node in datas)
@@ -257,29 +257,77 @@ public class CategoriesServices
             List<long> categoryids = await _Context.Forexs.Select(x => x.categoryid).ToListAsync();
             if (gettop)
             {
-                List<long> topcategoryids = await _Context.Categories.Where(x => categoryids.Contains((long)x.Id)).Select(x=>(long)x.parentId ).ToListAsync();
-                datas = await _Context.Categories.Where(x => topcategoryids.Contains((long)x.Id)).Include(x => x.categorytype)
-                                                     .Select(x => new CategorisDto()
-                                                     {
-                                                         Id = x.Id,
-                                                         parentId = x.parentId,
-                                                         name = x.name,
-                                                         categorytypeid = x.categorytypeid,
-                                                         categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
-                                                     }).ToListAsync();
+                //List<long> topcategoryids = await _Context.Categories.Where(x => categoryids.Contains((long)x.Id)).Select(x=>(long)x.parentId ).ToListAsync();
+                //datas = await _Context.Categories.Where(x => topcategoryids.Contains((long)x.Id)).Include(x => x.categorytype)
+                //                                     .Select(x => new CategorisDto()
+                //                                     {
+                //                                         Id = x.Id,
+                //                                         parentId = x.parentId,
+                //                                         name = x.name,
+                //                                         categorytypeid = x.categorytypeid,
+                //                                         categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
+                //                                     }).ToListAsync();
+                datas = await _Context.Categories.Where(x => x.Id == 896).Select(x => new CategorisDto()
+                {
+                    Id = x.Id,
+                    parentId = x.parentId,
+                    name = x.name,
+                    categorytypeid = x.categorytypeid,
+                    categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
+                }).ToListAsync();
+
             }
             else
             {
-                datas = await _Context.Categories.Where(x => categoryids.Contains((long)x.Id)).Include(x => x.categorytype)
-                                     .Select(x => new CategorisDto()
-                                     {
-                                         Id = x.Id,
-                                         parentId = x.parentId,
-                                         name = x.name,
-                                         categorytypeid = x.categorytypeid,
-                                         categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
-                                     }).ToListAsync();
+                //datas = await _Context.Categories.Where(x => categoryids.Contains((long)x.Id)).Include(x => x.categorytype)
+                //                     .Select(x => new CategorisDto()
+                //                     {
+                //                         Id = x.Id,
+                //                         parentId = x.parentId,
+                //                         name = x.name,
+                //                         categorytypeid = x.categorytypeid,
+                //                         categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
+                //}).ToListAsync();
+                datas = await _Context.Categories.Where(x => x.parentId == 896).Select(x => new CategorisDto()
+                {
+                    Id = x.Id,
+                    parentId = x.parentId,
+                    name = x.name,
+                    categorytypeid = x.categorytypeid,
+                    categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
+                }).ToListAsync();
             }
+
+            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+        }
+        catch (Exception ex)
+        {
+            message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+            string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+            await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+        }
+        return message;
+    }
+
+    public async Task<SystemMessageModel> GetCategoryCurrency4MarketPulsForex(ForexFilterDto model, UserModel? userlogin, string processId, string clientip, string hosturl, bool gettop)
+    {
+        SystemMessageModel message;
+        StackTrace stackTrace = new StackTrace();
+        string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+        long SerrvieCode = 130000;
+        List<CategorisDto> datas = null;
+        try
+        {
+
+            datas = await _Context.Categories.Where(x => x.parentId == model.categoryid).Select(x => new CategorisDto()
+            {
+                Id = x.Id,
+                parentId = x.parentId,
+                name = x.name,
+                categorytypeid = x.categorytypeid,
+                categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
+            }).ToListAsync();
+
 
             message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
         }

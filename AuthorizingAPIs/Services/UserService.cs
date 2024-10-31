@@ -1400,5 +1400,65 @@ namespace NextTradeAPIs.Services
             return message;
         }
 
+        public async Task<SystemMessageModel> GetUserInstructorsList(UserPartnerSearchDto filter, UserModel userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            List<UserPersonLookupModel> datas = null;
+            long SerrvieCode = 120000;
+
+            try
+            {
+                IQueryable<User> query = _Context.Users;
+                IQueryable<Person> queryperson = _Context.People;
+                bool HasPeronFilter = false;
+
+                if (!string.IsNullOrEmpty(filter.username))
+                    query = query.Where(x => x.Username == filter.username);
+
+                if (!string.IsNullOrEmpty(filter.fname))
+                    query = query.Where(x => x.Fname.StartsWith(filter.fname));
+
+                if (!string.IsNullOrEmpty(filter.lname))
+                    query = query.Where(x => x.Lname.StartsWith(filter.lname));
+
+                if (!string.IsNullOrEmpty(filter.name))
+                    query = query.Where(x => x.Lname.Contains(filter.name) || x.Fname.Contains(filter.name));
+
+
+                query = query.Where(x => x.UserTypeId == (long)UserTypes.Instructor);
+
+                int pageIndex = (filter.pageindex == null || filter.pageindex == 0) ? 1 : (int)filter.pageindex;
+                int PageRowCount = (filter.rowcount == null || filter.rowcount == 0) ? 50 : (int)filter.rowcount;
+
+                int totaldata = query.Count();
+                if (totaldata <= 0) totaldata = 1;
+                decimal pagecountd = ((decimal)totaldata / (decimal)PageRowCount);
+                int pagecount = (totaldata / PageRowCount);
+                pagecount = (pagecount <= 0) ? 1 : pagecount;
+                if (Math.Floor(pagecountd) > 0)
+                    pagecount++;
+
+                datas = await query
+                                .Select(x => new UserPersonLookupModel()
+                                {
+                                    userid = x.UserId,
+                                    username = x.Username,
+                                    fname = x.Fname,
+                                    lname = x.Lname,
+                                }).ToListAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas, Meta = new { pagecount = pagecount } };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
     }
 }

@@ -21,6 +21,7 @@ namespace Entities.Dtos
         public IFormFile? courseFile { get; set; }
         public string? excerpt { get; set; }
         public long? authorId { get; set; }
+        public string? authorusername { get; set; }
         public string? authorname { get; set; }
         public int? maximumStudents { get; set; }
         public int? difficultyLevelId { get; set; }
@@ -40,6 +41,9 @@ namespace Entities.Dtos
         public string? featuredImagepath { get; set; }
         public string? featuredImagecontent { get; set; }
         public DateTime? registerdatetime { get; set; }
+        public int? coursestatusid { get; set; }
+        public string? coursestatusname { get; set; }
+        public DateTime? changestatusdate { get; set; }
         public List<CourseBuilderMeetingDto>? meetings { get; set; }
         public List<CourseBuildeVideoPdfUrlDto>? videoPdfUrls { get; set; }
         public List<CourseCategoryDto>? courseCategorys { get; set; }
