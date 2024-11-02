@@ -6,6 +6,7 @@ using Entities.DBEntities;
 using Entities.Dtos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.Internal;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using NextTradeAPIs.Dtos;
 using System.Diagnostics;
@@ -67,7 +68,9 @@ namespace NextTradeAPIs.Services
                     courseFilecontent = model.courseFilecontent,
                     featuredImagecontent = model.featuredImagecontent,
                     coursestatusid = (int)CourseStatusList.Draft,
-                    changestatusdate = DateTime.Now
+                    changestatusdate = DateTime.Now,
+                    isvisibledropdown = model.isvisibledropdown,
+                    isvisible= model.isvisible
                 };
                 await _Context.CourseBuilderCourses.AddAsync(data);
 
@@ -331,7 +334,7 @@ namespace NextTradeAPIs.Services
 
 
                 List<CourseBuilderCourseDto> data = await query.Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount)
-                                                  .Include(x=>x.coursestatus)
+                                                  .Include(x => x.coursestatus)
                                                   .Include(x => x.author)
                                                   .Select(x => new CourseBuilderCourseDto()
                                                   {
@@ -342,7 +345,7 @@ namespace NextTradeAPIs.Services
                                                       courseFilepath = (sendfilepath == true) ? x.courseFilepath : "",
                                                       excerpt = x.excerpt,
                                                       authorId = x.authorId,
-                                                      authorname = (x.author.Fname??"") +" " + (x.author.Lname ?? ""),
+                                                      authorname = (x.author.Fname ?? "") + " " + (x.author.Lname ?? ""),
                                                       authorusername = x.author.Username,
                                                       maximumStudents = x.maximumStudents ?? 1,
                                                       difficultyLevelId = x.courseleveltypeId,
@@ -363,7 +366,9 @@ namespace NextTradeAPIs.Services
                                                       featuredImagecontent = x.featuredImagecontent,
                                                       coursestatusid = x.coursestatusid,
                                                       coursestatusname = x.coursestatus.name,
-                                                      changestatusdate = x.changestatusdate
+                                                      changestatusdate = x.changestatusdate,
+                                                      isvisible = x.isvisible,
+                                                      isvisibledropdown = x.isvisibledropdown,
                                                   }).ToListAsync();
 
 
@@ -387,7 +392,7 @@ namespace NextTradeAPIs.Services
                         meetingTitle = x.meetingTitle,
                         meetingURL = x.meetingURL
                     }).ToListAsync();
-
+                    item.meetingcount = item.meetings.Count();
                     item.videoPdfUrls = await _Context.CourseBuildeVideoPdfUrls.Where(x => x.courseId == item.Id).Select(x => new CourseBuildeVideoPdfUrlDto()
                     {
                         Id = x.Id,
@@ -398,15 +403,23 @@ namespace NextTradeAPIs.Services
                         pdfTitle = x.pdfTitle,
                         viewPdfFile = x.viewPdfFile
                     }).ToListAsync();
+                    item.videoPdfcount = item.videoPdfUrls.Count();
 
-                    item.featuredImagepath = hosturl + item.featuredImagepath.Substring(item.featuredImagepath.IndexOf("wwwroot\\")).Replace("wwwroot", "").Replace("\\", "/");
+                    if (!string.IsNullOrEmpty(item.featuredImagepath))
+                        item.featuredImagepath = hosturl + item.featuredImagepath.Substring(item.featuredImagepath.IndexOf("wwwroot\\")).Replace("wwwroot", "").Replace("\\", "/");
 
+                    if (!string.IsNullOrEmpty(item.courseFilepath))
+                        item.courseFilepath = hosturl + item.courseFilepath.Substring(item.courseFilepath.IndexOf("wwwroot\\")).Replace("wwwroot", "").Replace("\\", "/");
 
-                    item.courseFilepath = hosturl + item.courseFilepath.Substring(item.courseFilepath.IndexOf("wwwroot\\")).Replace("wwwroot", "").Replace("\\", "/");
+                    item.lessoncount = await _Context.CourseBuilderLessons.Where(x => x.courseId == item.Id).CountAsync();
+                    item.topiccount = await _Context.CourseBuilderTopics.Where(x => x.courseId == item.Id).CountAsync();
+                    item.quizcount = await _Context.CourseBuilderQuizs.Where(x => x.courseId == item.Id).CountAsync();
                     //Uri physicalUri = new Uri(data.courseFilepath);
                     //Uri baseUri = new Uri(sitePath);
                     //Uri relativeUri = physicalUri.MakeRelativeUri(baseUri);
                     //data.courseFilepath = relativePath;
+
+
                 }
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data, Meta = new { pageIndex = pageIndex, PageRowCount = PageRowCount, totaldata = totaldata, pagecount = pagecount } };
             }
@@ -428,11 +441,11 @@ namespace NextTradeAPIs.Services
 
             try
             {
-                if(model.Id == null)
+                if (model.Id == null)
                     return new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 101) * -1), MessageDescription = "Error In doing Request", MessageData = "data not complete" };
 
                 CourseBuilderCourse data = await _Context.CourseBuilderCourses.FindAsync(model.Id);
-                if(data == null)
+                if (data == null)
                     return new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 101) * -1), MessageDescription = "Error In doing Request", MessageData = "Id is wrong" };
 
                 data.coursestatusid = (int)model.coursestatusid;
@@ -1369,6 +1382,92 @@ namespace NextTradeAPIs.Services
             catch (Exception ex) { return new SystemMessageModel() { MessageCode = -501, MessageDescription = "File saving Error", MessageData = ex.Message }; }
         }
 
+        internal async Task<SystemMessageModel> UpdateCourse(CourseBuilderCourseDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                if (model.Id == null)
+                    return new SystemMessageModel() { MessageCode = -102, MessageDescription = "Id is Wrong" };
+
+                CourseBuilderCourse data = await _Context.CourseBuilderCourses.FindAsync(model.Id);
+
+                if (data == null)
+                    return new SystemMessageModel() { MessageCode = -103, MessageDescription = "data not find" };
+
+                if(!string.IsNullOrEmpty(model.courseName))
+                data.courseName = model.courseName;
+                if (!string.IsNullOrEmpty(model.courseDescription))
+                    data.courseDescription = model.courseDescription;
+                if (!string.IsNullOrEmpty(model.excerpt))
+                    data.excerpt = model.excerpt;
+                //data.authorId = model.authorId;
+                //data.authorname = (model.author.Fname ?? "") + " " + (model.author.Lname ?? "");
+                //data.authorusername = model.author.Username;
+                if(model.maximumStudents!= null)
+                data.maximumStudents = model.maximumStudents ?? 1;
+
+                if (model.difficultyLevelId != null)
+                    data.courseleveltypeId = model.difficultyLevelId;
+
+                if (model.isPublicCourse != null)
+                    data.isPublicCourse = model.isPublicCourse ?? false;
+
+                if (model.allowQA != null)
+                    data.allowQA = model.allowQA ?? false;
+
+                if (model.isvisibledropdown != null)
+                    data.isvisibledropdown = model.isvisibledropdown ?? false;
+
+                if (model.isvisible != null)
+                    data.isvisible = model.isvisible ?? false;
+
+                if (model.coursePrice != null)
+                    data.coursePrice = model.coursePrice ?? 0;
+
+                if (!string.IsNullOrEmpty(model.whatWillILearn))
+                    data.whatWillILearn = model.whatWillILearn;
+
+                if (!string.IsNullOrEmpty(model.targetedAudience))
+                    data.targetedAudience = model.targetedAudience;
+
+                if (model.maximumStudents != null)
+                    data.courseDuration = model.courseDuration ?? 1;
+
+                if (!string.IsNullOrEmpty(model.materialsIncluded))
+                    data.materialsIncluded = model.materialsIncluded;
+
+                if (!string.IsNullOrEmpty(model.requirementsInstructions))
+                    data.requirementsInstructions = model.requirementsInstructions;
+
+                if (!string.IsNullOrEmpty(model.courseIntroVideo))
+                    data.courseIntroVideo = model.courseIntroVideo;
+
+                if (!string.IsNullOrEmpty(model.courseTags))
+                    data.courseTags = model.courseTags;
+                //data.featuredImagename = model.featuredImagename;
+                //data.featuredImagepath = (sendfilepath == true) ? model.featuredImagepath : "";
+                //data.featuredImagecontent = model.featuredImagecontent;
+                //data.courseFilecontent = model.courseFilecontent;
+                //data.courseFilename = model.courseFilename;
+                //data.courseFilepath = (sendfilepath == true) ? model.courseFilepath : "";
+
+                await _Context.SaveChangesAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
     }
 }
 

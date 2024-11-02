@@ -339,4 +339,76 @@ public class CategoriesServices
         }
         return message;
     }
+
+    public async Task<SystemMessageModel> UpdateCategory(CategorisDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+    {
+        SystemMessageModel message;
+        StackTrace stackTrace = new StackTrace();
+        string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+        long SerrvieCode = 130000;
+
+        try
+        {
+            if (model.Id == null)
+                return new SystemMessageModel() { MessageCode = -102, MessageDescription = "Id is Wrong" };
+
+            Category data = await _Context.Categories.FindAsync(model.Id);
+
+            if (data == null)
+                return new SystemMessageModel() { MessageCode = -103, MessageDescription = "data not find" };
+
+            data.name = model.name;
+            data.parentId = model.parentId;
+
+            _Context.Categories.Update(data);
+            await _Context.SaveChangesAsync();
+
+            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
+        }
+        catch (Exception ex)
+        {
+            message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+            string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+            await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+        }
+        return message;
+    }
+
+    public async Task<SystemMessageModel> DeleteCategory(CategorisDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+    {
+        SystemMessageModel message;
+        StackTrace stackTrace = new StackTrace();
+        string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+        long SerrvieCode = 130000;
+
+        try
+        {
+            if (model.Id == null)
+                return new SystemMessageModel() { MessageCode = -102, MessageDescription = "Id is Wrong" };
+
+            Category data = await _Context.Categories.FindAsync(model.Id);
+
+            if (data == null)
+                return new SystemMessageModel() { MessageCode = -103, MessageDescription = "data not find" };
+
+            List<Category> datas = await _Context.Categories.Where(x=>x.parentId == model.Id).ToListAsync();
+
+            _Context.Categories.Remove(data);
+
+            if(datas!= null && datas.Count() > 0)
+                _Context.Categories.RemoveRange(datas);
+
+            await _Context.SaveChangesAsync();
+
+            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+        }
+        catch (Exception ex)
+        {
+            message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+            string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+            await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+        }
+        return message;
+    }
+
 }

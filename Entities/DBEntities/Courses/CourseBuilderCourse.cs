@@ -25,6 +25,9 @@ namespace Entities.DBEntities
         public int? courseleveltypeId { get; set; }
         public bool? isPublicCourse { get; set; }
         public bool? allowQA { get; set; }
+        public bool? isvisible { get; set; }
+        public bool? isvisibledropdown { get; set; }
+        
         public decimal? coursePrice { get; set; }
         public string? whatWillILearn { get; set; }
         public string? targetedAudience { get; set; }

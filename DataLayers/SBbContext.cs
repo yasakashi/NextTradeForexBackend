@@ -89,7 +89,7 @@ namespace DataLayers
 
         public DbSet<Question> Questions { get; set; }
         public DbSet<QuestionOption> QuestionOption { get; set; }
-        public DbSet<AdvancedSetting>AdvancedSettings { get; set; }
+        public DbSet<AdvancedSetting> AdvancedSettings { get; set; }
 
 
 
@@ -140,6 +140,17 @@ namespace DataLayers
         public DbSet<FlexibleBlock> FlexibleBlocks { get; set; }
         public DbSet<SecondCountryData> SecondCountryDatas { get; set; }
         public DbSet<Forex> Forexs { get; set; }
+
+        public DbSet<Comodity> Comodities { get; set; }
+        public DbSet<ComoditiesCountriesData> ComoditiesCountriesDatas { get; set; }
+        public DbSet<ComoditiesFirstCountryDataCountriesData> ComoditiesFirstCountryDataCountriesDatas { get; set; }
+        public DbSet<ComoditiesSecondCountryDataCountriesData> ComoditiesSecondCountryDataCountriesDatas { get; set; }
+        public DbSet<Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection> Comodities_fundamentalandtechnicaltabsection_fundamentalnewssections { get; set; }
+        public DbSet<Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontent> Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontents { get; set; }
+        public DbSet<Comodities_Fundamentalandtechnicaltabsection_TechnicalTabs> Comodities_Fundamentalandtechnicaltabsection_TechnicalTabses { get; set; }
+        public DbSet<Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNews> Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewses { get; set; }
+        public DbSet<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSection> Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections { get; set; }
+        public DbSet<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection> Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSections { get; set; }
         #endregion [ Market Puls Forex ]
 
         #region OnModelCreating

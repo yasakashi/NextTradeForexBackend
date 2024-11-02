@@ -27,6 +27,8 @@ namespace Entities.Dtos
         public int? difficultyLevelId { get; set; }
         public bool? isPublicCourse { get; set; }
         public bool? allowQA { get; set; }
+        public bool? isvisible { get; set; }
+        public bool? isvisibledropdown { get; set; }
         public decimal? coursePrice { get; set; }
         public string? whatWillILearn { get; set; }
         public string? targetedAudience { get; set; }
@@ -40,6 +42,11 @@ namespace Entities.Dtos
         public string? featuredImagename { get; set; }
         public string? featuredImagepath { get; set; }
         public string? featuredImagecontent { get; set; }
+        public int? lessoncount { get; set; }
+        public int? topiccount { get; set; }
+        public int? quizcount { get; set; }
+        public int? meetingcount { get; set; }
+        public int? videoPdfcount { get; set; }
         public DateTime? registerdatetime { get; set; }
         public int? coursestatusid { get; set; }
         public string? coursestatusname { get; set; }
