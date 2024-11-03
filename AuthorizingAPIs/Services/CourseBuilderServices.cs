@@ -70,7 +70,7 @@ namespace NextTradeAPIs.Services
                     coursestatusid = (int)CourseStatusList.Draft,
                     changestatusdate = DateTime.Now,
                     isvisibledropdown = model.isvisibledropdown,
-                    isvisible= model.isvisible
+                    isvisible = model.isvisible
                 };
                 await _Context.CourseBuilderCourses.AddAsync(data);
 
@@ -610,6 +610,40 @@ namespace NextTradeAPIs.Services
             return message;
         }
 
+        public async Task<SystemMessageModel> UpdateCourseTopic(CourseBuilderTopicDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                if (model.Id == null)
+                    return new SystemMessageModel() { MessageCode = -102, MessageDescription = "Id is Wrong" };
+
+                CourseBuilderTopic data = await _Context.CourseBuilderTopics.FindAsync(model.Id);
+                if (data == null)
+                    return new SystemMessageModel() { MessageCode = -103, MessageDescription = "data not find" };
+
+                data.topicName = model.topicName;
+                data.topicSummary = model.topicSummary;
+
+
+                _Context.CourseBuilderTopics.Update(data);
+                await _Context.SaveChangesAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
         public async Task<SystemMessageModel> DeleteCourseTopics(CourseBuilderTopicDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
             SystemMessageModel message;
@@ -668,6 +702,62 @@ namespace NextTradeAPIs.Services
                     videoSource = model.videoSource
                 };
                 await _Context.CourseBuilderLessons.AddAsync(data);
+
+
+                List<CourseBuilderLessonFile> lessonfileattachmentList = new List<CourseBuilderLessonFile>();
+                foreach (CourseBuilderLessonFileDto attch in model.fileattachments)
+                {
+                    lessonfileattachmentList.Add(new CourseBuilderLessonFile()
+                    {
+                        Id = Guid.NewGuid(),
+                        lessonId = data.Id,
+                        lessonFilecontenttype = attch.lessonFilecontenttype,
+                        lessonFilename = attch.lessonFilename,
+                        lessonFilepath = attch.lessonFilepath
+                    });
+                }
+                if (lessonfileattachmentList.Count() > 0)
+                    await _Context.CourseBuilderLessonFiles.AddRangeAsync(lessonfileattachmentList);
+
+
+                await _Context.SaveChangesAsync();
+
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model.Id };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<SystemMessageModel> UpdateCourseLesson(CourseBuilderLessonDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                CourseBuilderLesson data = await _Context.CourseBuilderLessons.FindAsync(model.Id);
+
+                if (!string.IsNullOrEmpty(model.featureImagecontenttype))
+                    data.featureImagecontenttype = model.featureImagecontenttype;
+                if (!string.IsNullOrEmpty(model.featureImagename)) data.featureImagename = model.featureImagename;
+                if (!string.IsNullOrEmpty(model.featureImagepath)) data.featureImagepath = model.featureImagepath;
+                if (!string.IsNullOrEmpty(model.lessonDescription)) data.lessonDescription = model.lessonDescription;
+                if (!string.IsNullOrEmpty(model.lessonFilecontenttype)) data.lessonFilecontenttype = model.lessonFilecontenttype;
+                if (!string.IsNullOrEmpty(model.lessonFilename)) data.lessonFilename = model.lessonFilename;
+                if (!string.IsNullOrEmpty(model.lessonName)) data.lessonName = model.lessonName;
+                if (model.videoPlaybackTime != null) data.videoPlaybackTime = model.videoPlaybackTime ?? 1;
+                if (!string.IsNullOrEmpty(model.lessonFilepath)) data.lessonFilepath = model.lessonFilepath;
+                if (!string.IsNullOrEmpty(model.videoSource)) data.videoSource = model.videoSource;
+
+                _Context.CourseBuilderLessons.Update(data);
 
 
                 List<CourseBuilderLessonFile> lessonfileattachmentList = new List<CourseBuilderLessonFile>();
@@ -1399,8 +1489,8 @@ namespace NextTradeAPIs.Services
                 if (data == null)
                     return new SystemMessageModel() { MessageCode = -103, MessageDescription = "data not find" };
 
-                if(!string.IsNullOrEmpty(model.courseName))
-                data.courseName = model.courseName;
+                if (!string.IsNullOrEmpty(model.courseName))
+                    data.courseName = model.courseName;
                 if (!string.IsNullOrEmpty(model.courseDescription))
                     data.courseDescription = model.courseDescription;
                 if (!string.IsNullOrEmpty(model.excerpt))
@@ -1408,8 +1498,8 @@ namespace NextTradeAPIs.Services
                 //data.authorId = model.authorId;
                 //data.authorname = (model.author.Fname ?? "") + " " + (model.author.Lname ?? "");
                 //data.authorusername = model.author.Username;
-                if(model.maximumStudents!= null)
-                data.maximumStudents = model.maximumStudents ?? 1;
+                if (model.maximumStudents != null)
+                    data.maximumStudents = model.maximumStudents ?? 1;
 
                 if (model.difficultyLevelId != null)
                     data.courseleveltypeId = model.difficultyLevelId;

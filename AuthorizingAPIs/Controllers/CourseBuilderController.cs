@@ -832,7 +832,7 @@ namespace NextTradeAPIs.Controllers
                 var sitePath = _webHostEnvironment.WebRootPath;
 
 
-                message = await _thisService.AddCourseTopics(model, null, processId, clientip, hosturl);
+                message = await _thisService.AddCourseTopics(model, userlogin, processId, clientip, hosturl);
 
                 if (message.MessageCode < 0)
                     return BadRequest(message);
@@ -901,6 +901,75 @@ namespace NextTradeAPIs.Controllers
                 var sitePath = _webHostEnvironment.WebRootPath;
 
                 message = await _thisService.GetCourseTopics(model, null, processId, clientip, hosturl);
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                string log = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, LogTypes.TokenError);
+                return Unauthorized();
+                //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [HttpPut]
+        [Route("/api/coursebuilder/editcoursetopic")]
+        [AllowAnonymous]
+        public async Task<IActionResult> UpdateCourseTopics(CourseBuilderTopicDto model)
+        {
+            StackTrace stackTrace = new StackTrace();
+            SystemMessageModel message;
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string authHeader = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            UserModel user = null;
+            LoginLog loginLog = null;
+
+            long ApiCode = 2000;
+
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}'";
+
+                var sitePath = _webHostEnvironment.WebRootPath;
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                message = await _authorizationService.CheckToken(_bearer_token, processId);
+
+                if (message.MessageCode < 0)
+                    return Unauthorized(message);
+
+                UserModel userlogin = message.MessageData as UserModel;
+
+
+                message = await _thisService.UpdateCourseTopic(model, userlogin, processId, clientip, hosturl);
 
                 if (message.MessageCode < 0)
                     return BadRequest(message);
@@ -1113,7 +1182,7 @@ namespace NextTradeAPIs.Controllers
 
                 }
 
-                message = await _thisService.AddNewCourseLesson(model, null, processId, clientip, hosturl);
+                message = await _thisService.AddNewCourseLesson(model, userlogin, processId, clientip, hosturl);
 
                 if (message.MessageCode < 0)
                     return BadRequest(message);
@@ -1129,6 +1198,150 @@ namespace NextTradeAPIs.Controllers
                 //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
             }
         }
+
+        [HttpPost]
+        [Route("/api/coursebuilder/editlesson")]
+        [AllowAnonymous]
+        public async Task<IActionResult> UpdateLesson([FromForm] CourseBuilderLessonDto model)
+        {
+            StackTrace stackTrace = new StackTrace();
+            SystemMessageModel message;
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string authHeader = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            UserModel user = null;
+            LoginLog loginLog = null;
+
+            long ApiCode = 2000;
+
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                message = await _authorizationService.CheckToken(_bearer_token, processId);
+
+                if (message.MessageCode < 0)
+                    return Unauthorized(message);
+
+                UserModel userlogin = message.MessageData as UserModel;
+
+                var sitePath = _webHostEnvironment.WebRootPath;
+
+                if (model.lessonFile != null)
+                {
+
+                    if (model.lessonFile.FileName == null || model.lessonFile.FileName.Length == 0)
+                    {
+                        // return Content("File not selected");
+                    }
+
+                    using (var ms = new MemoryStream())
+                    {
+                        model.lessonFilecontenttype = model.lessonFile.ContentType;
+                        model.lessonFilename = model.lessonFile.FileName;
+
+                        model.lessonFile.CopyTo(ms);
+                        message = await _thisService.SaveCourseLessonFile(ms.ToArray(), model, userlogin.userid, model.lessonFile.FileName, sitePath);
+                    }
+                    if (message.MessageCode < 0)
+                        return BadRequest(message);
+
+                    FileActionDto _fileinfo = message.MessageData as FileActionDto;
+                    model.lessonFilepath = _fileinfo.filepath;
+                }
+
+                if (model.featureImage != null)
+                {
+
+                    if (model.featureImage.FileName == null || model.featureImage.FileName.Length == 0)
+                    {
+                        // return Content("File not selected");
+                    }
+
+                    using (var ms = new MemoryStream())
+                    {
+                        model.featureImagecontenttype = model.featureImage.ContentType;
+                        model.featureImagename = model.featureImage.FileName;
+
+                        model.featureImage.CopyTo(ms);
+                        message = await _thisService.SaveCourseLessonFile(ms.ToArray(), model, userlogin.userid, model.featureImage.FileName, sitePath);
+                    }
+                    if (message.MessageCode < 0)
+                        return BadRequest(message);
+
+                    FileActionDto _fileinfo = message.MessageData as FileActionDto;
+                    model.featureImagepath = _fileinfo.filepath;
+
+                }
+
+                if (model.attachments != null)
+                {
+                    model.fileattachments = new List<CourseBuilderLessonFileDto>();
+                    foreach (IFormFile attach in model.attachments)
+                    {
+                        if (attach.FileName != null && attach.FileName.Length > 0)
+                        {
+                            CourseBuilderLessonFileDto fileattachment = new CourseBuilderLessonFileDto();
+                            using (var ms = new MemoryStream())
+                            {
+                                fileattachment.lessonFilecontenttype = attach.ContentType;
+                                fileattachment.lessonFilename = attach.FileName;
+
+                                attach.CopyTo(ms);
+                                message = await _thisService.SaveCourseLessonAttachFile(ms.ToArray(), model, userlogin.userid, attach.FileName, sitePath);
+                            }
+                            if (message.MessageCode > 0)
+                            {
+                                FileActionDto _fileinfo = message.MessageData as FileActionDto;
+                                fileattachment.lessonFilepath = _fileinfo.filepath;
+
+                                model.fileattachments.Add(fileattachment);
+                            }
+                        }
+                    }
+
+                }
+
+                message = await _thisService.UpdateCourseLesson(model, userlogin, processId, clientip, hosturl);
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                string log = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, LogTypes.TokenError);
+                return Unauthorized();
+                //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
+            }
+        }
+
 
         [HttpPost]
         [Route("/api/coursebuilder/getLessons")]
