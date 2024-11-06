@@ -24,6 +24,7 @@ namespace Entities.Dtos
         public string? featureImagecontenttype { get; set; }
         public string? videoSource { get; set; }
         public int? videoPlaybackTime { get; set; }
+        public int? lessonorder { get; set; }
         public List<IFormFile>? attachments { get; set; }
         public List<CourseBuilderLessonFileDto>? fileattachments { get; set; }
     }

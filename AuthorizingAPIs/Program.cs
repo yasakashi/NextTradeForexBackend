@@ -169,6 +169,7 @@ builder.Services.AddTransient<MarketPulsForexServices, MarketPulsForexServices>(
 builder.Services.AddTransient<MarketPulsComodityServices, MarketPulsComodityServices>();
 
 builder.Services.AddTransient<CourseBuilderServices, CourseBuilderServices>();
+builder.Services.AddTransient<CourseBuilderUserServices, CourseBuilderUserServices>();
 
 #endregion
 

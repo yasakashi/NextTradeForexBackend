@@ -280,7 +280,7 @@ namespace NextTradeAPIs.Services
         }
 
 
-        public async Task<SystemMessageModel> GetCourses(CourseBuilderCourseDto model, UserModel? userlogin, string processId, string clientip, string hosturl, bool sendfilepath = true)
+        public async Task<SystemMessageModel> GetCourses(CourseBuilderCourseFilterDto model, UserModel? userlogin, string processId, string clientip, string hosturl, bool sendfilepath = true)
         {
             SystemMessageModel message;
             StackTrace stackTrace = new StackTrace();
@@ -298,8 +298,10 @@ namespace NextTradeAPIs.Services
                         query = query.Where(x => Ids.Contains(x.Id));
                 }
                 if (model.Id != null)
+                {
                     query = query.Where(x => x.Id == model.Id);
-
+                    sendfilepath = true;
+                }
                 if (model.authorId != null)
                     query = query.Where(x => x.authorId == model.authorId);
 
@@ -332,6 +334,36 @@ namespace NextTradeAPIs.Services
                 if (Math.Floor(pagecountd) > 0)
                     pagecount++;
 
+                if (model.sortitem != null)
+                {
+                    foreach (var item in model.sortitem)
+                    {
+                        if (item.ascending == null || (bool)item.ascending)
+                        {
+                            switch (item.fieldname.ToLower())
+                            {
+                                case "registerdatetime":
+                                    query = query.OrderBy(x => x.registerdatetime);
+                                    break;
+                                case "coursename":
+                                    query = query.OrderBy(x => x.courseName);
+                                    break;
+                            };
+                        }
+                        else if (!(bool)item.ascending)
+                        {
+                            switch (item.fieldname.ToLower())
+                            {
+                                case "registerdatetime":
+                                    query = query.OrderByDescending(x => x.registerdatetime);
+                                    break;
+                                case "coursename":
+                                    query = query.OrderByDescending(x => x.courseName);
+                                    break;
+                            };
+                        }
+                    }
+                }
 
                 List<CourseBuilderCourseDto> data = await query.Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount)
                                                   .Include(x => x.coursestatus)
@@ -342,7 +374,9 @@ namespace NextTradeAPIs.Services
                                                       courseName = x.courseName,
                                                       courseDescription = x.courseDescription,
                                                       courseFilename = x.courseFilename,
-                                                      courseFilepath = (sendfilepath == true) ? x.courseFilepath : "",
+                                                      courseFilepath = ((!string.IsNullOrEmpty(x.courseFilepath)) && (sendfilepath == true)) ?
+                                                                                  hosturl + x.courseFilepath.Substring(x.courseFilepath
+                                                                                  .IndexOf("wwwroot\\")).Replace ("wwwroot", "").Replace("\\", "/") : "",
                                                       excerpt = x.excerpt,
                                                       authorId = x.authorId,
                                                       authorname = (x.author.Fname ?? "") + " " + (x.author.Lname ?? ""),
@@ -360,7 +394,8 @@ namespace NextTradeAPIs.Services
                                                       courseIntroVideo = x.courseIntroVideo,
                                                       courseTags = x.courseTags,
                                                       featuredImagename = x.featuredImagename,
-                                                      featuredImagepath = (sendfilepath == true) ? x.featuredImagepath : "",
+                                                      featuredImagepath = ((!string.IsNullOrEmpty(x.featuredImagepath)) && (sendfilepath == true)) ?
+                                                                                                            hosturl + x.featuredImagepath.Substring                                                                                 (x.featuredImagepath.IndexOf("wwwroot\\")).Replace                                                                          ("wwwroot", "").Replace("\\", "/") : "",
                                                       registerdatetime = x.registerdatetime,
                                                       courseFilecontent = x.courseFilecontent,
                                                       featuredImagecontent = x.featuredImagecontent,
@@ -538,7 +573,8 @@ namespace NextTradeAPIs.Services
                     Id = (Guid)model.Id,
                     courseId = (Guid)model.courseId,
                     topicName = model.topicName,
-                    topicSummary = model.topicSummary
+                    topicSummary = model.topicSummary,
+                    topicorder = model.topicorder??1
                 };
                 await _Context.CourseBuilderTopics.AddAsync(data);
 
@@ -588,6 +624,37 @@ namespace NextTradeAPIs.Services
                 if (Math.Floor(pagecountd) > 0)
                     pagecount++;
 
+                if (model.sortitem != null)
+                {
+                    foreach (var item in model.sortitem)
+                    {
+                        if (item.ascending == null || (bool)item.ascending)
+                        {
+                            switch (item.fieldname.ToLower())
+                            {
+                                case "topicorder":
+                                    query = query.OrderBy(x => x.topicorder);
+                                    break;
+                                case "topicname":
+                                    query = query.OrderBy(x => x.topicName);
+                                    break;
+                            };
+                        }
+                        else if (!(bool)item.ascending)
+                        {
+                            switch (item.fieldname.ToLower())
+                            {
+                                case "topicorder":
+                                    query = query.OrderByDescending(x => x.topicorder);
+                                    break;
+                                case "topicname":
+                                    query = query.OrderByDescending(x => x.topicName);
+                                    break;
+                            };
+                        }
+                    }
+                }
+
 
                 List<CourseBuilderTopicDto> data = await query.Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount)
                                                   .Select(x => new CourseBuilderTopicDto()
@@ -595,7 +662,8 @@ namespace NextTradeAPIs.Services
                                                       Id = x.Id,
                                                       courseId = x.courseId,
                                                       topicName = x.topicName,
-                                                      topicSummary = x.topicSummary
+                                                      topicSummary = x.topicSummary,
+                                                      topicorder = x.topicorder
                                                   }).ToListAsync();
 
 
@@ -822,6 +890,36 @@ namespace NextTradeAPIs.Services
                 if (Math.Floor(pagecountd) > 0)
                     pagecount++;
 
+                if (model.sortitem != null)
+                {
+                    foreach (var item in model.sortitem)
+                    {
+                        if (item.ascending == null || (bool)item.ascending)
+                        {
+                            switch (item.fieldname.ToLower())
+                            {
+                                case "lessonorder":
+                                    query = query.OrderBy(x => x.lessonorder);
+                                    break;
+                                case "lessonname":
+                                    query = query.OrderBy(x => x.lessonName);
+                                    break;
+                            };
+                        }
+                        else if (!(bool)item.ascending)
+                        {
+                            switch (item.fieldname.ToLower())
+                            {
+                                case "lessonorder":
+                                    query = query.OrderByDescending(x => x.lessonorder);
+                                    break;
+                                case "lessonname":
+                                    query = query.OrderByDescending(x => x.lessonName);
+                                    break;
+                            };
+                        }
+                    }
+                }
 
                 List<CourseBuilderLessonDto> data = await query.Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount)
                                                   .Select(x => new CourseBuilderLessonDto()
@@ -838,7 +936,8 @@ namespace NextTradeAPIs.Services
                                                       lessonName = x.lessonName,
                                                       topicId = x.topicId,
                                                       videoPlaybackTime = x.videoPlaybackTime,
-                                                      videoSource = x.videoSource
+                                                      videoSource = x.videoSource,
+                                                      lessonorder = x.lessonorder
                                                   }).ToListAsync();
 
 

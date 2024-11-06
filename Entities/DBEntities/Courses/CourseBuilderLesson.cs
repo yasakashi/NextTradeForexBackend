@@ -25,6 +25,7 @@ namespace Entities.DBEntities
         public string? featureImagecontenttype { get; set; }
         public string? videoSource { get; set; }
         public int videoPlaybackTime { get; set; }
+        public int lessonorder { get; set; }
         public List<CourseBuilderLessonFile> attachments { get; set; }
     }
 

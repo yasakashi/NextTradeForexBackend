@@ -16,6 +16,7 @@ namespace Entities.DBEntities
         public Guid courseId { get; set; }
         public string topicName { get; set; }
         public string topicSummary { get; set; }
+        public int topicorder { get; set; }
     }
 
 }

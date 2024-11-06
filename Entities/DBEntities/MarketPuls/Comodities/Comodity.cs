@@ -53,8 +53,6 @@ namespace Entities.DBEntities
         public string? maindescriptionfilepath { get; set; }
         public string? maindescriptionfilecontenttype { get; set; }
         public string? singlepagechartimage { get; set; }
-        public string? fundamentalandtechnicaltabsection_fundamentalnewssection_maintitle { get; set; }
-        public string? fundamentalandtechnicaltabsection_fundamentalnewssection_script { get; set; }
         public string? fundamentalandtechnicaltabsection_instrumentname { get; set; }
         public string? fundamentalandtechnicaltabsection_fundamentalheading { get; set; }
         public string? fundamentalandtechnicaltabsection_technicalheading { get; set; }

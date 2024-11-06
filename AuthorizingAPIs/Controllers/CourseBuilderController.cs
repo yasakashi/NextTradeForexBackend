@@ -644,7 +644,7 @@ namespace NextTradeAPIs.Controllers
         [HttpPost]
         [Route("/api/coursebuilder/getcourses")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetCourses(CourseBuilderCourseDto model)
+        public async Task<IActionResult> GetCourses(CourseBuilderCourseFilterDto model)
         {
             StackTrace stackTrace = new StackTrace();
             SystemMessageModel message;

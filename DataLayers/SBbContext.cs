@@ -87,6 +87,9 @@ namespace DataLayers
         public DbSet<CourseBuilderQuiz> CourseBuilderQuizs { get; set; }
         public DbSet<QuertionType> QuertionTypes { get; set; }
 
+        public DbSet<UserCourse> UserCourses { get; set; }
+        public DbSet<UserLesson> UserLessons { get; set; }
+
         public DbSet<Question> Questions { get; set; }
         public DbSet<QuestionOption> QuestionOption { get; set; }
         public DbSet<AdvancedSetting> AdvancedSettings { get; set; }

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Entities.Dtos
 {
-    public class CourseBuilderCourseDto : BaseFilterDto
+    public class CourseBuilderCourseDto 
     {
         public Guid? Id { get; set; }
         public string? courseName { get; set; }
@@ -55,4 +55,26 @@ namespace Entities.Dtos
         public List<CourseBuildeVideoPdfUrlDto>? videoPdfUrls { get; set; }
         public List<CourseCategoryDto>? courseCategorys { get; set; }
     }
+
+    public class CourseBuilderCourseFilterDto : BaseFilterDto
+    {
+        public Guid? Id { get; set; }
+        public string? courseName { get; set; }
+        public long? authorId { get; set; }
+        public string? authorusername { get; set; }
+        public string? authorname { get; set; }
+        public int? maximumStudents { get; set; }
+        public int? difficultyLevelId { get; set; }
+        public bool? isPublicCourse { get; set; }
+        public bool? allowQA { get; set; }
+        public bool? isvisible { get; set; }
+        public bool? isvisibledropdown { get; set; }
+        public decimal? coursePrice { get; set; }
+        public List<long>? courseCategoryIds { get; set; }
+        public string? courseTags { get; set; }
+        public int? lessoncount { get; set; }
+        public DateTime? registerdatetime { get; set; }
+        public int? coursestatusid { get; set; }
+    }
+
 }
