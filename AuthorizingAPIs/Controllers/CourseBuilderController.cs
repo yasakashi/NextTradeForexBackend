@@ -684,10 +684,9 @@ namespace NextTradeAPIs.Controllers
 
                 message = await _authorizationService.CheckToken(_bearer_token, processId);
 
-                if (message.MessageCode < 0)
-                    return Unauthorized(message);
-
-                UserModel userlogin = message.MessageData as UserModel;
+                UserModel userlogin = null;
+                if (message.MessageCode > 0)
+                { userlogin = message.MessageData as UserModel; }
 
                 var sitePath = _webHostEnvironment.WebRootPath;
 
