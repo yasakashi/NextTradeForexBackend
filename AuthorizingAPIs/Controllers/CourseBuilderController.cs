@@ -173,7 +173,7 @@ namespace NextTradeAPIs.Controllers
         [HttpPost]
         [Route("/api/coursebuilder/deletecourse")]
         [AllowAnonymous]
-        public async Task<IActionResult> DeleteCourse( CourseBuilderCourseDto model)
+        public async Task<IActionResult> DeleteCourse(CourseBuilderCourseFilterDto model)
         {
             StackTrace stackTrace = new StackTrace();
             SystemMessageModel message;
@@ -289,7 +289,7 @@ namespace NextTradeAPIs.Controllers
 
                 var sitePath = _webHostEnvironment.WebRootPath;
 
-                message = await _thisService.DeleteCourses(model, null, processId, clientip, hosturl);
+                message = await _thisService.ChangeCourseStatus(model, null, processId, clientip, hosturl);
 
                 if (message.MessageCode < 0)
                     return BadRequest(message);

@@ -113,6 +113,12 @@ namespace DataLayers
         public DbSet<CourseMeetFile> CourseMeetFiles { get; set; }
 
         public DbSet<CourseTopic> CoursTopics { get; set; }
+        public DbSet<QuizFeedbackMode> QuizFeedbackModes { get; set; }
+        public DbSet<QuizQuestionOrder> QuizQuestionOrders { get; set; }
+        public DbSet<QuizQuestionLayout> QuizQuestionLayouts { get; set; }
+        public DbSet<CourseCustomIntroVideoType> CourseCustomIntroVideoTypes { get; set; }
+        
+
         #endregion [ Course ]
 
         #region [  TicketType ]

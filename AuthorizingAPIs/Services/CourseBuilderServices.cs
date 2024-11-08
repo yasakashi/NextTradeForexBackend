@@ -440,10 +440,10 @@ namespace NextTradeAPIs.Services
                     }).ToListAsync();
                     item.videoPdfcount = item.videoPdfUrls.Count();
 
-                    if (!string.IsNullOrEmpty(item.featuredImagepath))
+                    if (!string.IsNullOrEmpty(item.featuredImagepath)&& !item.featuredImagepath.StartsWith("http"))
                         item.featuredImagepath = hosturl + item.featuredImagepath.Substring(item.featuredImagepath.IndexOf("wwwroot\\")).Replace("wwwroot", "").Replace("\\", "/");
 
-                    if (!string.IsNullOrEmpty(item.courseFilepath))
+                    if (!string.IsNullOrEmpty(item.courseFilepath) && !item.courseFilepath.StartsWith("http"))
                         item.courseFilepath = hosturl + item.courseFilepath.Substring(item.courseFilepath.IndexOf("wwwroot\\")).Replace("wwwroot", "").Replace("\\", "/");
 
                     item.lessoncount = await _Context.CourseBuilderLessons.Where(x => x.courseId == item.Id).CountAsync();
@@ -467,7 +467,7 @@ namespace NextTradeAPIs.Services
             return message;
         }
 
-        public async Task<SystemMessageModel> ChangeCourseStatus(CourseBuilderCourseDto model, UserModel? userlogin, string processId, string clientip, string hosturl, bool sendfilepath = true)
+        public async Task<SystemMessageModel> ChangeCourseStatus(CourseBuilderCourseDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
             SystemMessageModel message;
             StackTrace stackTrace = new StackTrace();
@@ -500,7 +500,7 @@ namespace NextTradeAPIs.Services
         }
 
 
-        public async Task<SystemMessageModel> DeleteCourses(CourseBuilderCourseDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        public async Task<SystemMessageModel> DeleteCourses(CourseBuilderCourseFilterDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
             SystemMessageModel message;
             StackTrace stackTrace = new StackTrace();
@@ -771,22 +771,23 @@ namespace NextTradeAPIs.Services
                 };
                 await _Context.CourseBuilderLessons.AddAsync(data);
 
-
-                List<CourseBuilderLessonFile> lessonfileattachmentList = new List<CourseBuilderLessonFile>();
-                foreach (CourseBuilderLessonFileDto attch in model.fileattachments)
+                if (model.fileattachments != null && model.fileattachments.Count() > 0)
                 {
-                    lessonfileattachmentList.Add(new CourseBuilderLessonFile()
+                    List<CourseBuilderLessonFile> lessonfileattachmentList = new List<CourseBuilderLessonFile>();
+                    foreach (CourseBuilderLessonFileDto attch in model.fileattachments)
                     {
-                        Id = Guid.NewGuid(),
-                        lessonId = data.Id,
-                        lessonFilecontenttype = attch.lessonFilecontenttype,
-                        lessonFilename = attch.lessonFilename,
-                        lessonFilepath = attch.lessonFilepath
-                    });
+                        lessonfileattachmentList.Add(new CourseBuilderLessonFile()
+                        {
+                            Id = Guid.NewGuid(),
+                            lessonId = data.Id,
+                            lessonFilecontenttype = attch.lessonFilecontenttype,
+                            lessonFilename = attch.lessonFilename,
+                            lessonFilepath = attch.lessonFilepath
+                        });
+                    }
+                    if (lessonfileattachmentList.Count() > 0)
+                        await _Context.CourseBuilderLessonFiles.AddRangeAsync(lessonfileattachmentList);
                 }
-                if (lessonfileattachmentList.Count() > 0)
-                    await _Context.CourseBuilderLessonFiles.AddRangeAsync(lessonfileattachmentList);
-
 
                 await _Context.SaveChangesAsync();
 
@@ -1308,7 +1309,7 @@ namespace NextTradeAPIs.Services
                     displayQuizTime = model.displayQuizTime ?? false,
                     passingGrade = (decimal)model.passingGrade,
                     quizDescription = model.quizDescription ?? "",
-                    quizFeedbackModeId = (long)model.quizFeedbackModeId,
+                    quizFeedbackModeId = (int)model.quizFeedbackModeId,
                     quizTitle = model.quizTitle ?? "",
                     timeLimit = model.timeLimit ?? 1
                 };

@@ -20,11 +20,13 @@ namespace Entities.DBEntities
         public string? quizDescription { get; set; }
         public int? timeLimit { get; set; }
         public bool? displayQuizTime { get; set; }
-        public long? quizFeedbackModeId { get; set; }
+        public int? quizFeedbackModeId { get; set; }
         public int? attemptsAllowed { get; set; }
         [Range(1, 100)]
         public decimal passingGrade { get; set; }
         public int maxQuestionsAllowedToAnswer { get; set; }
+
+        public virtual QuizFeedbackMode? quizFeedbackMode { get; set; }
         public List<Question> questions { get; set; }
     }
 }

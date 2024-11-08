@@ -17,7 +17,7 @@ namespace Entities.Dtos
         public string? quizDescription { get; set; }
         public int? timeLimit { get; set; }
         public bool? displayQuizTime { get; set; }
-        public long? quizFeedbackModeId { get; set; }
+        public int? quizFeedbackModeId { get; set; }
         public int? attemptsAllowed { get; set; }
         public decimal? passingGrade { get; set; }
         public int? maxQuestionsAllowedToAnswer { get; set; }
