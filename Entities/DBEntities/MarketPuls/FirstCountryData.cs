@@ -14,9 +14,9 @@ namespace Entities.DBEntities
         [Key]
         public Guid id { get; set; }
         public Guid marketpulsforexid { get; set; }
-        public string countries { get; set; }
-        public string centralbank { get; set; }
-        public string nickname { get; set; }
-        public string avragedaily { get; set; }
+        public string? countries { get; set; }
+        public string? centralbank { get; set; }
+        public string? nickname { get; set; }
+        public string? avragedaily { get; set; }
     }
 }

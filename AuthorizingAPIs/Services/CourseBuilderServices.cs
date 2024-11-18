@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using NextTradeAPIs.Dtos;
 using System.Diagnostics;
+using System.Security.Cryptography.X509Certificates;
 
 namespace NextTradeAPIs.Services
 {
@@ -127,7 +128,7 @@ namespace NextTradeAPIs.Services
                 await _Context.SaveChangesAsync();
 
 
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model.Id };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
             }
             catch (Exception ex)
             {
@@ -163,7 +164,7 @@ namespace NextTradeAPIs.Services
                 await _Context.CourseBuilderMeetings.AddAsync(data);
                 await _Context.SaveChangesAsync();
 
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model.Id };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
             }
             catch (Exception ex)
             {
@@ -207,6 +208,92 @@ namespace NextTradeAPIs.Services
             return message;
         }
 
+        public async Task<SystemMessageModel> GetCourseMeetings(CourseBuilderMeetingFilterDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+            List<CourseBuilderMeetingDto> datas = null;
+            try
+            {
+                IQueryable<CourseBuilderMeeting> query = _Context.CourseBuilderMeetings;
+                if (model.Id != null)
+                    query = query.Where(x => x.Id == model.Id);
+
+                if (model.frommeetingdatetime != null)
+                    query = query.Where(x => x.meetingDateTime >= model.frommeetingdatetime);
+
+                if (model.tomeetingdatetime != null)
+                    query = query.Where(x => x.meetingDateTime <= model.tomeetingdatetime);
+
+                if (model.courseId != null)
+                    query = query.Where(x => x.courseId == model.courseId);
+
+                int pageIndex = (model.pageindex == null || model.pageindex == 0) ? 1 : (int)model.pageindex;
+                int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 50 : (int)model.rowcount;
+
+                int totaldata = query.Count();
+                if (totaldata <= 0) totaldata = 1;
+                decimal pagecountd = ((decimal)totaldata / (decimal)PageRowCount);
+                int pagecount = (totaldata / PageRowCount);
+                pagecount = (pagecount <= 0) ? 1 : pagecount;
+                if (Math.Floor(pagecountd) > 0)
+                    pagecount++;
+
+                if (model.sortitem != null)
+                {
+                    foreach (var item in model.sortitem)
+                    {
+                        if (item.ascending == null || (bool)item.ascending)
+                        {
+                            switch (item.fieldname.ToLower())
+                            {
+                                case "meetingdatetime":
+                                    query = query.OrderBy(x => x.meetingDateTime);
+                                    break;
+                                case "meetingtitle":
+                                    query = query.OrderBy(x => x.meetingTitle);
+                                    break;
+                            };
+                        }
+                        else if (!(bool)item.ascending)
+                        {
+                            switch (item.fieldname.ToLower())
+                            {
+                                case "meetingdatetime":
+                                    query = query.OrderByDescending(x => x.meetingDateTime);
+                                    break;
+                                case "meetingtitle":
+                                    query = query.OrderByDescending(x => x.meetingTitle);
+                                    break;
+                            };
+                        }
+                    }
+                }
+
+                datas =  await query.Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount).Select(x => new CourseBuilderMeetingDto()
+                {
+                    Id = x.Id,
+                    courseId = x.courseId,
+                    meetingDateTime = x.meetingDateTime,
+                    meetingDescription = x.meetingDescription,
+                    meetingFilename = x.meetingFilename,
+                    meetingTitle = x.meetingTitle,
+                    meetingURL = x.meetingURL
+                }).ToListAsync();
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas, Meta = new { pageIndex = pageIndex, PageRowCount = PageRowCount, totaldata = totaldata, pagecount = pagecount } };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+
         public async Task<SystemMessageModel> AddNewCourseVideoPdfUrls(CourseBuildeVideoPdfUrlDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
             SystemMessageModel message;
@@ -233,7 +320,7 @@ namespace NextTradeAPIs.Services
                 await _Context.SaveChangesAsync();
 
 
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = videoPdfUrllist.Id };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = videoPdfUrllist };
             }
             catch (Exception ex)
             {
@@ -308,6 +395,15 @@ namespace NextTradeAPIs.Services
                 if (model.allowQA != null)
                     query = query.Where(x => x.allowQA == model.allowQA);
 
+                if (model.isfree != null)
+                    query = query.Where(x => x.coursePrice == 0);
+
+                if (model.ispaid != null)
+                    query = query.Where(x => x.coursePrice > 0);
+
+                if (model.allowQA != null)
+                    query = query.Where(x => x.allowQA == model.allowQA);
+
                 if (model.isPublicCourse != null)
                     query = query.Where(x => x.isPublicCourse == model.isPublicCourse);
 
@@ -374,9 +470,7 @@ namespace NextTradeAPIs.Services
                                                       courseName = x.courseName,
                                                       courseDescription = x.courseDescription,
                                                       courseFilename = x.courseFilename,
-                                                      courseFilepath = ((!string.IsNullOrEmpty(x.courseFilepath)) && (sendfilepath == true)) ?
-                                                                                  hosturl + x.courseFilepath.Substring(x.courseFilepath
-                                                                                  .IndexOf("wwwroot\\")).Replace ("wwwroot", "").Replace("\\", "/") : "",
+                                                      courseFilepath = (string.IsNullOrEmpty(x.courseFilepath))?"": ((sendfilepath == true) ? x.courseFilepath : hosturl + x.courseFilepath.Substring(x.courseFilepath.IndexOf("wwwroot\\")).Replace ("wwwroot", "").Replace("\\", "/") ),
                                                       excerpt = x.excerpt,
                                                       authorId = x.authorId,
                                                       authorname = (x.author.Fname ?? "") + " " + (x.author.Lname ?? ""),
@@ -394,8 +488,7 @@ namespace NextTradeAPIs.Services
                                                       courseIntroVideo = x.courseIntroVideo,
                                                       courseTags = x.courseTags,
                                                       featuredImagename = x.featuredImagename,
-                                                      featuredImagepath = ((!string.IsNullOrEmpty(x.featuredImagepath)) && (sendfilepath == true)) ?
-                                                                                                            hosturl + x.featuredImagepath.Substring                                                                                 (x.featuredImagepath.IndexOf("wwwroot\\")).Replace                                                                          ("wwwroot", "").Replace("\\", "/") : "",
+                                                      featuredImagepath = string.IsNullOrEmpty(x.featuredImagepath)?"":((sendfilepath == true) ? x.featuredImagepath:(hosturl + x.featuredImagepath.Substring                                     (x.featuredImagepath.IndexOf("wwwroot\\")).Replace("wwwroot", "").Replace("\\", "/"))),
                                                       registerdatetime = x.registerdatetime,
                                                       courseFilecontent = x.courseFilecontent,
                                                       featuredImagecontent = x.featuredImagecontent,
@@ -403,7 +496,7 @@ namespace NextTradeAPIs.Services
                                                       coursestatusname = x.coursestatus.name,
                                                       changestatusdate = x.changestatusdate,
                                                       isvisible = x.isvisible,
-                                                      isvisibledropdown = x.isvisibledropdown,
+                                                      isvisibledropdown = x.isvisibledropdown
                                                   }).ToListAsync();
 
 
@@ -467,7 +560,7 @@ namespace NextTradeAPIs.Services
             return message;
         }
 
-        public async Task<SystemMessageModel> ChangeCourseStatus(CourseBuilderCourseDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        public async Task<SystemMessageModel> ChangeCourseStatus(CourseBuilderCourseFilterDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
             SystemMessageModel message;
             StackTrace stackTrace = new StackTrace();
@@ -581,7 +674,7 @@ namespace NextTradeAPIs.Services
                 await _Context.SaveChangesAsync();
 
 
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model.Id };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
             }
             catch (Exception ex)
             {
@@ -792,7 +885,7 @@ namespace NextTradeAPIs.Services
                 await _Context.SaveChangesAsync();
 
 
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model.Id };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data };
             }
             catch (Exception ex)
             {
@@ -929,11 +1022,11 @@ namespace NextTradeAPIs.Services
                                                       courseId = x.courseId,
                                                       featureImagename = x.featureImagename,
                                                       featureImagecontenttype = x.featureImagecontenttype,
-                                                      featureImagepath = (showfilepath == true) ? x.featureImagepath : "",
+                                                      featureImagepath = (string.IsNullOrEmpty(x.featureImagepath))?"":( (showfilepath == true) ? x.featureImagepath :  hosturl + x.featureImagepath.Substring                                (x.featureImagepath.IndexOf("wwwroot\\")).Replace("wwwroot", "").Replace("\\", "/")),
                                                       lessonDescription = x.lessonDescription,
                                                       lessonFilecontenttype = x.lessonFilecontenttype,
                                                       lessonFilename = x.lessonFilename,
-                                                      lessonFilepath = (showfilepath == true) ? x.lessonFilepath : "",
+                                                      lessonFilepath = (string.IsNullOrEmpty(x.featureImagepath)) ? "" : ((showfilepath == true) ? x.lessonFilepath : hosturl + x.lessonFilepath.Substring(x.lessonFilepath.IndexOf("wwwroot\\")).Replace("wwwroot", "").Replace("\\", "/")),
                                                       lessonName = x.lessonName,
                                                       topicId = x.topicId,
                                                       videoPlaybackTime = x.videoPlaybackTime,
@@ -950,7 +1043,7 @@ namespace NextTradeAPIs.Services
                         Id = x.Id,
                         lessonFilecontenttype = x.lessonFilecontenttype,
                         lessonFilename = x.lessonFilename,
-                        lessonFilepath = (showfilepath == true) ? x.lessonFilepath : ""
+                        lessonFilepath = (string.IsNullOrEmpty(x.lessonFilepath))?"":((showfilepath == true)? x.lessonFilepath : hosturl + x.lessonFilepath.Substring(x.lessonFilepath.IndexOf("wwwroot\\")).Replace("wwwroot", "").Replace("\\", "/"))
                     }).ToListAsync();
                 }
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data, Meta = new { pageIndex = pageIndex, PageRowCount = PageRowCount, totaldata = totaldata, pagecount = pagecount } };

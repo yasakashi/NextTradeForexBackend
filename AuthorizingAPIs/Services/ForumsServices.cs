@@ -528,7 +528,7 @@ namespace NextTradeAPIs.Services
             catch (Exception ex) { return new SystemMessageModel() { MessageCode = -501, MessageDescription = "File saving Error", MessageData = ex.Message }; }
         }
 
-        public async Task<SystemMessageModel> GetForumMessage4MarketPuls(ForexFilterDto model, object value, string processId, string clientip, string hosturl)
+        public async Task<SystemMessageModel> GetForumMessage4MarketPuls(ForexFilterDto model, object value, string processId, string clientip, string hosturl, string _sitePath)
         {
             SystemMessageModel message;
             StackTrace stackTrace = new StackTrace();
@@ -543,8 +543,8 @@ namespace NextTradeAPIs.Services
 
                 query = query.Where(x => x.parentId == null);
                 query = query.Where(x => x.isneedpaid == false);
-                if (forummessageIds!= null && forummessageIds.Count > 0)
-                query = query.Where(x => forummessageIds.Contains(x.Id));
+                if (forummessageIds != null && forummessageIds.Count > 0)
+                    query = query.Where(x => forummessageIds.Contains(x.Id));
 
 
                 int pageIndex = (model.pageindex == null || model.pageindex == 0) ? 1 : (int)model.pageindex;
@@ -559,9 +559,9 @@ namespace NextTradeAPIs.Services
                 if (Math.Floor(pagecountd) > 0)
                     pagecount++;
 
-                List<ForumMessageDto> datas = await query.OrderByDescending(x => x.registerdatetime).Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount)
+                List<ForumMessageShortDto> datas = await query.OrderByDescending(x => x.registerdatetime).Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount)
                     .Include(x => x.creatoruser)
-                    .Select(x => new ForumMessageDto()
+                    .Select(x => new ForumMessageShortDto()
                     {
                         Id = x.Id,
                         parentId = x.parentId,
@@ -574,9 +574,22 @@ namespace NextTradeAPIs.Services
                         issignaltemplate = x.issignaltemplate ?? false,
                         isneedpaid = x.isneedpaid,
                         allowtoshow = true,
-                        creatorusername = x.creatoruser.Username,
-                        pagecount = pagecount
+                        creatorusername = x.creatoruser.Username
                     }).ToListAsync();
+
+                foreach (ForumMessageShortDto data in datas)
+                {
+                    List<MessageAttachement> attachements = await _Context.MessageAttachements.Where(x => x.ForumMessageId == data.Id).ToListAsync();
+                    if (attachements != null && attachements.Count > 0)
+                    {
+                        if (!string.IsNullOrEmpty(attachements[0].photofileurl))
+                            data.photofileurl = hosturl+ attachements[0].photofileurl;
+                    }
+                    else
+                    {
+                        data.photofileurl = hosturl + await GetCommunityCoverImageURL((Guid)data.communitygroupid, _sitePath);
+                    }
+                }
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas, Meta = new { pagecount = pagecount, totalitem = totaldata } };
             }
@@ -587,6 +600,60 @@ namespace NextTradeAPIs.Services
                 await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
             }
             return message;
+        }
+
+        public async Task<string> GetCommunityCoverImageURL(Guid Id, string _sitePath)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                string _LogPath = _sitePath + "\\communitygroups\\";
+                if (!Directory.Exists(_LogPath))
+                {
+                    Directory.CreateDirectory(_LogPath);
+                }
+
+                CommunityGroup data = await _Context.CommunityGroups.FindAsync(Id);
+
+                _LogPath += data.Id.ToString().Replace("-", "") + "\\";
+                if (!Directory.Exists(_LogPath))
+                {
+                    Directory.CreateDirectory(_LogPath);
+                }
+
+                Uri uri = new Uri("/communitygroups/" + data.Id.ToString().Replace("-", "") + "/" + "coverimage.png", UriKind.Relative);
+
+                if (data != null && data.coverimage != null)
+                {
+                    _LogPath += "coverimage.png";
+                    if (!File.Exists(_LogPath))
+                    {
+                        File.WriteAllBytes(_LogPath, data.coverimage);
+
+                    }
+                    else
+                    {
+                        File.Delete(_LogPath);
+                        File.WriteAllBytes(_LogPath, data.coverimage);
+                    }
+                    return uri.ToString() ;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, "", "", methodpath, LogTypes.SystemError);
+            }
+            return null;
         }
 
     }

@@ -75,6 +75,8 @@ namespace Entities.Dtos
         public int? lessoncount { get; set; }
         public DateTime? registerdatetime { get; set; }
         public int? coursestatusid { get; set; }
+        public bool? isfree { get; set; }
+        public bool? ispaid { get; set; }
     }
 
 }

@@ -162,6 +162,22 @@ namespace DataLayers
         public DbSet<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection> Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSections { get; set; }
         #endregion [ Market Puls Forex ]
 
+        #region [  Market Puls Indices ]
+        public DbSet<Indice> Indices { get; set; }
+        public DbSet<Indice_FundamentalNewsSection> IndiceFundamentalNewsSections { get; set; }
+        public DbSet<Indice_NewsMainContent> IndiceNewsMainContents { get; set; }
+        public DbSet<Indice_TechnicalTabs> IndiceTechnicalTabss { get; set; }
+        public DbSet<Indice_TechnicalTabs_TechnicalBreakingNews> IndiceTechnicalTabsTechnicalBreakingNewss { get; set; }
+        public DbSet<Indices_PDFSection> IndicePDFSections { get; set; }
+        public DbSet<Indice_URLSection> IndiceURLSections { get; set; }
+        public DbSet<Indice_ListedExchange> IndiceListedExchanges { get; set; }
+        public DbSet<Indice_RelatedInstument> IndiceRelatedInstuments { get; set; }
+        public DbSet<Indice_SectorRepresented> IndiceSectorRepresenteds { get; set; }
+        public DbSet<Indice_ChildIndice> IndiceChildIndices { get; set; }
+        public DbSet<Indice_AlternateIndice> IndiceAlternateIndices { get; set; }
+
+        #endregion [ Market Puls Indices ]
+
         #region OnModelCreating
         protected override void OnModelCreating(ModelBuilder builder)
         {

@@ -20,4 +20,16 @@ namespace Entities.Dtos
         public string? meetingURL { get; set; }
         public DateTime? meetingDateTime { get; set; }
     }
+
+
+    public class CourseBuilderMeetingFilterDto :BaseFilterDto
+    {
+        public Guid? Id { get; set; }
+        public Guid? courseId { get; set; }
+        public string? meetingTitle { get; set; }
+        public string? meetingDescription { get; set; }
+        public string? meetingFilename { get; set; }
+        public DateTime? frommeetingdatetime { get; set; }
+        public DateTime? tomeetingdatetime { get; set; }
+    }
 }

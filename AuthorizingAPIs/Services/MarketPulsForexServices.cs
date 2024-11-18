@@ -35,7 +35,10 @@ namespace NextTradeAPIs.Services
             try
             {
                 if (await _Context.Forexs.Where(x => x.categoryid == model.categoryid).AnyAsync())
-                    await DeleteForexItem(new ForexFilterDto() {id = model.id, categoryid = model.categoryid }, userlogin, processId, clientip, hosturl);
+                    {
+                    return new SystemMessageModel() { MessageCode = -103, MessageDescription = "For this category save before use update service", MessageData = model };
+                }
+                    //await DeleteForexItem(new ForexFilterDto() {id = model.id, categoryid = model.categoryid }, userlogin, processId, clientip, hosturl);
 
                 Forex data = new Forex()
                 {
@@ -356,7 +359,7 @@ namespace NextTradeAPIs.Services
 
                     data.FlexibleBlocklist = await _Context.FlexibleBlocks.Where(x => x.marketpulsforexid == data.id).Select(x => new FlexibleBlockDto() { countries = x.countries, dailyavrage = x.dailyavrage, highslows = x.highslows, MainTitle = x.MainTitle, pairsthatcorrelate = x.pairsthatcorrelate, pairtype = x.pairtype, id = x.id, marketpulsforexid = x.marketpulsforexid }).ToListAsync();
 
-                    data.FirstCountryDatalist = await _Context.FirstCountryDatas.Where(x => x.marketpulsforexid == data.id).Select(x => new FirstCountryDataDto() { avragedaily = x.avragedaily, centralbank = x.centralbank, countries = x.countries, nickname = x.nickname, id = x.id, marketpulsforexid = x.marketpulsforexid }).ToListAsync();
+                    data.FirstCountryDatalist = await _Context.FirstCountryDatas.Where(x => x.marketpulsforexid == data.id).Select(x => new FirstCountryDataDto() { avragedaily = x.avragedaily??"0", centralbank = x.centralbank, countries = x.countries, nickname = x.nickname, id = x.id, marketpulsforexid = x.marketpulsforexid }).ToListAsync();
 
                 }
 
@@ -371,6 +374,233 @@ namespace NextTradeAPIs.Services
             }
             return message;
         }
+
+        public async Task<SystemMessageModel> UpdateForexItem(ForexDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                if (model.id == null)
+                    return new SystemMessageModel() { MessageCode = -102, MessageDescription = "Id is Wrong" };
+
+                Forex data = await _Context.Forexs.FindAsync(model.id);
+
+                if (data == null)
+                    return new SystemMessageModel() { MessageCode = -103, MessageDescription = "data not find" };
+
+                if (await _Context.Forexs.Where(x => x.categoryid == model.categoryid).AnyAsync())
+                {
+                    return new SystemMessageModel() { MessageCode = -103, MessageDescription = "For this category save before use update service", MessageData = model };
+                }
+                //await DeleteForexItem(new ForexFilterDto() {id = model.id, categoryid = model.categoryid }, userlogin, processId, clientip, hosturl);
+
+                    data.price = 0;
+                    data.isvisible = model.isvisible ?? true;
+                    data.courseleveltypeId = model.courseleveltypeId ?? 0;
+                    data.coursetitle = model.coursetitle;
+                    data.oneyeardescription = model.oneyeardescription;
+                    data.chartdescription = model.chartdescription;
+                    data.firstcountryheading = model.firstcountryheading;
+                    data.firstcountrydescription = model.firstcountrydescription;
+                    data.secondcountryheading = model.secondcountryheading;
+                    data.secondcountrydescription = model.secondcountrydescription;
+                    data.bottomdescription = model.bottomdescription;
+                    data.maindescription = model.maindescription;
+                    data.singlepagechartimage = model.singlepagechartimage;
+                    data.instrumentname = model.instrumentname;
+                    data.fundamentalheading = model.fundamentalheading;
+                    data.technicalheading = model.technicalheading;
+                    data.marketsessiontitle = model.marketsessiontitle;
+                    data.marketsessionscript = model.marketsessionscript;
+                    data.marketsentimentstitle = model.marketsentimentstitle;
+                    data.marketsentimentsscript = model.marketsentimentsscript;
+                    data.privatenotes = model.privatenotes;
+                    data.excerpt = model.excerpt;
+                    data.author = model.author;
+
+                 _Context.Forexs.Update(data);
+
+
+                if (model.URLSectionlist != null && model.URLSectionlist.Count() > 0)
+                {
+                    List<URLSection> URLSectionlist = new List<URLSection>();
+                    foreach (URLSectionDto x in model.URLSectionlist)
+                    {
+                        URLSectionlist.Add(new URLSection()
+                        {
+                            url = x.url,
+                            urltitle = x.urltitle,
+                            id = Guid.NewGuid(),
+                            marketpulsforexid = data.id
+                        });
+                    }
+                    await _Context.URLSections.AddRangeAsync(URLSectionlist);
+                }
+                if (model.TechnicalTabslist != null && model.TechnicalTabslist.Count() > 0)
+                {
+                    List<TechnicalTabs> TechnicalTabslist = new List<TechnicalTabs>();
+                    foreach (TechnicalTabsDto x in model.TechnicalTabslist)
+                    {
+                        TechnicalTabs _technicalTabs = new TechnicalTabs()
+                        {
+                            maintitle = x.maintitle,
+                            script = x.script,
+                            id = Guid.NewGuid(),
+                            marketpulsforexid = data.id
+                        };
+
+                        if (x.TechnicalBreakingNewslist != null && x.TechnicalBreakingNewslist.Count() > 0)
+                        {
+                            List<TechnicalBreakingNews> TechnicalBreakingNewslist = new List<TechnicalBreakingNews>();
+                            foreach (TechnicalBreakingNewsDto xn in x.TechnicalBreakingNewslist)
+                            {
+                                TechnicalBreakingNewslist.Add(new TechnicalBreakingNews()
+                                {
+                                    maintitle = xn.maintitle,
+                                    script = xn.script,
+                                    id = Guid.NewGuid(),
+                                    technicaltabid = _technicalTabs.id,
+                                    marketpulsforexid = data.id
+                                });
+                            }
+                            await _Context.TechnicalBreakingNewss.AddRangeAsync(TechnicalBreakingNewslist);
+                        }
+                        TechnicalTabslist.Add(_technicalTabs);
+
+                    }
+                    await _Context.TechnicalTabss.AddRangeAsync(TechnicalTabslist);
+                }
+
+
+                if (model.SecondCountryDatalist != null && model.SecondCountryDatalist.Count() > 0)
+                {
+                    List<SecondCountryData> SecondCountryDatalist = new List<SecondCountryData>();
+                    foreach (SecondCountryDataDto x in model.SecondCountryDatalist)
+                    {
+                        SecondCountryDatalist.Add(new SecondCountryData()
+                        {
+                            id = Guid.NewGuid(),
+                            marketpulsforexid = data.id,
+                            avragedaily = x.avragedaily,
+                            centralbank = x.centralbank,
+                            countries = x.countries,
+                            nickname = x.nickname
+                        });
+                    }
+                    await _Context.SecondCountryDatas.AddRangeAsync(SecondCountryDatalist);
+                }
+
+                if (model.PDFSectionlist != null && model.PDFSectionlist.Count() > 0)
+                {
+                    List<PDFSection> PDFSectionlist = new List<PDFSection>();
+                    foreach (PDFSectionDto x in model.PDFSectionlist)
+                    {
+                        PDFSectionlist.Add(new PDFSection()
+                        {
+                            id = Guid.NewGuid(),
+                            marketpulsforexid = data.id,
+                            author = x.author,
+                            pdfshortcodeid = x.pdfshortcodeid,
+                            pdftitle = x.pdftitle,
+                            shortdescription = x.shortdescription
+                        });
+                    }
+                    await _Context.PDFSections.AddRangeAsync(PDFSectionlist);
+                }
+
+
+                if (model.FundamentalNewsSectionlist != null && model.FundamentalNewsSectionlist.Count() > 0)
+                {
+                    List<FundamentalNewsSection> FundamentalNewsSectionlist = new List<FundamentalNewsSection>();
+                    foreach (FundamentalNewsSectionDto x in model.FundamentalNewsSectionlist)
+                    {
+                        FundamentalNewsSection _fundamentalNewsSection = new FundamentalNewsSection()
+                        {
+                            maintitle = x.maintitle,
+                            script = x.script,
+                            id = Guid.NewGuid(),
+                            marketpulsforexid = data.id
+                        };
+
+
+                        if (x.NewsMainContentlist != null && x.NewsMainContentlist.Count() > 0)
+                        {
+                            List<NewsMainContent> NewsMainContentlist = new List<NewsMainContent>();
+                            foreach (NewsMainContentDto xn in x.NewsMainContentlist)
+                            {
+                                NewsMainContentlist.Add(new NewsMainContent()
+                                {
+                                    maintitle = xn.maintitle,
+                                    script = xn.script,
+                                    id = Guid.NewGuid(),
+                                    marketpulsforexid = data.id,
+                                    fundamentalnewssectionid = _fundamentalNewsSection.id
+                                });
+                            }
+                            await _Context.NewsMainContents.AddRangeAsync(NewsMainContentlist);
+                        }
+                        FundamentalNewsSectionlist.Add(_fundamentalNewsSection);
+                    }
+                    await _Context.FundamentalNewsSections.AddRangeAsync(FundamentalNewsSectionlist);
+                }
+
+                if (model.FlexibleBlocklist != null && model.FlexibleBlocklist.Count() > 0)
+                {
+                    List<FlexibleBlock> FlexibleBlocklist = new List<FlexibleBlock>();
+                    foreach (FlexibleBlockDto x in model.FlexibleBlocklist)
+                    {
+                        FlexibleBlocklist.Add(new FlexibleBlock()
+                        {
+                            id = Guid.NewGuid(),
+                            marketpulsforexid = data.id,
+                            countries = x.countries,
+                            dailyavrage = x.dailyavrage,
+                            highslows = x.highslows,
+                            MainTitle = x.MainTitle,
+                            pairsthatcorrelate = x.pairsthatcorrelate,
+                            pairtype = x.pairtype
+                        });
+                    }
+                    await _Context.FlexibleBlocks.AddRangeAsync(FlexibleBlocklist);
+                }
+
+                if (model.FirstCountryDatalist != null && model.FirstCountryDatalist.Count() > 0)
+                {
+                    List<FirstCountryData> FirstCountryDatalist = new List<FirstCountryData>();
+                    foreach (FirstCountryDataDto x in model.FirstCountryDatalist)
+                    {
+                        FirstCountryDatalist.Add(new FirstCountryData()
+                        {
+                            id = Guid.NewGuid(),
+                            marketpulsforexid = data.id,
+                            countries = x.countries,
+                            avragedaily = x.avragedaily,
+                            centralbank = x.centralbank,
+                            nickname = x.nickname
+                        });
+                    }
+                    await _Context.FirstCountryDatas.AddRangeAsync(FirstCountryDatalist);
+                }
+
+                await _Context.SaveChangesAsync();
+
+                model.id = data.id;
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
 
         public async Task<SystemMessageModel> DeleteForexItem(ForexFilterDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
