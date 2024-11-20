@@ -272,7 +272,92 @@ namespace NextTradeAPIs.Services
                     }
                 }
 
-                datas =  await query.Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount).Select(x => new CourseBuilderMeetingDto()
+                datas = await query.Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount).Select(x => new CourseBuilderMeetingDto()
+                {
+                    Id = x.Id,
+                    courseId = x.courseId,
+                    meetingDateTime = x.meetingDateTime,
+                    meetingDescription = x.meetingDescription,
+                    meetingFilename = x.meetingFilename,
+                    meetingTitle = x.meetingTitle,
+                    meetingURL = x.meetingURL
+                }).ToListAsync();
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas, Meta = new { pageIndex = pageIndex, PageRowCount = PageRowCount, totaldata = totaldata, pagecount = pagecount } };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<SystemMessageModel> UpdateCourseMeetings(CourseBuilderMeetingFilterDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+            List<CourseBuilderMeetingDto> datas = null;
+            try
+            {
+                IQueryable<CourseBuilderMeeting> query = _Context.CourseBuilderMeetings;
+                if (model.Id != null)
+                    query = query.Where(x => x.Id == model.Id);
+
+                if (model.frommeetingdatetime != null)
+                    query = query.Where(x => x.meetingDateTime >= model.frommeetingdatetime);
+
+                if (model.tomeetingdatetime != null)
+                    query = query.Where(x => x.meetingDateTime <= model.tomeetingdatetime);
+
+                if (model.courseId != null)
+                    query = query.Where(x => x.courseId == model.courseId);
+
+                int pageIndex = (model.pageindex == null || model.pageindex == 0) ? 1 : (int)model.pageindex;
+                int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 50 : (int)model.rowcount;
+
+                int totaldata = query.Count();
+                if (totaldata <= 0) totaldata = 1;
+                decimal pagecountd = ((decimal)totaldata / (decimal)PageRowCount);
+                int pagecount = (totaldata / PageRowCount);
+                pagecount = (pagecount <= 0) ? 1 : pagecount;
+                if (Math.Floor(pagecountd) > 0)
+                    pagecount++;
+
+                if (model.sortitem != null)
+                {
+                    foreach (var item in model.sortitem)
+                    {
+                        if (item.ascending == null || (bool)item.ascending)
+                        {
+                            switch (item.fieldname.ToLower())
+                            {
+                                case "meetingdatetime":
+                                    query = query.OrderBy(x => x.meetingDateTime);
+                                    break;
+                                case "meetingtitle":
+                                    query = query.OrderBy(x => x.meetingTitle);
+                                    break;
+                            };
+                        }
+                        else if (!(bool)item.ascending)
+                        {
+                            switch (item.fieldname.ToLower())
+                            {
+                                case "meetingdatetime":
+                                    query = query.OrderByDescending(x => x.meetingDateTime);
+                                    break;
+                                case "meetingtitle":
+                                    query = query.OrderByDescending(x => x.meetingTitle);
+                                    break;
+                            };
+                        }
+                    }
+                }
+
+                datas = await query.Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount).Select(x => new CourseBuilderMeetingDto()
                 {
                     Id = x.Id,
                     courseId = x.courseId,
@@ -331,7 +416,7 @@ namespace NextTradeAPIs.Services
             return message;
         }
 
-        public async Task<SystemMessageModel> DeleteCourseVideoPdfUrl(CourseBuildeVideoPdfUrlDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        public async Task<SystemMessageModel> DeleteCourseVideoPdfUrl(CourseBuildeVideoPdfUrlFilterDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
             SystemMessageModel message;
             StackTrace stackTrace = new StackTrace();
@@ -470,7 +555,7 @@ namespace NextTradeAPIs.Services
                                                       courseName = x.courseName,
                                                       courseDescription = x.courseDescription,
                                                       courseFilename = x.courseFilename,
-                                                      courseFilepath = (string.IsNullOrEmpty(x.courseFilepath))?"": ((sendfilepath == true) ? x.courseFilepath : hosturl + x.courseFilepath.Substring(x.courseFilepath.IndexOf("wwwroot\\")).Replace ("wwwroot", "").Replace("\\", "/") ),
+                                                      courseFilepath = (string.IsNullOrEmpty(x.courseFilepath)) ? "" : ((sendfilepath == true) ? x.courseFilepath : hosturl + x.courseFilepath.Substring(x.courseFilepath.IndexOf("wwwroot\\")).Replace("wwwroot", "").Replace("\\", "/")),
                                                       excerpt = x.excerpt,
                                                       authorId = x.authorId,
                                                       authorname = (x.author.Fname ?? "") + " " + (x.author.Lname ?? ""),
@@ -488,7 +573,7 @@ namespace NextTradeAPIs.Services
                                                       courseIntroVideo = x.courseIntroVideo,
                                                       courseTags = x.courseTags,
                                                       featuredImagename = x.featuredImagename,
-                                                      featuredImagepath = string.IsNullOrEmpty(x.featuredImagepath)?"":((sendfilepath == true) ? x.featuredImagepath:(hosturl + x.featuredImagepath.Substring                                     (x.featuredImagepath.IndexOf("wwwroot\\")).Replace("wwwroot", "").Replace("\\", "/"))),
+                                                      featuredImagepath = string.IsNullOrEmpty(x.featuredImagepath) ? "" : ((sendfilepath == true) ? x.featuredImagepath : (hosturl + x.featuredImagepath.Substring(x.featuredImagepath.IndexOf("wwwroot\\")).Replace("wwwroot", "").Replace("\\", "/"))),
                                                       registerdatetime = x.registerdatetime,
                                                       courseFilecontent = x.courseFilecontent,
                                                       featuredImagecontent = x.featuredImagecontent,
@@ -533,7 +618,7 @@ namespace NextTradeAPIs.Services
                     }).ToListAsync();
                     item.videoPdfcount = item.videoPdfUrls.Count();
 
-                    if (!string.IsNullOrEmpty(item.featuredImagepath)&& !item.featuredImagepath.StartsWith("http"))
+                    if (!string.IsNullOrEmpty(item.featuredImagepath) && !item.featuredImagepath.StartsWith("http"))
                         item.featuredImagepath = hosturl + item.featuredImagepath.Substring(item.featuredImagepath.IndexOf("wwwroot\\")).Replace("wwwroot", "").Replace("\\", "/");
 
                     if (!string.IsNullOrEmpty(item.courseFilepath) && !item.courseFilepath.StartsWith("http"))
@@ -667,7 +752,7 @@ namespace NextTradeAPIs.Services
                     courseId = (Guid)model.courseId,
                     topicName = model.topicName,
                     topicSummary = model.topicSummary,
-                    topicorder = model.topicorder??1
+                    topicorder = model.topicorder ?? 1
                 };
                 await _Context.CourseBuilderTopics.AddAsync(data);
 
@@ -1022,7 +1107,7 @@ namespace NextTradeAPIs.Services
                                                       courseId = x.courseId,
                                                       featureImagename = x.featureImagename,
                                                       featureImagecontenttype = x.featureImagecontenttype,
-                                                      featureImagepath = (string.IsNullOrEmpty(x.featureImagepath))?"":( (showfilepath == true) ? x.featureImagepath :  hosturl + x.featureImagepath.Substring                                (x.featureImagepath.IndexOf("wwwroot\\")).Replace("wwwroot", "").Replace("\\", "/")),
+                                                      featureImagepath = (string.IsNullOrEmpty(x.featureImagepath)) ? "" : ((showfilepath == true) ? x.featureImagepath : hosturl + x.featureImagepath.Substring(x.featureImagepath.IndexOf("wwwroot\\")).Replace("wwwroot", "").Replace("\\", "/")),
                                                       lessonDescription = x.lessonDescription,
                                                       lessonFilecontenttype = x.lessonFilecontenttype,
                                                       lessonFilename = x.lessonFilename,
@@ -1043,7 +1128,7 @@ namespace NextTradeAPIs.Services
                         Id = x.Id,
                         lessonFilecontenttype = x.lessonFilecontenttype,
                         lessonFilename = x.lessonFilename,
-                        lessonFilepath = (string.IsNullOrEmpty(x.lessonFilepath))?"":((showfilepath == true)? x.lessonFilepath : hosturl + x.lessonFilepath.Substring(x.lessonFilepath.IndexOf("wwwroot\\")).Replace("wwwroot", "").Replace("\\", "/"))
+                        lessonFilepath = (string.IsNullOrEmpty(x.lessonFilepath)) ? "" : ((showfilepath == true) ? x.lessonFilepath : hosturl + x.lessonFilepath.Substring(x.lessonFilepath.IndexOf("wwwroot\\")).Replace("wwwroot", "").Replace("\\", "/"))
                     }).ToListAsync();
                 }
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data, Meta = new { pageIndex = pageIndex, PageRowCount = PageRowCount, totaldata = totaldata, pagecount = pagecount } };
@@ -1056,7 +1141,6 @@ namespace NextTradeAPIs.Services
             }
             return message;
         }
-
 
         public async Task<SystemMessageModel> DeleteCourseLessons(CourseBuilderLessonFilterDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
@@ -1665,7 +1749,7 @@ namespace NextTradeAPIs.Services
             catch (Exception ex) { return new SystemMessageModel() { MessageCode = -501, MessageDescription = "File saving Error", MessageData = ex.Message }; }
         }
 
-        internal async Task<SystemMessageModel> UpdateCourse(CourseBuilderCourseDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        public async Task<SystemMessageModel> UpdateCourse(CourseBuilderCourseDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
             SystemMessageModel message;
             StackTrace stackTrace = new StackTrace();
@@ -1742,6 +1826,86 @@ namespace NextTradeAPIs.Services
                 await _Context.SaveChangesAsync();
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<SystemMessageModel> GetCourseVideoPdfUrl(CourseBuildeVideoPdfUrlFilterDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                IQueryable<CourseBuildeVideoPdfUrl> query = _Context.CourseBuildeVideoPdfUrls;
+
+                if (model.Id != null)
+                {
+                    query = query.Where(x => x.Id == model.Id);
+                }
+                if (model.courseId != null)
+                    query = query.Where(x => x.courseId == model.courseId);
+
+                if (!string.IsNullOrEmpty(model.pdfTitle))
+                    query = query.Where(x => x.pdfTitle.Contains(model.pdfTitle.Trim()));
+
+                int pageIndex = (model.pageindex == null || model.pageindex == 0) ? 1 : (int)model.pageindex;
+                int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 50 : (int)model.rowcount;
+
+                int totaldata = query.Count();
+                if (totaldata <= 0) totaldata = 1;
+                decimal pagecountd = ((decimal)totaldata / (decimal)PageRowCount);
+                int pagecount = (totaldata / PageRowCount);
+                pagecount = (pagecount <= 0) ? 1 : pagecount;
+                if (Math.Floor(pagecountd) > 0)
+                    pagecount++;
+
+                if (model.sortitem != null)
+                {
+                    foreach (var item in model.sortitem)
+                    {
+                        if (item.ascending == null || (bool)item.ascending)
+                        {
+                            switch (item.fieldname.ToLower())
+                            {
+                                case "pdftitle":
+                                    query = query.OrderBy(x => x.pdfTitle);
+                                    break;
+                            };
+                        }
+                        else if (!(bool)item.ascending)
+                        {
+                            switch (item.fieldname.ToLower())
+                            {
+                                case "pdftitle":
+                                    query = query.OrderByDescending(x => x.pdfTitle);
+                                    break;
+                            };
+                        }
+                    }
+                }
+
+                List<CourseBuildeVideoPdfUrlDto> videoPdfUrls = await query.Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount).Select(x => new CourseBuildeVideoPdfUrlDto()
+                {
+                    Id = x.Id,
+                    courseId = x.courseId,
+                    downloadable = x.downloadable,
+                    pdfDescription = x.pdfDescription,
+                    pdfFilename = x.pdfFilename,
+                    pdfTitle = x.pdfTitle,
+                    viewPdfFile = x.viewPdfFile,
+                    pdfFilecontenttype = x.pdfFilecontenttype,
+                    pdfFilepath = (string.IsNullOrEmpty(x.pdfFilepath)) ? "" : (hosturl + x.pdfFilepath.Substring(x.pdfFilepath.IndexOf("wwwroot\\")).Replace("wwwroot", "").Replace("\\", "/")),
+                }).ToListAsync();
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = videoPdfUrls, Meta = new { pageIndex = pageIndex, PageRowCount = PageRowCount, totaldata = totaldata, pagecount = pagecount } };
             }
             catch (Exception ex)
             {

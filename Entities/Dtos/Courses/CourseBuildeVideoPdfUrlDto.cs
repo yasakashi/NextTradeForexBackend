@@ -20,4 +20,11 @@ namespace Entities.Dtos
         public string? viewPdfFile { get; set; }
         public bool? downloadable { get; set; }
     }
+
+    public class CourseBuildeVideoPdfUrlFilterDto :BaseFilterDto
+    {
+        public Guid? Id { get; set; }
+        public Guid? courseId { get; set; }
+        public string? pdfTitle { get; set; }
+    }
 }

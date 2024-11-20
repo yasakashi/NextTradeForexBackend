@@ -65,5 +65,11 @@ namespace Entities.Dtos
         
 
     }
+
+    public class IndiceFilterDto : BaseFilterDto
+    {
+        public Guid? id { get; set; }
+        public long categoryid { get; set; }
+    }
 }
 

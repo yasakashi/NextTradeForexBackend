@@ -171,6 +171,9 @@ builder.Services.AddTransient<MarketPulsComodityServices, MarketPulsComodityServ
 builder.Services.AddTransient<CourseBuilderServices, CourseBuilderServices>();
 builder.Services.AddTransient<CourseBuilderUserServices, CourseBuilderUserServices>();
 
+builder.Services.AddTransient<MarketPulsIndiceServices, MarketPulsIndiceServices>();
+
+
 #endregion
 
 builder.Services.AddSwaggerGen();

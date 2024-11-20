@@ -13,4 +13,6 @@ public class CourseMeetDto : BaseFilterDto
     public string? name { get; set; }
     public DateTime? registerdatetime { get; set; }
     public DateTime? duedatetime { get; set; }
+    public DateTime? fromdatetime { get; set; }
+    public DateTime? todatetime { get; set; }
 }

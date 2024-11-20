@@ -602,6 +602,81 @@ namespace NextTradeAPIs.Services
             return message;
         }
 
+        public async Task<SystemMessageModel> GetForumMessage4MarketPuls(IndiceFilterDto model, object value, string processId, string clientip, string hosturl, string _sitePath)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                List<Guid> forummessageIds = await _Context.ForumMessageCategorys.Where(x => x.categoryid == model.categoryid).Select(x => x.forummessageId).ToListAsync();
+
+                IQueryable<ForumMessage> query = _Context.ForumMessages;
+
+                query = query.Where(x => x.parentId == null);
+                query = query.Where(x => x.isneedpaid == false);
+                if (forummessageIds != null && forummessageIds.Count > 0)
+                    query = query.Where(x => forummessageIds.Contains(x.Id));
+
+
+                int pageIndex = (model.pageindex == null || model.pageindex == 0) ? 1 : (int)model.pageindex;
+                int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 50 : (int)model.rowcount;
+
+
+                int totaldata = query.Count();
+                if (totaldata <= 0) totaldata = 1;
+                decimal pagecountd = ((decimal)totaldata / (decimal)PageRowCount);
+                int pagecount = (totaldata / PageRowCount);
+                pagecount = (pagecount <= 0) ? 1 : pagecount;
+                if (Math.Floor(pagecountd) > 0)
+                    pagecount++;
+
+                List<ForumMessageShortDto> datas = await query.OrderByDescending(x => x.registerdatetime).Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount)
+                    .Include(x => x.creatoruser)
+                    .Select(x => new ForumMessageShortDto()
+                    {
+                        Id = x.Id,
+                        parentId = x.parentId,
+                        categoryid = x.categoryid,
+                        creatoruserid = x.creatoruserid,
+                        registerdatetime = x.registerdatetime,
+                        messagebody = x.messagebody,
+                        communitygroupid = x.communitygroupid,
+                        title = x.title,
+                        issignaltemplate = x.issignaltemplate ?? false,
+                        isneedpaid = x.isneedpaid,
+                        allowtoshow = true,
+                        creatorusername = x.creatoruser.Username
+                    }).ToListAsync();
+
+                foreach (ForumMessageShortDto data in datas)
+                {
+                    List<MessageAttachement> attachements = await _Context.MessageAttachements.Where(x => x.ForumMessageId == data.Id).ToListAsync();
+                    if (attachements != null && attachements.Count > 0)
+                    {
+                        if (!string.IsNullOrEmpty(attachements[0].photofileurl))
+                            data.photofileurl = hosturl + attachements[0].photofileurl;
+                    }
+                    else
+                    {
+                        data.photofileurl = hosturl + await GetCommunityCoverImageURL((Guid)data.communitygroupid, _sitePath);
+                    }
+                }
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas, Meta = new { pagecount = pagecount, totalitem = totaldata } };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+
         public async Task<string> GetCommunityCoverImageURL(Guid Id, string _sitePath)
         {
             SystemMessageModel message;

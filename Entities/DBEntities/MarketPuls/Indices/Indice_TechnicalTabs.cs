@@ -13,6 +13,7 @@ namespace Entities.DBEntities
     {
         [Key]
         public Guid id { get; set; }
+        public Guid marketpulsindiceid { get; set; }
         public string? tabtitle { get; set; }
         public string? script { get; set; }
         public virtual Indice? marketpulsindice { get; set; }

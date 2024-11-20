@@ -11,6 +11,7 @@ namespace Entities.Dtos
     public class Indice_TechnicalTabsDto
     {
         public Guid? id { get; set; }
+        public Guid? marketpulsindiceid { get; set; }
         public string? tabtitle { get; set; }
         public string? script { get; set; }
         public List<Indice_TechnicalTabs_TechnicalBreakingNewsDto>? technicalbreakingnewslist { get; set; }
