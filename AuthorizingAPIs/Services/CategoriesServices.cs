@@ -1,5 +1,6 @@
 ﻿using Base.Common.Enums;
 using DataLayers;
+using DocumentFormat.OpenXml.Vml.Spreadsheet;
 using Entities.DBEntities;
 using Entities.Dtos;
 using Entities.Dtos;
@@ -27,7 +28,7 @@ public class CategoriesServices
         _systemLogServices = systemLogServices;
     }
 
-
+    //    public byte[] CategoryImage { get; set; }
     public async Task<SystemMessageModel> GetCategory(CategorisDto filter, UserModel? userlogin, string processId, string clientip, string hosturl)
     {
         SystemMessageModel message;
@@ -46,11 +47,17 @@ public class CategoriesServices
                                                          parentId = x.parentId,
                                                          name = x.name,
                                                          categorytypeid = x.categorytypeid,
-                                                         categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
+                                                         categorytypename = (x.categorytype != null) ? x.categorytype.name : "",
+                                                         Description = x.Description ?? "",
+                                                         Slug = x.Slug ?? "",
+                                                         IsVisibleDropdown = x.IsVisibleDropdown ?? false,
+                                                         IsThisTopCategory = x.IsThisTopCategory ?? false,
+                                                         CoursesOfCategory = x.CoursesOfCategory ?? false,
+                                                         IsVisible = x.IsVisible ?? false,
+                                                         categorytypeid_old = x.categorytypeid_old,
+                                                         categoryimagefilepath = x.categoryimagefilepath,
+                                                         categoryimagefileurl = x.categoryimagefileurl
                                                      }).ToListAsync();
-
-
-
 
             message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
         }
@@ -104,7 +111,6 @@ public class CategoriesServices
         }
         return message;
     }
-
     private List<CategorisTreeDto> CreateTree(List<Category> datalist, long parentId)
     {
         List<Category> datas = datalist.Where(x => x.parentId == parentId && x.Id != parentId).ToList();
@@ -191,7 +197,7 @@ public class CategoriesServices
         return message;
     }
 
-    public async Task<SystemMessageModel> AddCategory(BaseInformationDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+    public async Task<SystemMessageModel> AddCategory(CategoryDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
     {
         SystemMessageModel message;
         StackTrace stackTrace = new StackTrace();
@@ -203,7 +209,16 @@ public class CategoriesServices
             Category datas = new Category()
             {
                 name = model.name,
-                parentId = model.parentid
+                parentId = model.parentId,
+                categoryimagefilepath = model.categoryimagefilepath,
+                categoryimagefileurl = model.categoryimagefileurl,
+                categorytypeid = model.categorytypeid,
+                categorytypeid_old = model.categorytypeid_old,
+                Slug = model.Slug,
+                IsThisTopCategory = model.IsThisTopCategory,
+                IsVisible = model.IsVisible,
+                IsVisibleDropdown = model.IsVisibleDropdown,
+                Description = model.Description
             };
             _Context.Categories.Add(datas);
             await _Context.SaveChangesAsync();
@@ -340,7 +355,7 @@ public class CategoriesServices
         return message;
     }
 
-    public async Task<SystemMessageModel> UpdateCategory(CategorisDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+    public async Task<SystemMessageModel> UpdateCategory(CategoryDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
     {
         SystemMessageModel message;
         StackTrace stackTrace = new StackTrace();
@@ -359,6 +374,17 @@ public class CategoriesServices
 
             data.name = model.name;
             data.parentId = model.parentId;
+            if (!string.IsNullOrEmpty(model.categoryimagefilepath))
+                data.categoryimagefilepath = model.categoryimagefilepath;
+            if (!string.IsNullOrEmpty(model.categoryimagefileurl))
+                data.categoryimagefileurl = model.categoryimagefileurl;
+            data.categorytypeid = model.categorytypeid;
+            data.categorytypeid_old = model.categorytypeid_old;
+            data.Slug = model.Slug;
+            data.IsThisTopCategory = model.IsThisTopCategory;
+            data.IsVisible = model.IsVisible;
+            data.IsVisibleDropdown = model.IsVisibleDropdown;
+            data.Description = model.Description;
 
             _Context.Categories.Update(data);
             await _Context.SaveChangesAsync();
@@ -391,11 +417,11 @@ public class CategoriesServices
             if (data == null)
                 return new SystemMessageModel() { MessageCode = -103, MessageDescription = "data not find" };
 
-            List<Category> datas = await _Context.Categories.Where(x=>x.parentId == model.Id).ToListAsync();
+            List<Category> datas = await _Context.Categories.Where(x => x.parentId == model.Id).ToListAsync();
 
             _Context.Categories.Remove(data);
 
-            if(datas!= null && datas.Count() > 0)
+            if (datas != null && datas.Count() > 0)
                 _Context.Categories.RemoveRange(datas);
 
             await _Context.SaveChangesAsync();
@@ -495,14 +521,14 @@ public class CategoriesServices
         {
             List<long> categoryids = await _Context.Forexs.Select(x => x.categoryid).ToListAsync();
 
-                datas = await _Context.Categories.Where(x => x.parentId == model.categoryid).Select(x => new CategorisDto()
-                {
-                    Id = x.Id,
-                    parentId = x.parentId,
-                    name = x.name,
-                    categorytypeid = x.categorytypeid,
-                    categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
-                }).ToListAsync();
+            datas = await _Context.Categories.Where(x => x.parentId == model.categoryid).Select(x => new CategorisDto()
+            {
+                Id = x.Id,
+                parentId = x.parentId,
+                name = x.name,
+                categorytypeid = x.categorytypeid,
+                categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
+            }).ToListAsync();
             message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
         }
         catch (Exception ex)
@@ -512,5 +538,43 @@ public class CategoriesServices
             await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
         }
         return message;
+    }
+
+    public async Task<SystemMessageModel> SaveCategoryFile(byte[] filecontent, long userid, string FileName, string sitePath, string hosturl)
+    {
+        string filegroupname = "categoryfile";
+        try
+        {
+            if (filecontent != null)
+            {
+                string _filePath = sitePath + "\\" + filegroupname + "\\";
+                if (!Directory.Exists(_filePath))
+                    Directory.CreateDirectory(_filePath);
+
+                _filePath += FileName;
+                string fileurl = hosturl + "/" + filegroupname + "/" + FileName;
+                Uri uri = new Uri(fileurl, UriKind.Relative);
+
+                if (File.Exists(_filePath))
+                {
+                    File.Delete(_filePath);
+                }
+                File.WriteAllBytes(_filePath, filecontent);
+
+                FileActionDto dto = new FileActionDto()
+                {
+                    filepath = _filePath,
+                    fileurl = fileurl
+                };
+
+
+                return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = dto };
+            }
+            else
+            {
+                return new SystemMessageModel() { MessageCode = -501, MessageDescription = "File Error", MessageData = null };
+            }
+        }
+        catch (Exception ex) { return new SystemMessageModel() { MessageCode = -501, MessageDescription = "File saving Error", MessageData = ex.Message }; }
     }
 }

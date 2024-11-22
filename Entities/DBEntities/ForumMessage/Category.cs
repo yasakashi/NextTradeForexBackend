@@ -16,7 +16,16 @@ public class Category
     public long? parentId { get; set; }
     public string name { get; set; }
     public int? categorytypeid { get; set; }
-
+    public string? Description { get; set; }
+    public string? Slug { get; set; }
+    public bool? IsVisibleDropdown { get; set; }
+    public bool? IsThisTopCategory { get; set; }
+    public bool? CoursesOfCategory { get; set; }
+    public bool? IsVisible { get; set; }
+    public int? categorytypeid_old { get; set; }
+    public byte[] CategoryImage { get; set; }
+    public string? categoryimagefileurl { get; set; }
+    public string? categoryimagefilepath { get; set; }
 
 
     //public virtual List<SubCategory> SubCategories { get; set; }

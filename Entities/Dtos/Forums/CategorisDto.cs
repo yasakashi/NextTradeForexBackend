@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,8 +14,37 @@ public class CategorisDto
     public string? name { get; set; }
     public int? categorytypeid { get; set; }
     public string? categorytypename { get; set; }
+    public string? Description { get; set; }
+    public string? Slug { get; set; }
+    public bool? IsVisibleDropdown { get; set; }
+    public bool? IsThisTopCategory { get; set; }
+    public bool? CoursesOfCategory { get; set; }
+    public bool? IsVisible { get; set; }
+    public int? categorytypeid_old { get; set; }
+    public string? categoryimagefileurl { get; set; }
+    public string? categoryimagefilepath { get; set; }
+    public string? categoryimagefilecontenttype { get; set; }
 }
 
+public class CategoryDto
+{
+    public long? Id { get; set; }
+    public long? parentId { get; set; }
+    public string? name { get; set; }
+    public int? categorytypeid { get; set; }
+    public string? categorytypename { get; set; }
+    public string? Description { get; set; }
+    public string? Slug { get; set; }
+    public bool? IsVisibleDropdown { get; set; }
+    public bool? IsThisTopCategory { get; set; }
+    public bool? CoursesOfCategory { get; set; }
+    public bool? IsVisible { get; set; }
+    public int? categorytypeid_old { get; set; }
+    public string? categoryimagefileurl { get; set; }
+    public string? categoryimagefilepath { get; set; }
+    public string? categoryimagefilecontenttype { get; set; }
+    public IFormFile? categoryimage { get; set; }
+}
 
 public class CategorisTreeDto
 {
