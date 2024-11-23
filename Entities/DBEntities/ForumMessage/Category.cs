@@ -23,10 +23,12 @@ public class Category
     public bool? CoursesOfCategory { get; set; }
     public bool? IsVisible { get; set; }
     public int? categorytypeid_old { get; set; }
-    public byte[] CategoryImage { get; set; }
     public string? categoryimagefileurl { get; set; }
     public string? categoryimagefilepath { get; set; }
-
+    public string? customfileurl { get; set; }
+    public string? customfilepath { get; set; }
+    public string? customfilename { get; set; }
+    public string? customfilecontenttype { get; set; }
 
     //public virtual List<SubCategory> SubCategories { get; set; }
     public virtual List<ForumMessage> ForumMessages { get; set; }

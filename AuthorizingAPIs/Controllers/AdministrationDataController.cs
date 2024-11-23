@@ -48,12 +48,78 @@ namespace NextTradeAPIs.Controllers
             _categoryService = courseServices;
         }
 
+        [HttpPost]
+        [HttpDelete]
+        [Route("/api/categorymangment/getcategoryinfo")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetCategoryFull(CategorisDto model)
+        {
+            StackTrace stackTrace = new StackTrace();
+            SystemMessageModel message;
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string authHeader = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            UserModel user = null;
+            LoginLog loginLog = null;
+
+            long ApiCode = 2000;
+
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                message = await _authorizationService.CheckToken(_bearer_token, processId);
+                UserModel userlogin = null;
+                if (message.MessageCode > 0)
+                {
+                    userlogin = message.MessageData as UserModel;
+                }
+                message = await _categoryService.GetCategoryFullInfo(model, userlogin, processId, clientip, hosturl);
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                string log = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, LogTypes.TokenError);
+                return Unauthorized();
+                //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
+            }
+        }
+
 
         [HttpPost]
         [HttpDelete]
         [Route("/api/categorymangment/deletecategory")]
         [AllowAnonymous]
-        public async Task<IActionResult> DeleteCourse(CategorisDto model)
+        public async Task<IActionResult> DeleteCategory(CategorisDto model)
         {
             StackTrace stackTrace = new StackTrace();
             SystemMessageModel message;
@@ -193,6 +259,30 @@ namespace NextTradeAPIs.Controllers
 
                 }
 
+                if (model.customfile != null)
+                {
+
+                    if (model.customfile.FileName == null || model.customfile.FileName.Length == 0)
+                    {
+                        // return Content("File not selected");
+                    }
+
+                    using (var ms = new MemoryStream())
+                    {
+                        model.customfilecontenttype = model.customfile.ContentType;
+                        model.customfilename = model.categoryimage.FileName;
+
+                        model.categoryimage.CopyTo(ms);
+                        message = await _categoryService.SaveCategoryFile(ms.ToArray(), userlogin.userid, model.customfilename, sitePath, hosturl);
+                    }
+                    if (message.MessageCode < 0)
+                        return BadRequest(message);
+
+                    FileActionDto _fileinfo = message.MessageData as FileActionDto;
+                    model.customfilepath = _fileinfo.filepath;
+                    model.customfileurl = _fileinfo.fileurl;
+
+                }
 
                 message = await _categoryService.AddCategory(model, userlogin, processId, clientip, hosturl);
 
@@ -288,7 +378,30 @@ namespace NextTradeAPIs.Controllers
                     model.categoryimagefileurl = _fileinfo.fileurl;
 
                 }
+                if (model.customfile != null)
+                {
 
+                    if (model.customfile.FileName == null || model.customfile.FileName.Length == 0)
+                    {
+                        // return Content("File not selected");
+                    }
+
+                    using (var ms = new MemoryStream())
+                    {
+                        model.customfilecontenttype = model.customfile.ContentType;
+                        model.customfilename = model.categoryimage.FileName;
+
+                        model.categoryimage.CopyTo(ms);
+                        message = await _categoryService.SaveCategoryFile(ms.ToArray(), userlogin.userid, model.customfilename, sitePath, hosturl);
+                    }
+                    if (message.MessageCode < 0)
+                        return BadRequest(message);
+
+                    FileActionDto _fileinfo = message.MessageData as FileActionDto;
+                    model.customfilepath = _fileinfo.filepath;
+                    model.customfileurl = _fileinfo.fileurl;
+
+                }
 
                 message = await _categoryService.UpdateCategory(model, userlogin, processId, clientip, hosturl);
 

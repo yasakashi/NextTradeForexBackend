@@ -24,6 +24,10 @@ public class CategorisDto
     public string? categoryimagefileurl { get; set; }
     public string? categoryimagefilepath { get; set; }
     public string? categoryimagefilecontenttype { get; set; }
+    public string? customfileurl { get; set; }
+    public string? customfilepath { get; set; }
+    public string? customfilename { get; set; }
+    public string? customfilecontenttype { get; set; }
 }
 
 public class CategoryDto
@@ -44,6 +48,11 @@ public class CategoryDto
     public string? categoryimagefilepath { get; set; }
     public string? categoryimagefilecontenttype { get; set; }
     public IFormFile? categoryimage { get; set; }
+    public IFormFile? customfile { get; set; }
+    public string? customfileurl { get; set; }
+    public string? customfilepath { get; set; }
+    public string? customfilename { get; set; }
+    public string? customfilecontenttype { get; set; }
 }
 
 public class CategorisTreeDto
@@ -53,4 +62,13 @@ public class CategorisTreeDto
     public string? name { get; set; }
     public int? categorytypeid { get; set; }
     public virtual List<CategorisTreeDto> children { get; set; }
+}
+
+public class CategoryBaseDto
+{
+    public long? Id { get; set; }
+    public long? parentId { get; set; }
+    public string? name { get; set; }
+    public int? categorytypeid { get; set; }
+    public string? categorytypename { get; set; }
 }

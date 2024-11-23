@@ -38,7 +38,46 @@ public class CategoriesServices
 
         try
         {
-            List<CategorisDto> datas = await _Context.Categories
+            List<CategoryBaseDto> datas = await _Context.Categories
+                                                     //.Where(x => x.categorytypeid == 14)
+                                                     .Include(x => x.categorytype)
+                                                     .Select(x => new CategoryBaseDto()
+                                                     {
+                                                         Id = x.Id,
+                                                         parentId = x.parentId,
+                                                         name = x.name,
+                                                     }).ToListAsync();
+
+            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+        }
+        catch (Exception ex)
+        {
+            message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+            string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+            await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+        }
+        return message;
+    }
+
+    public async Task<SystemMessageModel> GetCategoryFullInfo(CategorisDto filter, UserModel? userlogin, string processId, string clientip, string hosturl)
+    {
+        SystemMessageModel message;
+        StackTrace stackTrace = new StackTrace();
+        string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+        long SerrvieCode = 130000;
+
+        try
+        {
+            IQueryable<Category> query =  _Context.Categories;
+            if (filter.categorytypeid != null)
+                query = query.Where(x=>x.categorytypeid == filter.categorytypeid);
+
+            if (filter.parentId != null)
+                query = query.Where(x => x.parentId == filter.parentId);
+            if (filter.Id != null)
+                query = query.Where(x => x.Id == filter.Id);
+
+            List<CategorisDto> datas = await query
                                                      //.Where(x => x.categorytypeid == 14)
                                                      .Include(x => x.categorytype)
                                                      .Select(x => new CategorisDto()
@@ -56,7 +95,11 @@ public class CategoriesServices
                                                          IsVisible = x.IsVisible ?? false,
                                                          categorytypeid_old = x.categorytypeid_old,
                                                          categoryimagefilepath = x.categoryimagefilepath,
-                                                         categoryimagefileurl = x.categoryimagefileurl
+                                                         categoryimagefileurl = x.categoryimagefileurl, 
+                                                         customfilecontenttype = x.customfilecontenttype,
+                                                         customfilename = x.customfilename,
+                                                         customfileurl = x.customfileurl,
+                                                         customfilepath = x.customfilepath
                                                      }).ToListAsync();
 
             message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
@@ -69,6 +112,7 @@ public class CategoriesServices
         }
         return message;
     }
+
     public async Task<SystemMessageModel> GetCategoryTree(CategorisDto filter, UserModel? userlogin, string processId, string clientip, string hosturl)
     {
         SystemMessageModel message;
@@ -266,7 +310,7 @@ public class CategoriesServices
         StackTrace stackTrace = new StackTrace();
         string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
         long SerrvieCode = 130000;
-        List<CategorisDto> datas = null;
+        List<CategoryBaseDto> datas = null;
         try
         {
             List<long> categoryids = await _Context.Forexs.Select(x => x.categoryid).ToListAsync();
@@ -282,7 +326,7 @@ public class CategoriesServices
                 //                                         categorytypeid = x.categorytypeid,
                 //                                         categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
                 //                                     }).ToListAsync();
-                datas = await _Context.Categories.Where(x => x.Id == 896).Select(x => new CategorisDto()
+                datas = await _Context.Categories.Where(x => x.Id == 896).Select(x => new CategoryBaseDto()
                 {
                     Id = x.Id,
                     parentId = x.parentId,
@@ -303,7 +347,7 @@ public class CategoriesServices
                 //                         categorytypeid = x.categorytypeid,
                 //                         categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
                 //}).ToListAsync();
-                datas = await _Context.Categories.Where(x => x.parentId == 896).Select(x => new CategorisDto()
+                datas = await _Context.Categories.Where(x => x.parentId == 896).Select(x => new CategoryBaseDto()
                 {
                     Id = x.Id,
                     parentId = x.parentId,
@@ -385,6 +429,14 @@ public class CategoriesServices
             data.IsVisible = model.IsVisible;
             data.IsVisibleDropdown = model.IsVisibleDropdown;
             data.Description = model.Description;
+            if (!string.IsNullOrEmpty(model.customfilecontenttype))
+                data.customfilecontenttype = model.customfilecontenttype;
+            if (!string.IsNullOrEmpty(model.customfilename))
+                data.customfilename = model.customfilename;
+            if (!string.IsNullOrEmpty(model.customfilepath))
+                data.customfilepath = model.customfilepath;
+            if (!string.IsNullOrEmpty(model.customfileurl))
+                data.customfileurl = model.customfileurl;
 
             _Context.Categories.Update(data);
             await _Context.SaveChangesAsync();
@@ -444,7 +496,33 @@ public class CategoriesServices
 
     internal async Task<SystemMessageModel> GetCategoryCurrency4MarketPulsComodity(ComodityFilterDto model, object value, string processId, string clientip, string hosturl, bool v)
     {
-        throw new NotImplementedException();
+        SystemMessageModel message;
+        StackTrace stackTrace = new StackTrace();
+        string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+        long SerrvieCode = 130000;
+        List<CategoryBaseDto> datas = null;
+        try
+        {
+
+            datas = await _Context.Categories.Where(x => x.parentId == model.categoryid).Select(x => new CategoryBaseDto()
+            {
+                Id = x.Id,
+                parentId = x.parentId,
+                name = x.name,
+                categorytypeid = x.categorytypeid,
+                categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
+            }).ToListAsync();
+
+
+            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+        }
+        catch (Exception ex)
+        {
+            message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+            string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+            await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+        }
+        return message;
     }
 
     internal async Task<SystemMessageModel> GetCategory4MarketPulsIndice(IndiceFilterDto model, object value, string processId, string clientip, string hosturl, bool v)
@@ -454,11 +532,11 @@ public class CategoriesServices
         StackTrace stackTrace = new StackTrace();
         string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
         long SerrvieCode = 130000;
-        List<CategorisDto> datas = null;
+        List<CategoryBaseDto> datas = null;
         try
         {
 
-            datas = await _Context.Categories.Where(x => x.parentId == model.categoryid).Select(x => new CategorisDto()
+            datas = await _Context.Categories.Where(x => x.parentId == model.categoryid).Select(x => new CategoryBaseDto()
             {
                 Id = x.Id,
                 parentId = x.parentId,
@@ -485,11 +563,11 @@ public class CategoriesServices
         StackTrace stackTrace = new StackTrace();
         string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
         long SerrvieCode = 130000;
-        List<CategorisDto> datas = null;
+        List<CategoryBaseDto> datas = null;
         try
         {
 
-            datas = await _Context.Categories.Where(x => x.parentId == model.categoryid).Select(x => new CategorisDto()
+            datas = await _Context.Categories.Where(x => x.parentId == model.categoryid).Select(x => new CategoryBaseDto()
             {
                 Id = x.Id,
                 parentId = x.parentId,
@@ -516,12 +594,12 @@ public class CategoriesServices
         StackTrace stackTrace = new StackTrace();
         string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
         long SerrvieCode = 130000;
-        List<CategorisDto> datas = null;
+        List<CategoryBaseDto> datas = null;
         try
         {
             List<long> categoryids = await _Context.Forexs.Select(x => x.categoryid).ToListAsync();
 
-            datas = await _Context.Categories.Where(x => x.parentId == model.categoryid).Select(x => new CategorisDto()
+            datas = await _Context.Categories.Where(x => x.parentId == model.categoryid).Select(x => new CategoryBaseDto()
             {
                 Id = x.Id,
                 parentId = x.parentId,
