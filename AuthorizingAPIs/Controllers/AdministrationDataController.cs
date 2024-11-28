@@ -49,7 +49,7 @@ namespace NextTradeAPIs.Controllers
         }
 
         [HttpPost]
-        [HttpDelete]
+        [HttpGet]
         [Route("/api/categorymangment/getcategoryinfo")]
         [AllowAnonymous]
         public async Task<IActionResult> GetCategoryFull(CategorisDto model)
@@ -248,7 +248,7 @@ namespace NextTradeAPIs.Controllers
                         //model.categoryimagefilecontentfilename = model.categoryimage.FileName;
 
                         model.categoryimage.CopyTo(ms);
-                        message = await _categoryService.SaveCategoryFile(ms.ToArray(), userlogin.userid, model.name, sitePath, hosturl);
+                        message = await _categoryService.SaveCategoryFile(ms.ToArray(), userlogin.userid, filename, sitePath, hosturl);
                     }
                     if (message.MessageCode < 0)
                         return BadRequest(message);

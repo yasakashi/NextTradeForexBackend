@@ -18,6 +18,7 @@ namespace Entities.DBEntities
         public DateTime? createdatetime { get; set; }
         public long? creatoruserid { get; set; }
         public string? title { get; set; }
+        public string? tags { get; set; }
         public string? excerpt { get; set; }
         public string? authorname { get; set; }
         public long? authorid { get; set; }
@@ -49,9 +50,9 @@ namespace Entities.DBEntities
         public string? bottomdescriptionfilepath { get; set; }
         public string? bottomdescriptionfilecontenttype { get; set; }
         public string? maindescription { get; set; }
+        public string? maindescriptionfilecontenttype { get; set; }
         public string? maindescriptionfilename { get; set; }
         public string? maindescriptionfilepath { get; set; }
-        public string? maindescriptionfilecontenttype { get; set; }
         public string? singlepagechartimage { get; set; }
         public string? fundamentalandtechnicaltabsection_instrumentname { get; set; }
         public string? fundamentalandtechnicaltabsection_fundamentalheading { get; set; }
@@ -63,8 +64,21 @@ namespace Entities.DBEntities
         public string? fundamentalandtechnicaltabsection_relatedresorces { get; set; }
         public string? fundamentalandtechnicaltabsection_privatenotes { get; set; }
 
-
         public virtual Category? category { get; set; }
         public virtual User? author { get; set; }
     }
 }
+
+/*
+ 
+
+ 
+tblMarketPuls_Comodities_FlexibleBlock_FirstCountryDatas
+tblMarketPuls_Comodities_FlexibleBlock_SecondCountryDatas
+tblMarketPuls_Comodities_fundamentalandtechnicaltabsection_fundamentalnewssections
+tblMarketPuls_Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontents
+tblMarketPuls_Comodities_Fundamentalandtechnicaltabsection_Technicaltabs
+tblMarketPuls_Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewses
+tblMarketPuls_Comodities_PDFSections
+tblMarketPuls_Comodities_URLSections
+ */

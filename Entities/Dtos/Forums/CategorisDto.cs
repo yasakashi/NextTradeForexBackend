@@ -64,11 +64,20 @@ public class CategorisTreeDto
     public virtual List<CategorisTreeDto> children { get; set; }
 }
 
-public class CategoryBaseDto
+public class CategoryBaseDto 
 {
     public long? Id { get; set; }
     public long? parentId { get; set; }
     public string? name { get; set; }
     public int? categorytypeid { get; set; }
     public string? categorytypename { get; set; }
+}
+
+public class CategoryFilterDto : BaseFilterDto
+{
+    public long? Id { get; set; }
+    public long? parentId { get; set; }
+    public string? name { get; set; }
+    public int? categorytypeid { get; set; }
+    public bool? isvisible { get; set; }
 }

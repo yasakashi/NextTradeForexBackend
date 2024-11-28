@@ -29,7 +29,7 @@ public class CategoriesServices
     }
 
     //    public byte[] CategoryImage { get; set; }
-    public async Task<SystemMessageModel> GetCategory(CategorisDto filter, UserModel? userlogin, string processId, string clientip, string hosturl)
+    public async Task<SystemMessageModel> GetCategory(CategoryFilterDto filter, UserModel? userlogin, string processId, string clientip, string hosturl)
     {
         SystemMessageModel message;
         StackTrace stackTrace = new StackTrace();
@@ -38,7 +38,24 @@ public class CategoriesServices
 
         try
         {
-            List<CategoryBaseDto> datas = await _Context.Categories
+            IQueryable<Category> query = _Context.Categories;
+
+            if (filter.Id != null)
+                query = query.Where(x=>x.Id == filter.Id);
+
+            if (filter.parentId != null)
+                query = query.Where(x => x.parentId == filter.parentId);
+
+            if (filter.name != null)
+                query = query.Where(x => x.name.Contains(filter.name));
+
+            if (filter.categorytypeid != null)
+                query = query.Where(x => x.categorytypeid == filter.categorytypeid);
+
+            if (filter.isvisible!= null)
+                query = query.Where(x => x.IsVisible == filter.isvisible);
+
+            List<CategoryBaseDto> datas = await query
                                                      //.Where(x => x.categorytypeid == 14)
                                                      .Include(x => x.categorytype)
                                                      .Select(x => new CategoryBaseDto()
@@ -77,6 +94,10 @@ public class CategoriesServices
             if (filter.Id != null)
                 query = query.Where(x => x.Id == filter.Id);
 
+
+            int totaldata = query.Count();
+            if (totaldata <= 0) totaldata = 1;
+
             List<CategorisDto> datas = await query
                                                      //.Where(x => x.categorytypeid == 14)
                                                      .Include(x => x.categorytype)
@@ -102,7 +123,7 @@ public class CategoriesServices
                                                          customfilepath = x.customfilepath
                                                      }).ToListAsync();
 
-            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas, Meta=new { totaldata = totaldata } };
         }
         catch (Exception ex)
         {
@@ -262,11 +283,18 @@ public class CategoriesServices
                 IsThisTopCategory = model.IsThisTopCategory,
                 IsVisible = model.IsVisible,
                 IsVisibleDropdown = model.IsVisibleDropdown,
-                Description = model.Description
+                Description = model.Description,
+                customfilecontenttype = model.customfilecontenttype,
+                customfilename = model.customfilename,
+                customfilepath = model.customfilepath,
+                customfileurl = model.customfileurl,
+                CoursesOfCategory = model.CoursesOfCategory
             };
             _Context.Categories.Add(datas);
             await _Context.SaveChangesAsync();
 
+
+            datas.categoryimagefilepath = datas.customfilepath = string.Empty;
             message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
         }
         catch (Exception ex)
@@ -489,12 +517,12 @@ public class CategoriesServices
         return message;
     }
 
-    internal async Task<SystemMessageModel> GetCategory4MarketPulsComodity(ComodityFilterDto model, object value, string processId, string clientip, string hosturl, bool v)
+    public async Task<SystemMessageModel> GetCategory4MarketPulsComodity(ComodityFilterDto model, object value, string processId, string clientip, string hosturl, bool v)
     {
         throw new NotImplementedException();
     }
 
-    internal async Task<SystemMessageModel> GetCategoryCurrency4MarketPulsComodity(ComodityFilterDto model, object value, string processId, string clientip, string hosturl, bool v)
+    public async Task<SystemMessageModel> GetCategoryCurrency4MarketPulsComodity(ComodityFilterDto model, object value, string processId, string clientip, string hosturl, bool v)
     {
         SystemMessageModel message;
         StackTrace stackTrace = new StackTrace();
@@ -525,7 +553,7 @@ public class CategoriesServices
         return message;
     }
 
-    internal async Task<SystemMessageModel> GetCategory4MarketPulsIndice(IndiceFilterDto model, object value, string processId, string clientip, string hosturl, bool v)
+    public async Task<SystemMessageModel> GetCategory4MarketPulsIndice(IndiceFilterDto model, object value, string processId, string clientip, string hosturl, bool v)
     {
         //1174
         SystemMessageModel message;
@@ -557,7 +585,7 @@ public class CategoriesServices
         return message;
     }
 
-    internal async Task<SystemMessageModel> GetCategoryCurrency4MarketPulsIndice(IndiceFilterDto model, object value, string processId, string clientip, string hosturl, bool v)
+    public async Task<SystemMessageModel> GetCategoryCurrency4MarketPulsIndice(IndiceFilterDto model, object value, string processId, string clientip, string hosturl, bool v)
     {
         SystemMessageModel message;
         StackTrace stackTrace = new StackTrace();
@@ -588,7 +616,8 @@ public class CategoriesServices
         return message;
     }
 
-    internal async Task<SystemMessageModel> GetCategory4MarketPulsIndices(IndiceFilterDto model, object value, string processId, string clientip, string hosturl, bool v)
+
+    public async Task<SystemMessageModel> GetCategory4MarketPulsIndices(IndiceFilterDto model, object value, string processId, string clientip, string hosturl, bool v)
     {
         SystemMessageModel message;
         StackTrace stackTrace = new StackTrace();
@@ -631,7 +660,6 @@ public class CategoriesServices
 
                 _filePath += FileName;
                 string fileurl = hosturl + "/" + filegroupname + "/" + FileName;
-                Uri uri = new Uri(fileurl, UriKind.Relative);
 
                 if (File.Exists(_filePath))
                 {

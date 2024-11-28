@@ -10,22 +10,54 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Entities.Dtos
 {
-    public class ComodityDto
+    public class ComodityModel
     {
         public Guid? id { get; set; }
-
+        public List<Comodities_FlexibleBlockDto> comodities { get; set; }
+        public FundamentalAndTechnicalTabSection fundamentalandtechnicaltabsection { get; set; }
         public long? categoryid { get; set; }
-        public DateTime? createdatetime { get; set; }
-        public long? creatoruserid { get; set; }
         public string? title { get; set; }
+        public string? tags { get; set; }
         public string? excerpt { get; set; }
         public string? authorname { get; set; }
         public long? authorid { get; set; }
         public bool? isvisible { get; set; }
         public int? courseleveltypeId { get; set; }
         public int? coursestatusid { get; set; }
+        public long? creatoruserid { get; set; }
+    }
+
+    public class FundamentalAndTechnicalTabSection
+    {
+        public string? instrumentname { get; set; }
+        public string? fundamentalheading { get; set; }
+        public string? technicalheading { get; set; }
+        public string? marketsentimentstitle { get; set; }
+        public string? marketsentimentsscript { get; set; }
+        public string? marketsessiontitle { get; set; }
+        public string? marketsessionscript { get; set; }
+        public string? relatedresorces { get; set; }
+        public string? privatenotes { get; set; }
+        public List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSectionDto>? comoditiespdfsectionlist { get; set; }
+        public List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionDto>? comoditiesurlsectionlist { get; set; }
+    }
+    public class ComodityDto
+    {
+        public Guid? id { get; set; }
+
+        public long? categoryid { get; set; }
+        public DateTime? createdatetime { get; set; }
         public DateTime? changestatusdate { get; set; }
-        public string? comodities_maintitle { get; set; }
+        public string? title { get; set; }
+        public string? tags { get; set; }
+        public string? excerpt { get; set; }
+        public string? authorname { get; set; }
+        public long? authorid { get; set; }
+        public bool? isvisible { get; set; }
+        public int? courseleveltypeId { get; set; }
+        public int? coursestatusid { get; set; }
+        public long? creatoruserid { get; set; }
+        public string? maintitle { get; set; }
         public string? oneyeardescription { get; set; }
         public string? oneyeardescriptionfilename { get; set; }
         public string? oneyeardescriptionfilecontenttype { get; set; }
@@ -49,9 +81,9 @@ namespace Entities.Dtos
         public string? bottomdescriptionfilepath { get; set; }
         public string? bottomdescriptionfilecontenttype { get; set; }
         public string? maindescription { get; set; }
+        public string? maindescriptionfilecontenttype { get; set; }
         public string? maindescriptionfilename { get; set; }
         public string? maindescriptionfilepath { get; set; }
-        public string? maindescriptionfilecontenttype { get; set; }
         public string? singlepagechartimage { get; set; }
         public string? fundamentalandtechnicaltabsection_instrumentname { get; set; }
         public string? fundamentalandtechnicaltabsection_fundamentalheading { get; set; }
@@ -64,9 +96,8 @@ namespace Entities.Dtos
         public string? fundamentalandtechnicaltabsection_privatenotes { get; set; }
 
 
-        public List<ComoditiesCountriesDataDto>? comoditiescountriesdatalist { get; set; }
-        public List<ComoditiesFirstCountryDataCountriesDataDto>? comoditiesfirstcountrydatacountriesdatalist { get; set; }
-        public List<ComoditiesSecondCountryDataCountriesDataDto>? comoditiessecondcountrydatacountriesdatalist { get; set; }
+        public List<Comodities_FlexibleBlockDto>? comoditiesflexibleblocklist { get; set; }
+
         public List<Comodities_fundamentalandtechnicaltabsection_fundamentalnewssectionDto>? Comodities_fundamentalandtechnicaltabsection_fundamentalnewssectionlist { get; set; }
         public List<Comodities_Fundamentalandtechnicaltabsection_TechnicalTabsDto>? comoditiesfundamentalandtechnicaltabsectiontechnicaltabslist { get; set; }
         public List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSectionDto>? comoditiesfundamentalandtechnicaltabsection_relatedresorces_pdfsectionlist { get; set; }

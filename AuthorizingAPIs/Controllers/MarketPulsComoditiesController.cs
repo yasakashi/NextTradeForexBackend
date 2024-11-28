@@ -51,7 +51,7 @@ namespace NextTradeAPIs.Controllers
         [HttpPost]
         [Route("/api/marketpuls/addcomodityitem")]
         [AllowAnonymous]
-        public async Task<IActionResult> CreatecomodityItem(ComodityDto model)
+        public async Task<IActionResult> CreatecomodityItem(ComodityModel model)
         {
             StackTrace stackTrace = new StackTrace();
             SystemMessageModel message;

@@ -10,6 +10,7 @@ namespace Entities.Dtos
     {
         public Guid? id { get; set; }
         public Guid? comodityid { get; set; }
+        public Guid? comodityflexibleblockid { get; set; }
         public string? contries { get; set; }
         public string? pairsthatcorrelate { get; set; }
         public string? highslows { get; set; }
