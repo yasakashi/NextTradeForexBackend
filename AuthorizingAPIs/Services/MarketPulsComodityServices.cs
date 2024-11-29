@@ -75,16 +75,17 @@ namespace NextTradeAPIs.Services
                         comodityid = data.id,
                         author = pdf.author,
                         pdfshortcodeid = pdf.pdfshortcodeid,
-                        pdftitle= pdf.pdftitle,
+                        pdftitle = pdf.pdftitle,
                         shortdescription = pdf.shortdescription
                     });
                 }
-                if(PDFSectionlist.Count > 0)
-                await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections.AddRangeAsync(PDFSectionlist);
+                if (PDFSectionlist.Count > 0)
+                    await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections.AddRangeAsync(PDFSectionlist);
 
                 foreach (Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionDto pdf in model.fundamentalandtechnicaltabsection.comoditiesurlsectionlist)
                 {
-                    UrlSectionlist.Add(new Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection() { 
+                    UrlSectionlist.Add(new Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection()
+                    {
                         id = Guid.NewGuid(),
                         comodityid = data.id,
                         url = pdf.url,
@@ -646,6 +647,196 @@ namespace NextTradeAPIs.Services
             return message;
         }
 
+        public async Task<SystemMessageModel> GetComodityItems(ComodityFilterDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                List<ComodityModel> datas;
+                IQueryable<Comodity> query = _Context.Comodities;
+
+                if (model.id != null)
+                    query = query.Where(x => x.id == model.id);
+
+                if (model.categoryid != null)
+                    query = query.Where(x => x.categoryid == model.categoryid);
+
+                if (model.sortitem != null && model.sortitem.Count() > 0)
+                    if (model.sortitem != null)
+                    {
+                        foreach (var item in model.sortitem)
+                        {
+                            if (item.ascending == null || (bool)item.ascending)
+                            {
+                                switch (item.fieldname.ToLower())
+                                {
+                                    case "createdatetime":
+                                        query = query.OrderBy(x => x.createdatetime);
+                                        break;
+                                };
+                            }
+                            else if (!(bool)item.ascending)
+                            {
+                                switch (item.fieldname.ToLower())
+                                {
+                                    case "createdatetime":
+                                        query = query.OrderByDescending(x => x.createdatetime);
+                                        break;
+                                };
+                            }
+                        }
+                    }
+
+                int pageIndex = (model.pageindex == null || model.pageindex == 0) ? 1 : (int)model.pageindex;
+                int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 10 : (int)model.rowcount;
+                int totaldata = query.Count();
+                if (totaldata <= 0) totaldata = 1;
+                decimal pagecountd = ((decimal)totaldata / (decimal)PageRowCount);
+                int pagecount = (totaldata / PageRowCount);
+                pagecount = (pagecount <= 0) ? 1 : pagecount;
+                if (Math.Floor(pagecountd) > 0)
+                    pagecount++;
+
+                datas = await query.Skip((pageIndex - 1) * PageRowCount)
+                                .Take(PageRowCount).Select(x => new ComodityModel()
+                                {
+                                    id = x.id,
+                                    categoryid = x.categoryid,
+                                    creatoruserid = x.creatoruserid,
+                                    isvisible = x.isvisible,
+                                    courseleveltypeId = x.courseleveltypeId,
+                                    title = x.title,
+                                    excerpt = x.excerpt,
+                                    authorid = x.authorid,
+                                    authorname = x.authorname,
+                                    createdatetime = x.createdatetime,
+                                    changestatusdate = x.changestatusdate,
+                                    coursestatusid = x.coursestatusid,
+                                    tags = x.tags,
+                                    fundamentalandtechnicaltabsection = new FundamentalAndTechnicalTabSection()
+                                    {
+                                        instrumentname = x.fundamentalandtechnicaltabsection_instrumentname,
+                                        fundamentalheading = x.fundamentalandtechnicaltabsection_fundamentalheading,
+                                        marketsentimentsscript = x.fundamentalandtechnicaltabsection_marketsentimentsscript,
+                                        marketsessionscript = x.fundamentalandtechnicaltabsection_marketsessionscript,
+                                        privatenotes = x.fundamentalandtechnicaltabsection_privatenotes,
+                                        relatedresorces = x.fundamentalandtechnicaltabsection_relatedresorces,
+                                        technicalheading = x.fundamentalandtechnicaltabsection_technicalheading,
+                                        marketsentimentstitle = x.fundamentalandtechnicaltabsection_marketsessiontitle,
+                                        marketsessiontitle = x.fundamentalandtechnicaltabsection_marketsessiontitle
+                                    }
+                                }).ToListAsync();
+
+                foreach (ComodityModel data in datas)
+                {
+                    data.fundamentalandtechnicaltabsection.comoditiesurlsectionlist = await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSections.Where(x => x.comodityid == data.id).Select(x => new Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionDto()
+                    {
+                        id = x.id,
+                        comodityid = x.comodityid,
+                        url = x.url,
+                        urltitle = x.urltitle
+                    }).ToListAsync();
+
+                    data.fundamentalandtechnicaltabsection.comoditiespdfsectionlist = await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections.Where(x => x.comodityid == data.id).Select(x => new Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSectionDto()
+                    {
+                        id = x.id,
+                        comodityid = x.comodityid,
+                        author = x.author,
+                        pdfshortcodeid = x.pdfshortcodeid,
+                        pdftitle = x.pdftitle,
+                        shortdescription = x.shortdescription
+                    }).ToListAsync();
+
+                    data.comodities = await _Context.ComoditiyFlexibleBlocks.Where(x => x.comodityid == data.id).Select(x => new Comodities_FlexibleBlockDto()
+                    {
+                        id = x.id,
+                        comodityid = x.comodityid,
+                        bottomdescription = x.bottomdescription,
+                        bottomdescriptionfilecontenttype = x.bottomdescriptionfilecontenttype,
+                        bottomdescriptionfilename = x.bottomdescriptionfilename,
+                        bottomdescriptionfilepath = x.bottomdescriptionfilepath,
+                        bottomdescriptionfileurl = x.bottomdescriptionfileurl,
+                        chartdescription = x.chartdescription,
+                        chartdescriptionfilecontenttype = x.chartdescriptionfilecontenttype,
+                        chartdescriptionfilename = x.chartdescriptionfilename,
+                        chartdescriptionfilepath = x.chartdescriptionfilepath,
+                        chartdescriptionfileurl = x.chartdescriptionfileurl,
+                        firstcontrydescription = x.firstcontrydescription,
+                        firstcontrydescriptionfilecontentype = x.firstcontrydescriptionfilecontentype,
+                        firstcontrydescriptionfilename = x.firstcontrydescriptionfilename,
+                        firstcontrydescriptionfilepath = x.firstcontrydescriptionfilepath,
+                        firstcontrydescriptionfileurl = x.firstcontrydescriptionfileurl,
+                        firstcontryheading = x.firstcontryheading,
+                        maindescrition = x.maindescrition,
+                        maindescritionfilename = x.maindescritionfilename,
+                        maindescritionfilepath = x.maindescritionfilepath,
+                        maindescritionfileurl = x.maindescritionfileurl,
+                        maintitle = x.maintitle,
+                        oneyeardescription = x.oneyeardescription,
+                        maindescritionfilecontenttype = x.maindescritionfilecontenttype,
+                        oneyeardescriptionfilename = x.oneyeardescriptionfilename,
+                        oneyeardescriptionfilecontenttype = x.oneyeardescriptionfilecontenttype,
+                        oneyeardescriptionfilepath = x.oneyeardescriptionfilepath,
+                        oneyeardescriptionfileurl = x.oneyeardescriptionfileurl,
+                        secoundcontrydescription = x.secoundcontrydescription,
+                        secoundcontrydescriptionfilecontenttype = x.secoundcontrydescriptionfilecontenttype,
+                        secoundcontrydescriptionfilename = x.secoundcontrydescriptionfilename,
+                        secoundcontrydescriptionfilepath = x.secoundcontrydescriptionfilepath,
+                        secoundcontrydescriptionfileurl = x.secoundcontrydescriptionfileurl,
+                        singlepagechartimage = x.singlepagechartimage
+                    }).ToListAsync();
+
+                    foreach (Comodities_FlexibleBlockDto FlexibleBlockitem in data.comodities)
+                    {
+                        FlexibleBlockitem.comoditiescountriesdatalist = await _Context.ComoditiesCountriesDatas.Where(x => x.comodityid == data.id && x.comodityflexibleblockid == FlexibleBlockitem.id).Select(x => new ComoditiesCountriesDataDto()
+                        {
+                            id = x.id,
+                            comodityflexibleblockid = x.comodityflexibleblockid,
+                            comodityid = x.comodityid,
+                            contries = x.contries,
+                            dailyaveragemovementinpips = x.dailyaveragemovementinpips,
+                            highslows = x.highslows,
+                            pairsthatcorrelate = x.pairsthatcorrelate,
+                            pairtype = x.pairtype
+                        }).ToListAsync();
+
+                        FlexibleBlockitem.comoditiessecondcountrydatacountriesdatalist = await _Context.ComoditiesSecondCountryDataCountriesDatas.Where(x => x.comodityid == data.id && x.comodityflexibleblockid == FlexibleBlockitem.id).Select(x => new ComoditiesSecondCountryDataCountriesDataDto()
+                        {
+                            id = x.id,
+                            comodityid = x.comodityid,
+                            centeralbank = x.centeralbank,
+                            nickname = x.nickname,
+                            ofaveragedailyturnover = x.ofaveragedailyturnover,
+                            contries = x.contries
+                        }).ToListAsync();
+
+                        FlexibleBlockitem.comoditiesfirstcountrydatacountriesdatalist = await _Context.ComoditiesFirstCountryDataCountriesDatas.Where(x => x.comodityid == data.id && x.comodityflexibleblockid == FlexibleBlockitem.id).Select(x => new ComoditiesFirstCountryDataCountriesDataDto()
+                        {
+                            id = x.id,
+                            comodityid = x.comodityid,
+                            centeralbank = x.centeralbank,
+                            nickname = x.nickname,
+                            ofaveragedailyturnover = x.ofaveragedailyturnover,
+                            contries = x.contries
+                        }).ToListAsync();
+                    }
+                }
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas, Meta = new { totaldata = datas.Count, pagecount = pagecount } };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
         public async Task<SystemMessageModel> DeleteComodityItem(ComodityFilterDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
             SystemMessageModel message;
@@ -668,36 +859,38 @@ namespace NextTradeAPIs.Services
 
                 _Context.Comodities.Remove(data);
 
-                //List<URLSection> URLSectionlist = await _Context.URLSections.Where(x => x.marketpulsforexid == data.id).ToListAsync();
-                //_Context.URLSections.RemoveRange(URLSectionlist);
 
-                //List<TechnicalTabs> TechnicalTabslist = await _Context.TechnicalTabss.Where(x => x.marketpulsforexid == data.id).ToListAsync();
-                //_Context.TechnicalTabss.RemoveRange(TechnicalTabslist);
+                List<Comodities_FlexibleBlock> _ComoditiyFlexibleBlocks = await _Context.ComoditiyFlexibleBlocks.Where(x => x.comodityid == data.id).ToListAsync();
+                _Context.ComoditiyFlexibleBlocks.RemoveRange(_ComoditiyFlexibleBlocks);
+
+                List<ComoditiesCountriesData> _ComoditiesCountriesDatas = await _Context.ComoditiesCountriesDatas.Where(x => x.comodityid == data.id).ToListAsync();
+                _Context.ComoditiesCountriesDatas.RemoveRange(_ComoditiesCountriesDatas);
+
+                List<ComoditiesFirstCountryDataCountriesData> _ComoditiesFirstCountryDataCountriesDatas =await _Context.ComoditiesFirstCountryDataCountriesDatas.Where(x => x.comodityid == data.id).ToListAsync();
+                _Context.ComoditiesFirstCountryDataCountriesDatas.RemoveRange(_ComoditiesFirstCountryDataCountriesDatas);
+
+                List<ComoditiesSecondCountryDataCountriesData> _ComoditiesSecondCountryDataCountriesDatas = await _Context.ComoditiesSecondCountryDataCountriesDatas.Where(x => x.comodityid == data.id).ToListAsync();
+                _Context.ComoditiesSecondCountryDataCountriesDatas.RemoveRange(_ComoditiesSecondCountryDataCountriesDatas);
+
+                List<Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection> _Comodities_fundamentalandtechnicaltabsection_fundamentalnewssections= await _Context.Comodities_fundamentalandtechnicaltabsection_fundamentalnewssections.Where(x => x.comodityid == data.id).ToListAsync();
+                _Context.Comodities_fundamentalandtechnicaltabsection_fundamentalnewssections.RemoveRange(_Comodities_fundamentalandtechnicaltabsection_fundamentalnewssections);
+
+                List<Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontent> _Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontents = await _Context.Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontents.Where(x => x.comodityid == data.id).ToListAsync();
+                _Context.Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontents.RemoveRange(_Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontents);
+
+                List<Comodities_Fundamentalandtechnicaltabsection_TechnicalTabs> _Comodities_Fundamentalandtechnicaltabsection_TechnicalTabses = await _Context.Comodities_Fundamentalandtechnicaltabsection_TechnicalTabses.Where(x => x.comodityid == data.id).ToListAsync();
+                _Context.Comodities_Fundamentalandtechnicaltabsection_TechnicalTabses.RemoveRange(_Comodities_Fundamentalandtechnicaltabsection_TechnicalTabses);
+
+                List<Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNews> _Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewses = await _Context.Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewses.Where(x => x.comodityid == data.id).ToListAsync();
+                _Context.Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewses.RemoveRange(_Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewses);
+
+                List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSection> _Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections = await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections.Where(x => x.comodityid == data.id).ToListAsync();
+                _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections.RemoveRange(_Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections);
+
+                List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection> _Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionsawait  = await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSections.Where(x => x.comodityid == data.id).ToListAsync();
+                _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSections.RemoveRange(_Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionsawait);
 
 
-                //List<TechnicalBreakingNews> TechnicalBreakingNewslist = await _Context.TechnicalBreakingNewss.Where(x => x.marketpulsforexid == data.id).ToListAsync();
-                //_Context.TechnicalBreakingNewss.RemoveRange(TechnicalBreakingNewslist);
-
-
-                //List<SecondCountryData> SecondCountryDatalist = await _Context.SecondCountryDatas.Where(x => x.marketpulsforexid == data.id).ToListAsync();
-                //_Context.SecondCountryDatas.RemoveRange(SecondCountryDatalist);
-
-
-                //List<PDFSection> PDFSectionlist = await _Context.PDFSections.Where(x => x.marketpulsforexid == data.id).ToListAsync();
-                //_Context.PDFSections.RemoveRange(PDFSectionlist);
-
-                //List<NewsMainContent> NewsMainContentlist = await _Context.NewsMainContents.Where(x => x.marketpulsforexid == data.id).ToListAsync();
-                //_Context.NewsMainContents.RemoveRange(NewsMainContentlist);
-
-                //List<FundamentalNewsSection> FundamentalNewsSectionlist = await _Context.FundamentalNewsSections.Where(x => x.marketpulsforexid == data.id).ToListAsync();
-                //_Context.FundamentalNewsSections.RemoveRange(FundamentalNewsSectionlist);
-
-
-                //List<FlexibleBlock> FlexibleBlocklist = await _Context.FlexibleBlocks.Where(x => x.marketpulsforexid == data.id).ToListAsync();
-                //_Context.FlexibleBlocks.RemoveRange(FlexibleBlocklist);
-
-                //List<FirstCountryData> FirstCountryDatalist = await _Context.FirstCountryDatas.Where(x => x.marketpulsforexid == data.id).ToListAsync();
-                //_Context.FirstCountryDatas.RemoveRange(FirstCountryDatalist);
 
                 await _Context.SaveChangesAsync();
 
@@ -711,5 +904,190 @@ namespace NextTradeAPIs.Services
             }
             return message;
         }
+
+
+        public async Task<SystemMessageModel> UpdateComodityItem(ComodityModel model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                if (model.id == null)
+                    return new SystemMessageModel() { MessageCode = -102, MessageDescription = "Id is Wrong" };
+
+                Comodity data = await _Context.Comodities.FindAsync(model.id);
+                if (data == null)
+                    return new SystemMessageModel() { MessageCode = -103, MessageDescription = "data not find" };
+
+                data.isvisible = model.isvisible;
+                    data.courseleveltypeId = model.courseleveltypeId;
+                data.title = model.title;
+                data.excerpt = model.excerpt;
+                data.authorid = model.authorid;
+                data.authorname = model.authorname;
+                    data.changestatusdate = DateTime.Now;
+                data.coursestatusid = model.coursestatusid;
+                data.fundamentalandtechnicaltabsection_instrumentname = model.fundamentalandtechnicaltabsection.instrumentname;
+                data.fundamentalandtechnicaltabsection_fundamentalheading = model.fundamentalandtechnicaltabsection.fundamentalheading;
+                data.fundamentalandtechnicaltabsection_technicalheading = model.fundamentalandtechnicaltabsection.technicalheading;
+                data.fundamentalandtechnicaltabsection_marketsentimentstitle = model.fundamentalandtechnicaltabsection.marketsentimentstitle;
+                data.fundamentalandtechnicaltabsection_marketsentimentsscript = model.fundamentalandtechnicaltabsection.marketsentimentsscript;
+                data.fundamentalandtechnicaltabsection_marketsessiontitle = model.fundamentalandtechnicaltabsection.marketsessiontitle;
+                data.fundamentalandtechnicaltabsection_marketsessionscript = model.fundamentalandtechnicaltabsection.marketsessionscript;
+                data.fundamentalandtechnicaltabsection_relatedresorces = model.fundamentalandtechnicaltabsection.relatedresorces;
+                data.fundamentalandtechnicaltabsection_privatenotes = model.fundamentalandtechnicaltabsection.privatenotes;
+                
+                _Context.Comodities.Update(data);
+
+
+
+                //List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSection> PDFSectionlist = new List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSection>();
+                //List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection> UrlSectionlist = new List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection>();
+
+                //foreach (Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSectionDto pdf in model.fundamentalandtechnicaltabsection.comoditiespdfsectionlist)
+                //{
+                //    PDFSectionlist.Add(new Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSection()
+                //    {
+                //        id = Guid.NewGuid(),
+                //        comodityid = data.id,
+                //        author = pdf.author,
+                //        pdfshortcodeid = pdf.pdfshortcodeid,
+                //        pdftitle = pdf.pdftitle,
+                //        shortdescription = pdf.shortdescription
+                //    });
+                //}
+                //if (PDFSectionlist.Count > 0)
+                //    await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections.AddRangeAsync(PDFSectionlist);
+
+                //foreach (Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionDto pdf in model.fundamentalandtechnicaltabsection.comoditiesurlsectionlist)
+                //{
+                //    UrlSectionlist
+                //    if (pdf.id != null)
+                //    {
+                //        Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection urlsection = await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSections.FindAsync(pdf.id);
+                //        if (urlsection != null)
+                //        {
+                //            urlsection.url = pdf.url;
+                //            urlsection.urltitle = pdf.urltitle;
+
+                //            _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSections.Update();
+                //        }
+                //    }
+                //}
+                //if (UrlSectionlist.Count > 0)
+                //    await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSections.AddRangeAsync(UrlSectionlist);
+
+
+                //List<Comodities_FlexibleBlock> flexibleBlocklist = new List<Comodities_FlexibleBlock>();
+                //List<ComoditiesCountriesData> countriesDatalist = new List<ComoditiesCountriesData>();
+                //List<ComoditiesFirstCountryDataCountriesData> firstcountriesDatalist = new List<ComoditiesFirstCountryDataCountriesData>();
+                //List<ComoditiesSecondCountryDataCountriesData> SecondcountriesDatalist = new List<ComoditiesSecondCountryDataCountriesData>();
+                //foreach (Comodities_FlexibleBlockDto flex in model.comodities)
+                //{
+                //    Comodities_FlexibleBlock FlexibleBlock = new Comodities_FlexibleBlock();
+                //    FlexibleBlock.id = Guid.NewGuid();
+                //    FlexibleBlock.bottomdescription = flex.bottomdescription;
+                //    FlexibleBlock.bottomdescriptionfilecontenttype = flex.bottomdescriptionfilecontenttype;
+                //    FlexibleBlock.bottomdescriptionfilename = flex.bottomdescriptionfilename;
+                //    FlexibleBlock.bottomdescriptionfilepath = flex.bottomdescriptionfilepath;
+                //    FlexibleBlock.bottomdescriptionfileurl = flex.bottomdescriptionfileurl;
+                //    FlexibleBlock.chartdescription = flex.chartdescription;
+                //    FlexibleBlock.chartdescriptionfilecontenttype = flex.chartdescriptionfilecontenttype;
+                //    FlexibleBlock.chartdescriptionfilename = flex.chartdescriptionfilename;
+                //    FlexibleBlock.chartdescriptionfilepath = flex.chartdescriptionfilepath;
+                //    FlexibleBlock.chartdescriptionfileurl = flex.chartdescriptionfileurl;
+                //    FlexibleBlock.comodityid = data.id;
+                //    FlexibleBlock.firstcontryheading = flex.firstcontryheading;
+                //    FlexibleBlock.firstcontrydescriptionfilename = flex.firstcontrydescriptionfilename;
+                //    FlexibleBlock.firstcontrydescriptionfilecontentype = flex.firstcontrydescriptionfilecontentype;
+                //    FlexibleBlock.firstcontrydescription = flex.firstcontrydescription;
+                //    FlexibleBlock.firstcontrydescriptionfilepath = flex.firstcontrydescriptionfilepath;
+                //    FlexibleBlock.firstcontrydescriptionfileurl = flex.firstcontrydescriptionfileurl;
+                //    FlexibleBlock.maindescrition = flex.maindescrition;
+                //    FlexibleBlock.maindescritionfilecontenttype = flex.maindescritionfilecontenttype;
+                //    FlexibleBlock.maindescritionfilename = flex.maindescritionfilename;
+                //    FlexibleBlock.maindescritionfilepath = flex.maindescritionfilepath;
+                //    FlexibleBlock.maindescritionfileurl = flex.maindescritionfileurl;
+                //    FlexibleBlock.oneyeardescription = flex.oneyeardescription;
+                //    FlexibleBlock.oneyeardescriptionfilecontenttype = flex.oneyeardescriptionfilecontenttype;
+                //    FlexibleBlock.oneyeardescriptionfilename = flex.oneyeardescriptionfilename;
+                //    FlexibleBlock.oneyeardescriptionfilepath = flex.oneyeardescriptionfilepath;
+                //    FlexibleBlock.oneyeardescriptionfileurl = flex.oneyeardescriptionfileurl;
+                //    FlexibleBlock.secoundcontrydescription = flex.secoundcontrydescription;
+                //    FlexibleBlock.maintitle = flex.maintitle;
+                //    FlexibleBlock.secoundcontrydescriptionfilecontenttype = flex.secoundcontrydescriptionfilecontenttype;
+                //    FlexibleBlock.secoundcontrydescriptionfilename = flex.secoundcontrydescriptionfilename;
+                //    FlexibleBlock.secoundcontrydescriptionfilepath = flex.secoundcontrydescriptionfilepath;
+                //    FlexibleBlock.secoundcontrydescriptionfileurl = flex.secoundcontrydescriptionfileurl;
+                //    FlexibleBlock.singlepagechartimage = flex.singlepagechartimage;
+
+
+
+                //    foreach (ComoditiesCountriesDataDto contrydata in flex.comoditiescountriesdatalist)
+                //    {
+                //        countriesDatalist.Add(new ComoditiesCountriesData()
+                //        {
+                //            id = Guid.NewGuid(),
+                //            comodityid = data.id,
+                //            comodityflexibleblockid = FlexibleBlock.id,
+                //            contries = contrydata.contries,
+                //            highslows = contrydata.highslows,
+                //            pairsthatcorrelate = contrydata.pairsthatcorrelate,
+                //            pairtype = contrydata.pairtype,
+                //            dailyaveragemovementinpips = contrydata.dailyaveragemovementinpips
+                //        });
+                //        await _Context.ComoditiesCountriesDatas.AddRangeAsync(countriesDatalist);
+                //    }
+                //    foreach (ComoditiesFirstCountryDataCountriesDataDto contrydata in flex.comoditiesfirstcountrydatacountriesdatalist)
+                //    {
+                //        firstcountriesDatalist.Add(new ComoditiesFirstCountryDataCountriesData()
+                //        {
+                //            id = Guid.NewGuid(),
+                //            comodityid = data.id,
+                //            comodityflexibleblockid = FlexibleBlock.id,
+                //            centeralbank = contrydata.centeralbank,
+                //            contries = contrydata.contries,
+                //            nickname = contrydata.nickname,
+                //            ofaveragedailyturnover = contrydata.ofaveragedailyturnover
+                //        });
+                //    }
+                //    await _Context.ComoditiesFirstCountryDataCountriesDatas.AddRangeAsync(firstcountriesDatalist);
+
+                //    foreach (ComoditiesSecondCountryDataCountriesDataDto contrydata in flex.comoditiessecondcountrydatacountriesdatalist)
+                //    {
+                //        SecondcountriesDatalist.Add(new ComoditiesSecondCountryDataCountriesData()
+                //        {
+                //            id = Guid.NewGuid(),
+                //            comodityid = data.id,
+                //            comodityflexibleblockid = FlexibleBlock.id,
+                //            centeralbank = contrydata.centeralbank,
+                //            contries = contrydata.contries,
+                //            nickname = contrydata.nickname,
+                //            ofaveragedailyturnover = contrydata.ofaveragedailyturnover
+                //        });
+                //    }
+                //    await _Context.ComoditiesSecondCountryDataCountriesDatas.AddRangeAsync(SecondcountriesDatalist);
+                //    //public List<>?  { get; set; }
+                //    flexibleBlocklist.Add(FlexibleBlock);
+                //}
+
+                //await _Context.ComoditiyFlexibleBlocks.AddRangeAsync(flexibleBlocklist);
+
+                await _Context.SaveChangesAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
     }
 }

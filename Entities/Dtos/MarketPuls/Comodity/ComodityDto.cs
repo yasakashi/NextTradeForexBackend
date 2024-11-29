@@ -25,6 +25,8 @@ namespace Entities.Dtos
         public int? courseleveltypeId { get; set; }
         public int? coursestatusid { get; set; }
         public long? creatoruserid { get; set; }
+        public DateTime? createdatetime { get; set; }
+        public DateTime? changestatusdate { get; set; }
     }
 
     public class FundamentalAndTechnicalTabSection

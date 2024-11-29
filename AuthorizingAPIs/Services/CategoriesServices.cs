@@ -519,7 +519,33 @@ public class CategoriesServices
 
     public async Task<SystemMessageModel> GetCategory4MarketPulsComodity(ComodityFilterDto model, object value, string processId, string clientip, string hosturl, bool v)
     {
-        throw new NotImplementedException();
+        SystemMessageModel message;
+        StackTrace stackTrace = new StackTrace();
+        string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+        long SerrvieCode = 130010;
+        List<CategorisDto> datas = null;
+        try
+        {
+
+            datas = await _Context.Categories.Where(x => x.parentId == model.categoryid).Select(x => new CategorisDto()
+            {
+                Id = x.Id,
+                parentId = x.parentId,
+                name = x.name,
+                categorytypeid = x.categorytypeid,
+                categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
+            }).ToListAsync();
+
+
+            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+        }
+        catch (Exception ex)
+        {
+            message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+            string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+            await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+        }
+        return message;
     }
 
     public async Task<SystemMessageModel> GetCategoryCurrency4MarketPulsComodity(ComodityFilterDto model, object value, string processId, string clientip, string hosturl, bool v)

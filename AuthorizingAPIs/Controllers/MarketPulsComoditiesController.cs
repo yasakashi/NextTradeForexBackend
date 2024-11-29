@@ -22,6 +22,7 @@ namespace NextTradeAPIs.Controllers
     {
         AuthorizationService _authorizationService;
         private IHttpContextAccessor _HttpContextAccessor;
+        private IWebHostEnvironment _webHostEnvironment;
         UserServices _userServices;
         SystemLogServices _systemLogServices;
         BlockedIPServices _blockedIPService;
@@ -36,6 +37,7 @@ namespace NextTradeAPIs.Controllers
                                        MarketPulsComodityServices marketPulscomodityServices,
                                        CategoriesServices baseInformationServices,
                                        ForumsServices forumsServices,
+                                       IWebHostEnvironment env,
         UserServices userServices)
         {
             _authorizationService = authorizationService;
@@ -46,6 +48,7 @@ namespace NextTradeAPIs.Controllers
             _service = marketPulscomodityServices;
             _baseInformationService = baseInformationServices;
             _forumsService = forumsServices;
+            _webHostEnvironment = env;
         }
 
         [HttpPost]
@@ -114,6 +117,72 @@ namespace NextTradeAPIs.Controllers
             }
         }
 
+        [HttpPost]
+        [HttpPut]
+        [Route("/api/marketpuls/editcomodityitem")]
+        [AllowAnonymous]
+        public async Task<IActionResult> UpdatecomodityItem(ComodityModel model)
+        {
+            StackTrace stackTrace = new StackTrace();
+            SystemMessageModel message;
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string authHeader = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            UserModel user = null;
+            LoginLog loginLog = null;
+
+            long ApiCode = 2000;
+
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                message = await _authorizationService.CheckToken(_bearer_token, processId);
+
+                if (message.MessageCode < 0)
+                    return Unauthorized(message);
+
+                UserModel userlogin = message.MessageData as UserModel;
+
+                message = await _service.UpdateComodityItem(model, userlogin, processId, clientip, hosturl);
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                string log = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, LogTypes.TokenError);
+                return Unauthorized();
+                //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
+            }
+        }
 
         [HttpPost]
         [Route("/api/marketpuls/getcomodityitems")]
@@ -163,7 +232,7 @@ namespace NextTradeAPIs.Controllers
 
                 UserModel userlogin = message.MessageData as UserModel;
 
-               // message = await _service.GetcomodityItem(model, userlogin, processId, clientip, hosturl);
+                message = await _service.GetComodityItems(model, userlogin, processId, clientip, hosturl);
 
                 if (message.MessageCode < 0)
                     return BadRequest(message);
@@ -181,6 +250,7 @@ namespace NextTradeAPIs.Controllers
         }
 
         [HttpPost]
+        [HttpDelete]
         [Route("/api/marketpuls/deletecomodityitem")]
         public async Task<IActionResult> DeletecomodityItems(ComodityFilterDto model)
         {
@@ -294,7 +364,7 @@ namespace NextTradeAPIs.Controllers
 
                 //UserModel userlogin = message.MessageData as UserModel;
 
-                model.categoryid = 895;
+                model.categoryid = 1085;
                 message = await _baseInformationService.GetCategory4MarketPulsComodity(model, null, processId, clientip, hosturl, true);
 
                 if (message.MessageCode < 0)
@@ -361,7 +431,6 @@ namespace NextTradeAPIs.Controllers
 
                 //UserModel userlogin = message.MessageData as UserModel;
 
-                model.categoryid = 895;
                 message = await _baseInformationService.GetCategory4MarketPulsComodity(model, null, processId, clientip, hosturl, false);
 
                 if (message.MessageCode < 0)
@@ -382,7 +451,7 @@ namespace NextTradeAPIs.Controllers
 
         [HttpPost]
         [HttpGet]
-        [Route("/api/marketpuls/getcomoditycurrencies")]
+        [Route("/api/marketpuls/comodity/getcurrencies")]
         public async Task<IActionResult> GetComodityCurrencies(ComodityFilterDto model)
         {
             StackTrace stackTrace = new StackTrace();
@@ -446,8 +515,72 @@ namespace NextTradeAPIs.Controllers
             }
         }
 
+        
+        [HttpPost]
+        [Route("/api/marketpuls/getcomodityforummessages")]
+        public async Task<IActionResult> GetForumMessages(ForexFilterDto model)
+        {
+            StackTrace stackTrace = new StackTrace();
+            SystemMessageModel message;
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string authHeader = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            UserModel user = null;
+            LoginLog loginLog = null;
+
+            long ApiCode = 2000;
+
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}'";
+                var sitePath = _webHostEnvironment.WebRootPath;
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                //message = await _authorizationService.CheckToken(_bearer_token, processId);
+
+                //if (message.MessageCode < 0)
+                //    return Unauthorized(message);
+
+                //UserModel userlogin = message.MessageData as UserModel;
+
+                message = await _forumsService.GetForumMessage4MarketPuls(model, null, processId, clientip, hosturl, sitePath);
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
 
 
- 
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                string log = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, LogTypes.TokenError);
+                return Unauthorized();
+                //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
+            }
+        }
+        
+
     }
 }

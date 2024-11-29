@@ -240,7 +240,7 @@ namespace NextTradeAPIs.Controllers
                         // return Content("File not selected");
                     }
 
-                    string filename = model.name + "." + model.categoryimage.FileName.Split('.').Last();
+                    string filename = model.name.Replace(".", "").Trim() + "." + model.categoryimage.FileName.Split('.').Last();
 
                     using (var ms = new MemoryStream())
                     {
@@ -360,7 +360,7 @@ namespace NextTradeAPIs.Controllers
                         // return Content("File not selected");
                     }
 
-                    string filename = model.name + "." + model.categoryimage.FileName.Split('.').Last();
+                    string filename = model.name.Replace(".","").Trim() + "." + model.categoryimage.FileName.Split('.').Last();
 
                     using (var ms = new MemoryStream())
                     {
@@ -368,7 +368,7 @@ namespace NextTradeAPIs.Controllers
                         //model.categoryimagefilecontentfilename = model.categoryimage.FileName;
 
                         model.categoryimage.CopyTo(ms);
-                        message = await _categoryService.SaveCategoryFile(ms.ToArray(), userlogin.userid, model.name, sitePath, hosturl);
+                        message = await _categoryService.SaveCategoryFile(ms.ToArray(), userlogin.userid, filename, sitePath, hosturl);
                     }
                     if (message.MessageCode < 0)
                         return BadRequest(message);
