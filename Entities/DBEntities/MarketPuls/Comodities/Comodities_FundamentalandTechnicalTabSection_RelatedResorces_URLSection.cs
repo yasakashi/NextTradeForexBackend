@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Entities.DBEntities
 {
-    [Table("tblMarketPuls_Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSections")]
+    [Table("tblMarketPuls_Comodities_URLSections")]
     public class Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection
     {
         [Key]

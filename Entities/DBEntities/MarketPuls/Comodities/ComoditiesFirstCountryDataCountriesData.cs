@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Entities.DBEntities
 {
-    [Table("Comodities_FirstCountryData_CountriesDatas")]
+    [Table("tblMarketPuls_Comodities_FlexibleBlock_FirstCountryDatas")]
     public class ComoditiesFirstCountryDataCountriesData
     {
         public Guid id { get; set; }

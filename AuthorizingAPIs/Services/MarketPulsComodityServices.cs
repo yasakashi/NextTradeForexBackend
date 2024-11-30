@@ -61,41 +61,44 @@ namespace NextTradeAPIs.Services
                     fundamentalandtechnicaltabsection_marketsessionscript = model.fundamentalandtechnicaltabsection.marketsessionscript,
                     fundamentalandtechnicaltabsection_relatedresorces = model.fundamentalandtechnicaltabsection.relatedresorces,
                     fundamentalandtechnicaltabsection_privatenotes = model.fundamentalandtechnicaltabsection.privatenotes,
+                    tags = model.tags
                 };
                 await _Context.Comodities.AddAsync(data);
 
                 List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSection> PDFSectionlist = new List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSection>();
                 List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection> UrlSectionlist = new List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection>();
-
-                foreach (Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSectionDto pdf in model.fundamentalandtechnicaltabsection.comoditiespdfsectionlist)
+                if (model.fundamentalandtechnicaltabsection.comoditiespdfsectionlist != null && model.fundamentalandtechnicaltabsection.comoditiespdfsectionlist.Count > 0)
                 {
-                    PDFSectionlist.Add(new Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSection()
+                    foreach (Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSectionDto pdf in model.fundamentalandtechnicaltabsection.comoditiespdfsectionlist)
                     {
-                        id = Guid.NewGuid(),
-                        comodityid = data.id,
-                        author = pdf.author,
-                        pdfshortcodeid = pdf.pdfshortcodeid,
-                        pdftitle = pdf.pdftitle,
-                        shortdescription = pdf.shortdescription
-                    });
+                        PDFSectionlist.Add(new Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSection()
+                        {
+                            id = Guid.NewGuid(),
+                            comodityid = data.id,
+                            author = pdf.author,
+                            pdfshortcodeid = pdf.pdfshortcodeid,
+                            pdftitle = pdf.pdftitle,
+                            shortdescription = pdf.shortdescription
+                        });
+                    }
+                    if (PDFSectionlist.Count > 0)
+                        await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections.AddRangeAsync(PDFSectionlist);
                 }
-                if (PDFSectionlist.Count > 0)
-                    await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections.AddRangeAsync(PDFSectionlist);
-
-                foreach (Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionDto pdf in model.fundamentalandtechnicaltabsection.comoditiesurlsectionlist)
+                if (model.fundamentalandtechnicaltabsection.comoditiesurlsectionlist != null && model.fundamentalandtechnicaltabsection.comoditiesurlsectionlist.Count > 0)
                 {
-                    UrlSectionlist.Add(new Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection()
+                    foreach (Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionDto pdf in model.fundamentalandtechnicaltabsection.comoditiesurlsectionlist)
                     {
-                        id = Guid.NewGuid(),
-                        comodityid = data.id,
-                        url = pdf.url,
-                        urltitle = pdf.urltitle
-                    });
+                        UrlSectionlist.Add(new Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection()
+                        {
+                            id = Guid.NewGuid(),
+                            comodityid = data.id,
+                            url = pdf.url,
+                            urltitle = pdf.urltitle
+                        });
+                    }
+                    if (UrlSectionlist.Count > 0)
+                        await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSections.AddRangeAsync(UrlSectionlist);
                 }
-                if (UrlSectionlist.Count > 0)
-                    await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSections.AddRangeAsync(UrlSectionlist);
-
-
                 List<Comodities_FlexibleBlock> flexibleBlocklist = new List<Comodities_FlexibleBlock>();
                 List<ComoditiesCountriesData> countriesDatalist = new List<ComoditiesCountriesData>();
                 List<ComoditiesFirstCountryDataCountriesData> firstcountriesDatalist = new List<ComoditiesFirstCountryDataCountriesData>();
@@ -140,51 +143,59 @@ namespace NextTradeAPIs.Services
                     FlexibleBlock.singlepagechartimage = flex.singlepagechartimage;
 
 
-
-                    foreach (ComoditiesCountriesDataDto contrydata in flex.comoditiescountriesdatalist)
+                    if (flex.comoditiescountriesdatalist != null && flex.comoditiescountriesdatalist.Count > 0)
                     {
-                        countriesDatalist.Add(new ComoditiesCountriesData()
+                        foreach (ComoditiesCountriesDataDto contrydata in flex.comoditiescountriesdatalist)
                         {
-                            id = Guid.NewGuid(),
-                            comodityid = data.id,
-                            comodityflexibleblockid = FlexibleBlock.id,
-                            contries = contrydata.contries,
-                            highslows = contrydata.highslows,
-                            pairsthatcorrelate = contrydata.pairsthatcorrelate,
-                            pairtype = contrydata.pairtype,
-                            dailyaveragemovementinpips = contrydata.dailyaveragemovementinpips
-                        });
+                            countriesDatalist.Add(new ComoditiesCountriesData()
+                            {
+                                id = Guid.NewGuid(),
+                                comodityid = data.id,
+                                comodityflexibleblockid = FlexibleBlock.id,
+                                contries = contrydata.contries,
+                                highslows = contrydata.highslows,
+                                pairsthatcorrelate = contrydata.pairsthatcorrelate,
+                                pairtype = contrydata.pairtype,
+                                dailyaveragemovementinpips = contrydata.dailyaveragemovementinpips
+                            });
+                        }
                         await _Context.ComoditiesCountriesDatas.AddRangeAsync(countriesDatalist);
                     }
-                    foreach (ComoditiesFirstCountryDataCountriesDataDto contrydata in flex.comoditiesfirstcountrydatacountriesdatalist)
+                    if (flex.comoditiesfirstcountrydatacountriesdatalist != null && flex.comoditiesfirstcountrydatacountriesdatalist.Count > 0)
                     {
-                        firstcountriesDatalist.Add(new ComoditiesFirstCountryDataCountriesData()
+                        foreach (ComoditiesFirstCountryDataCountriesDataDto contrydata in flex.comoditiesfirstcountrydatacountriesdatalist)
                         {
-                            id = Guid.NewGuid(),
-                            comodityid = data.id,
-                            comodityflexibleblockid = FlexibleBlock.id,
-                            centeralbank = contrydata.centeralbank,
-                            contries = contrydata.contries,
-                            nickname = contrydata.nickname,
-                            ofaveragedailyturnover = contrydata.ofaveragedailyturnover
-                        });
+                            firstcountriesDatalist.Add(new ComoditiesFirstCountryDataCountriesData()
+                            {
+                                id = Guid.NewGuid(),
+                                comodityid = data.id,
+                                comodityflexibleblockid = FlexibleBlock.id,
+                                centeralbank = contrydata.centeralbank,
+                                contries = contrydata.contries,
+                                nickname = contrydata.nickname,
+                                ofaveragedailyturnover = contrydata.ofaveragedailyturnover
+                            });
+                        }
+                        await _Context.ComoditiesFirstCountryDataCountriesDatas.AddRangeAsync(firstcountriesDatalist);
                     }
-                    await _Context.ComoditiesFirstCountryDataCountriesDatas.AddRangeAsync(firstcountriesDatalist);
-
-                    foreach (ComoditiesSecondCountryDataCountriesDataDto contrydata in flex.comoditiessecondcountrydatacountriesdatalist)
+                    if (flex.comoditiessecondcountrydatacountriesdatalist != null && flex.comoditiessecondcountrydatacountriesdatalist.Count > 0)
                     {
-                        SecondcountriesDatalist.Add(new ComoditiesSecondCountryDataCountriesData()
+                        foreach (ComoditiesSecondCountryDataCountriesDataDto contrydata in flex.comoditiessecondcountrydatacountriesdatalist)
                         {
-                            id = Guid.NewGuid(),
-                            comodityid = data.id,
-                            comodityflexibleblockid = FlexibleBlock.id,
-                            centeralbank = contrydata.centeralbank,
-                            contries = contrydata.contries,
-                            nickname = contrydata.nickname,
-                            ofaveragedailyturnover = contrydata.ofaveragedailyturnover
-                        });
+                            SecondcountriesDatalist.Add(new ComoditiesSecondCountryDataCountriesData()
+                            {
+                                id = Guid.NewGuid(),
+                                comodityid = data.id,
+                                comodityflexibleblockid = FlexibleBlock.id,
+                                centeralbank = contrydata.centeralbank,
+                                contries = contrydata.contries,
+                                nickname = contrydata.nickname,
+                                ofaveragedailyturnover = contrydata.ofaveragedailyturnover
+                            });
+                        }
+                        await _Context.ComoditiesSecondCountryDataCountriesDatas.AddRangeAsync(SecondcountriesDatalist);
+                        await _Context.SaveChangesAsync();
                     }
-                    await _Context.ComoditiesSecondCountryDataCountriesDatas.AddRangeAsync(SecondcountriesDatalist);
                     //public List<>?  { get; set; }
                     flexibleBlocklist.Add(FlexibleBlock);
                 }
@@ -431,33 +442,33 @@ namespace NextTradeAPIs.Services
                     changestatusdate = DateTime.Now,
                     coursestatusid = (int)CourseStatusList.Draft,
 
-                    oneyeardescription = model.oneyeardescription,
-                    oneyeardescriptionfilename = model.oneyeardescriptionfilename,
-                    oneyeardescriptionfilecontenttype = model.oneyeardescriptionfilecontenttype,
-                    oneyeardescriptionfilepath = model.oneyeardescriptionfilepath,
-                    chartdescription = model.chartdescription,
-                    chartdescriptionfilename = model.chartdescriptionfilename,
-                    chartdescriptionfilepath = model.chartdescriptionfilepath,
-                    chartdescriptionfilecontenttype = model.chartdescriptionfilecontenttype,
-                    firstcountryheading = model.firstcountryheading,
-                    firstcountrydescription = model.firstcountrydescription,
-                    firstcountrydescriptionfilename = model.firstcountrydescriptionfilename,
-                    firstcountrydescriptionfilepath = model.firstcountrydescriptionfilepath,
-                    firstcountrydescriptionfilecontenttype = model.firstcountrydescriptionfilecontenttype,
-                    secondcountryheading = model.secondcountryheading,
-                    secondcountrydescription = model.secondcountrydescription,
-                    secondcountrydescriptionfilename = model.secondcountrydescriptionfilename,
-                    secondcountrydescriptionfilepath = model.secondcountrydescriptionfilepath,
-                    secondcountrydescriptionfilecontenttype = model.secondcountrydescriptionfilecontenttype,
-                    bottomdescription = model.bottomdescription,
-                    bottomdescriptionfilename = model.bottomdescriptionfilename,
-                    bottomdescriptionfilepath = model.bottomdescriptionfilepath,
-                    bottomdescriptionfilecontenttype = model.bottomdescriptionfilecontenttype,
-                    maindescription = model.maindescription,
-                    maindescriptionfilecontenttype = model.maindescriptionfilecontenttype,
-                    maindescriptionfilename = model.maindescriptionfilename,
-                    maindescriptionfilepath = model.maindescriptionfilepath,
-                    singlepagechartimage = model.singlepagechartimage,
+                    //oneyeardescription = model.oneyeardescription,
+                    //oneyeardescriptionfilename = model.oneyeardescriptionfilename,
+                    //oneyeardescriptionfilecontenttype = model.oneyeardescriptionfilecontenttype,
+                    //oneyeardescriptionfilepath = model.oneyeardescriptionfilepath,
+                    //chartdescription = model.chartdescription,
+                    //chartdescriptionfilename = model.chartdescriptionfilename,
+                    //chartdescriptionfilepath = model.chartdescriptionfilepath,
+                    //chartdescriptionfilecontenttype = model.chartdescriptionfilecontenttype,
+                    //firstcountryheading = model.firstcountryheading,
+                    //firstcountrydescription = model.firstcountrydescription,
+                    //firstcountrydescriptionfilename = model.firstcountrydescriptionfilename,
+                    //firstcountrydescriptionfilepath = model.firstcountrydescriptionfilepath,
+                    //firstcountrydescriptionfilecontenttype = model.firstcountrydescriptionfilecontenttype,
+                    //secondcountryheading = model.secondcountryheading,
+                    //secondcountrydescription = model.secondcountrydescription,
+                    //secondcountrydescriptionfilename = model.secondcountrydescriptionfilename,
+                    //secondcountrydescriptionfilepath = model.secondcountrydescriptionfilepath,
+                    //secondcountrydescriptionfilecontenttype = model.secondcountrydescriptionfilecontenttype,
+                    //bottomdescription = model.bottomdescription,
+                    //bottomdescriptionfilename = model.bottomdescriptionfilename,
+                    //bottomdescriptionfilepath = model.bottomdescriptionfilepath,
+                    //bottomdescriptionfilecontenttype = model.bottomdescriptionfilecontenttype,
+                    //maindescription = model.maindescription,
+                    //maindescriptionfilecontenttype = model.maindescriptionfilecontenttype,
+                    //maindescriptionfilename = model.maindescriptionfilename,
+                    //maindescriptionfilepath = model.maindescriptionfilepath,
+                    //singlepagechartimage = model.singlepagechartimage,
                     fundamentalandtechnicaltabsection_instrumentname = model.fundamentalandtechnicaltabsection_instrumentname,
                     fundamentalandtechnicaltabsection_fundamentalheading = model.fundamentalandtechnicaltabsection_fundamentalheading,
                     fundamentalandtechnicaltabsection_technicalheading = model.fundamentalandtechnicaltabsection_technicalheading,
@@ -1091,3 +1102,30 @@ namespace NextTradeAPIs.Services
 
     }
 }
+/*oneyeardescription	ntext	Checked
+oneyeardescriptionfilename	nvarchar(500)	Checked
+oneyeardescriptionfilecontenttype	nvarchar(50)	Checked
+oneyeardescriptionfilepath	nvarchar(2000)	Checked
+chartdescription	ntext	Checked
+chartdescriptionfilename	nvarchar(500)	Checked
+chartdescriptionfilepath	nvarchar(1800)	Checked
+chartdescriptionfilecontenttype	nvarchar(50)	Checked
+firstcountryheading	nvarchar(3000)	Checked
+firstcountrydescription	ntext	Checked
+firstcountrydescriptionfilename	nvarchar(500)	Checked
+firstcountrydescriptionfilepath	nvarchar(1800)	Checked
+firstcountrydescriptionfilecontenttype	nvarchar(50)	Checked
+secondcountryheading	nvarchar(1500)	Checked
+secondcountrydescription	ntext	Checked
+secondcountrydescriptionfilename	nvarchar(500)	Checked
+secondcountrydescriptionfilepath	nvarchar(1800)	Checked
+secondcountrydescriptionfilecontenttype	nvarchar(50)	Checked
+bottomdescription	ntext	Checked
+bottomdescriptionfilename	nvarchar(500)	Checked
+bottomdescriptionfilepath	nvarchar(1800)	Checked
+bottomdescriptionfilecontenttype	nvarchar(50)	Checked
+maindescription	ntext	Checked
+maindescriptionfilecontenttype	nvarchar(50)	Checked
+maindescriptionfilename	nvarchar(500)	Checked
+maindescriptionfilepath	nvarchar(1800)	Checked
+singlepagechartimage	ntext	Checked*/

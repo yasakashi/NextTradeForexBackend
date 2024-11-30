@@ -402,11 +402,11 @@ public class CategoriesServices
         StackTrace stackTrace = new StackTrace();
         string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
         long SerrvieCode = 130000;
-        List<CategorisDto> datas = null;
+        List<CategoryBaseDto> datas = null;
         try
         {
 
-            datas = await _Context.Categories.Where(x => x.parentId == model.categoryid).Select(x => new CategorisDto()
+            datas = await _Context.Categories.Where(x => x.parentId == model.categoryid).Select(x => new CategoryBaseDto()
             {
                 Id = x.Id,
                 parentId = x.parentId,
@@ -523,11 +523,11 @@ public class CategoriesServices
         StackTrace stackTrace = new StackTrace();
         string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
         long SerrvieCode = 130010;
-        List<CategorisDto> datas = null;
+        List<CategoryBaseDto> datas = null;
         try
         {
 
-            datas = await _Context.Categories.Where(x => x.parentId == model.categoryid).Select(x => new CategorisDto()
+            datas = await _Context.Categories.Where(x => x.parentId == model.categoryid).Select(x => new CategoryBaseDto()
             {
                 Id = x.Id,
                 parentId = x.parentId,
