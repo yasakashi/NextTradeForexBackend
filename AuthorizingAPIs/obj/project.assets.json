@@ -12505,11 +12505,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "J:\\NextTradeForexBackend-main\\AuthorizingAPIs\\NextTradeAPIs.csproj",
+      "projectUniqueName": "J:\\NextTradeForexBackend\\AuthorizingAPIs\\NextTradeAPIs.csproj",
       "projectName": "NextTradeAPIs",
-      "projectPath": "J:\\NextTradeForexBackend-main\\AuthorizingAPIs\\NextTradeAPIs.csproj",
+      "projectPath": "J:\\NextTradeForexBackend\\AuthorizingAPIs\\NextTradeAPIs.csproj",
       "packagesPath": "C:\\Users\\kourosh\\.nuget\\packages\\",
-      "outputPath": "J:\\NextTradeForexBackend-main\\AuthorizingAPIs\\obj\\",
+      "outputPath": "J:\\NextTradeForexBackend\\AuthorizingAPIs\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -12530,14 +12530,14 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "J:\\NextTradeForexBackend-main\\Base.Common\\Base.Common.csproj": {
-              "projectPath": "J:\\NextTradeForexBackend-main\\Base.Common\\Base.Common.csproj"
+            "J:\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj": {
+              "projectPath": "J:\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj"
             },
-            "J:\\NextTradeForexBackend-main\\DataLayers\\DataLayers.csproj": {
-              "projectPath": "J:\\NextTradeForexBackend-main\\DataLayers\\DataLayers.csproj"
+            "J:\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj": {
+              "projectPath": "J:\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj"
             },
-            "J:\\NextTradeForexBackend-main\\Entities\\Entities.csproj": {
-              "projectPath": "J:\\NextTradeForexBackend-main\\Entities\\Entities.csproj"
+            "J:\\NextTradeForexBackend\\Entities\\Entities.csproj": {
+              "projectPath": "J:\\NextTradeForexBackend\\Entities\\Entities.csproj"
             }
           }
         }
