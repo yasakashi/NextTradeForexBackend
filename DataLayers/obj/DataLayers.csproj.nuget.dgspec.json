@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Programming\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj": {}
+    "J:\\NextTradeForexBackend-main\\DataLayers\\DataLayers.csproj": {}
   },
   "projects": {
-    "E:\\Programming\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj": {
+    "J:\\NextTradeForexBackend-main\\DataLayers\\DataLayers.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Programming\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj",
+        "projectUniqueName": "J:\\NextTradeForexBackend-main\\DataLayers\\DataLayers.csproj",
         "projectName": "DataLayers",
-        "projectPath": "E:\\Programming\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj",
-        "packagesPath": "C:\\Users\\Yasa\\.nuget\\packages\\",
-        "outputPath": "E:\\Programming\\NextTradeForexBackend\\DataLayers\\obj\\",
+        "projectPath": "J:\\NextTradeForexBackend-main\\DataLayers\\DataLayers.csproj",
+        "packagesPath": "C:\\Users\\kourosh\\.nuget\\packages\\",
+        "outputPath": "J:\\NextTradeForexBackend-main\\DataLayers\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Yasa\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\kourosh\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -32,8 +32,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj": {
-                "projectPath": "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj"
+              "J:\\NextTradeForexBackend-main\\Entities\\Entities.csproj": {
+                "projectPath": "J:\\NextTradeForexBackend-main\\Entities\\Entities.csproj"
               }
             }
           }
@@ -46,7 +46,7 @@
         "restoreAuditProperties": {
           "enableAudit": "true",
           "auditLevel": "low",
-          "auditMode": "all"
+          "auditMode": "direct"
         },
         "SdkAnalysisLevel": "9.0.100"
       },
@@ -107,24 +107,29 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "win-x64": {
+          "#import": []
         }
       }
     },
-    "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj": {
+    "J:\\NextTradeForexBackend-main\\Entities\\Entities.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj",
+        "projectUniqueName": "J:\\NextTradeForexBackend-main\\Entities\\Entities.csproj",
         "projectName": "Entities",
-        "projectPath": "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj",
-        "packagesPath": "C:\\Users\\Yasa\\.nuget\\packages\\",
-        "outputPath": "E:\\Programming\\NextTradeForexBackend\\Entities\\obj\\",
+        "projectPath": "J:\\NextTradeForexBackend-main\\Entities\\Entities.csproj",
+        "packagesPath": "C:\\Users\\kourosh\\.nuget\\packages\\",
+        "outputPath": "J:\\NextTradeForexBackend-main\\Entities\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Yasa\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\kourosh\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -149,7 +154,7 @@
         "restoreAuditProperties": {
           "enableAudit": "true",
           "auditLevel": "low",
-          "auditMode": "all"
+          "auditMode": "direct"
         },
         "SdkAnalysisLevel": "9.0.100"
       },
@@ -196,7 +201,12 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "win-x64": {
+          "#import": []
         }
       }
     }

@@ -17947,23 +17947,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Yasa\\.nuget\\packages\\": {},
+    "C:\\Users\\kourosh\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\Programming\\NextTradeForexBackend\\AuthorizingAPIs\\NextTradeAPIs.csproj",
+      "projectUniqueName": "J:\\NextTradeForexBackend-main\\AuthorizingAPIs\\NextTradeAPIs.csproj",
       "projectName": "NextTradeAPIs",
-      "projectPath": "E:\\Programming\\NextTradeForexBackend\\AuthorizingAPIs\\NextTradeAPIs.csproj",
-      "packagesPath": "C:\\Users\\Yasa\\.nuget\\packages\\",
-      "outputPath": "E:\\Programming\\NextTradeForexBackend\\AuthorizingAPIs\\obj\\publish\\win-x64\\",
+      "projectPath": "J:\\NextTradeForexBackend-main\\AuthorizingAPIs\\NextTradeAPIs.csproj",
+      "packagesPath": "C:\\Users\\kourosh\\.nuget\\packages\\",
+      "outputPath": "J:\\NextTradeForexBackend-main\\AuthorizingAPIs\\obj\\publish\\win-x64\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Yasa\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\kourosh\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -17978,14 +17978,14 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "E:\\Programming\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj": {
-              "projectPath": "E:\\Programming\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj"
+            "J:\\NextTradeForexBackend-main\\Base.Common\\Base.Common.csproj": {
+              "projectPath": "J:\\NextTradeForexBackend-main\\Base.Common\\Base.Common.csproj"
             },
-            "E:\\Programming\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj": {
-              "projectPath": "E:\\Programming\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj"
+            "J:\\NextTradeForexBackend-main\\DataLayers\\DataLayers.csproj": {
+              "projectPath": "J:\\NextTradeForexBackend-main\\DataLayers\\DataLayers.csproj"
             },
-            "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj": {
-              "projectPath": "E:\\Programming\\NextTradeForexBackend\\Entities\\Entities.csproj"
+            "J:\\NextTradeForexBackend-main\\Entities\\Entities.csproj": {
+              "projectPath": "J:\\NextTradeForexBackend-main\\Entities\\Entities.csproj"
             }
           }
         }
@@ -17998,7 +17998,7 @@
       "restoreAuditProperties": {
         "enableAudit": "true",
         "auditLevel": "low",
-        "auditMode": "all"
+        "auditMode": "direct"
       },
       "SdkAnalysisLevel": "9.0.100"
     },
@@ -18092,7 +18092,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
       }
     },
     "runtimes": {
@@ -18100,169 +18100,5 @@
         "#import": []
       }
     }
-  },
-  "logs": [
-    {
-      "code": "NU1902",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'Azure.Identity' 1.10.3 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-m5vv-6r4h-3vj9",
-      "libraryId": "Azure.Identity",
-      "targetGraphs": [
-        "net8.0",
-        "net8.0/win-x64"
-      ]
-    },
-    {
-      "code": "NU1902",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'Azure.Identity' 1.10.3 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-wvxc-855f-jvrv",
-      "libraryId": "Azure.Identity",
-      "targetGraphs": [
-        "net8.0",
-        "net8.0/win-x64"
-      ]
-    },
-    {
-      "code": "NU1902",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'Microsoft.AspNetCore.Server.IIS' 2.2.0 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-prrf-397v-83xh",
-      "libraryId": "Microsoft.AspNetCore.Server.IIS",
-      "targetGraphs": [
-        "net8.0",
-        "net8.0/win-x64"
-      ]
-    },
-    {
-      "code": "NU1903",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'Microsoft.Extensions.Caching.Memory' 8.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-qj66-m88j-hmgj",
-      "libraryId": "Microsoft.Extensions.Caching.Memory",
-      "targetGraphs": [
-        "net8.0",
-        "net8.0/win-x64"
-      ]
-    },
-    {
-      "code": "NU1902",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'Microsoft.Identity.Client' 4.56.0 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-m5vv-6r4h-3vj9",
-      "libraryId": "Microsoft.Identity.Client",
-      "targetGraphs": [
-        "net8.0",
-        "net8.0/win-x64"
-      ]
-    },
-    {
-      "code": "NU1901",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'Microsoft.Identity.Client' 4.56.0 has a known low severity vulnerability, https://github.com/advisories/GHSA-x674-v45j-fwxw",
-      "libraryId": "Microsoft.Identity.Client",
-      "targetGraphs": [
-        "net8.0",
-        "net8.0/win-x64"
-      ]
-    },
-    {
-      "code": "NU1903",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'System.Formats.Asn1' 5.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-447r-wph3-92pm",
-      "libraryId": "System.Formats.Asn1",
-      "targetGraphs": [
-        "net8.0",
-        "net8.0/win-x64"
-      ]
-    },
-    {
-      "code": "NU1903",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'System.IO.Packaging' 6.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-f32c-w444-8ppv",
-      "libraryId": "System.IO.Packaging",
-      "targetGraphs": [
-        "net8.0",
-        "net8.0/win-x64"
-      ]
-    },
-    {
-      "code": "NU1903",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'System.IO.Packaging' 6.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-qj66-m88j-hmgj",
-      "libraryId": "System.IO.Packaging",
-      "targetGraphs": [
-        "net8.0",
-        "net8.0/win-x64"
-      ]
-    },
-    {
-      "code": "NU1903",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'System.Private.Uri' 4.3.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-5f2m-466j-3848",
-      "libraryId": "System.Private.Uri",
-      "targetGraphs": [
-        "net8.0/win-x64"
-      ]
-    },
-    {
-      "code": "NU1902",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'System.Private.Uri' 4.3.0 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-x5qj-9vmx-7g6g",
-      "libraryId": "System.Private.Uri",
-      "targetGraphs": [
-        "net8.0/win-x64"
-      ]
-    },
-    {
-      "code": "NU1903",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'System.Private.Uri' 4.3.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-xhfc-gr8f-ffwc",
-      "libraryId": "System.Private.Uri",
-      "targetGraphs": [
-        "net8.0/win-x64"
-      ]
-    },
-    {
-      "code": "NU1902",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'System.Security.Cryptography.Xml' 4.5.0 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-vh55-786g-wjwj",
-      "libraryId": "System.Security.Cryptography.Xml",
-      "targetGraphs": [
-        "net8.0",
-        "net8.0/win-x64"
-      ]
-    },
-    {
-      "code": "NU1903",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'System.Text.Json' 8.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-8g4q-xg66-9fp4",
-      "libraryId": "System.Text.Json",
-      "targetGraphs": [
-        "net8.0",
-        "net8.0/win-x64"
-      ]
-    },
-    {
-      "code": "NU1903",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'System.Text.Json' 8.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-hh2w-p6rv-4g7w",
-      "libraryId": "System.Text.Json",
-      "targetGraphs": [
-        "net8.0",
-        "net8.0/win-x64"
-      ]
-    }
-  ]
+  }
 }

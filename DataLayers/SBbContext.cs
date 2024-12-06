@@ -117,6 +117,10 @@ namespace DataLayers
         public DbSet<QuizQuestionOrder> QuizQuestionOrders { get; set; }
         public DbSet<QuizQuestionLayout> QuizQuestionLayouts { get; set; }
         public DbSet<CourseCustomIntroVideoType> CourseCustomIntroVideoTypes { get; set; }
+        public DbSet<Podcast> Podcasts { get; set; }
+        public DbSet<PodcastCategory> PodcastCategories { get; set; }
+        public DbSet<Webinar> Webinars { get; set; }
+        public DbSet<WebinarCategory> WebinarCategories { get; set; }
         
 
         #endregion [ Course ]
@@ -167,6 +171,7 @@ namespace DataLayers
         public DbSet<Indice_AlternateIndice> IndiceAlternateIndices { get; set; }
 
         #endregion [ Market Puls Indices ]
+
         #region [ Market Puls Cominidity ]
         public DbSet<Comodities_FlexibleBlock> ComoditiyFlexibleBlocks { get; set; }
         public DbSet<Comodity> Comodities { get; set; }
