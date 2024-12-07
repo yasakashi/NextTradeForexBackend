@@ -44,7 +44,7 @@ namespace NextTradeAPIs.Controllers
             _blockedIPService = blockedIPServices;
             _categoriesServices = categoriesServices;
             _baseInformationService = baseInformationServices;
-            _webHostEnvironment = env;  
+            _webHostEnvironment = env;
         }
 
 
@@ -1978,7 +1978,7 @@ namespace NextTradeAPIs.Controllers
         [HttpPost]
         [HttpGet]
         [Route("/api/coursecustomintrovideotypes")]
-        [AllowAnonymous] 
+        [AllowAnonymous]
         public async Task<IActionResult> GetCourseCustomIntroVideoTypes()
         {
             StackTrace stackTrace = new StackTrace();
@@ -2041,6 +2041,7 @@ namespace NextTradeAPIs.Controllers
                 //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
             }
         }
+
         [HttpPost]
         [HttpGet]
         [Route("/api/getleantotradetopcategories")]
@@ -2091,9 +2092,547 @@ namespace NextTradeAPIs.Controllers
 
                 //UserModel userlogin = message.MessageData as UserModel;
 
-                CategorisDto filter = new CategorisDto() { parentId = 770};
+                CategorisDto filter = new CategorisDto() { parentId = 770 };
 
-                message = await _categoriesServices.GetCategoryFullInfo(filter,null,processId, clientip, hosturl);
+                message = await _categoriesServices.GetCategoryFullInfo(filter, null, processId, clientip, hosturl);
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                string log = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, LogTypes.TokenError);
+                return Unauthorized();
+                //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        [HttpGet]
+        [Route("/api/gettopictypes")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetTopicTypes()
+        {
+            StackTrace stackTrace = new StackTrace();
+            SystemMessageModel message;
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string authHeader = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            UserModel user = null;
+            LoginLog loginLog = null;
+
+            long ApiCode = 2000;
+
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                //message = await _authorizationService.CheckToken(_bearer_token, processId);
+
+                //if (message.MessageCode < 0)
+                //    return Unauthorized(message);
+
+                //UserModel userlogin = message.MessageData as UserModel;
+
+                message = await _baseInformationService.GetTopicTypes(null, processId, clientip, hosturl);
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                string log = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, LogTypes.TokenError);
+                return Unauthorized();
+                //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [HttpGet]
+        [Route("/api/gettopicstatuses")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetTopicStatuses()
+        {
+            StackTrace stackTrace = new StackTrace();
+            SystemMessageModel message;
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string authHeader = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            UserModel user = null;
+            LoginLog loginLog = null;
+
+            long ApiCode = 2000;
+
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                //message = await _authorizationService.CheckToken(_bearer_token, processId);
+
+                //if (message.MessageCode < 0)
+                //    return Unauthorized(message);
+
+                //UserModel userlogin = message.MessageData as UserModel;
+
+                message = await _baseInformationService.GetTopicStatuss(null, processId, clientip, hosturl);
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                string log = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, LogTypes.TokenError);
+                return Unauthorized();
+                //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [HttpGet]
+        [Route("/api/getpdfpagerendersizes")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetPDFPageRenderSizes()
+        {
+            StackTrace stackTrace = new StackTrace();
+            SystemMessageModel message;
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string authHeader = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            UserModel user = null;
+            LoginLog loginLog = null;
+
+            long ApiCode = 2000;
+
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                //message = await _authorizationService.CheckToken(_bearer_token, processId);
+
+                //if (message.MessageCode < 0)
+                //    return Unauthorized(message);
+
+                //UserModel userlogin = message.MessageData as UserModel;
+
+                message = await _baseInformationService.GetPDFPageRenderSizes(null, processId, clientip, hosturl);
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                string log = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, LogTypes.TokenError);
+                return Unauthorized();
+                //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [HttpGet]
+        [Route("/api/gethardpages")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetHardPages()
+        {
+            StackTrace stackTrace = new StackTrace();
+            SystemMessageModel message;
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string authHeader = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            UserModel user = null;
+            LoginLog loginLog = null;
+
+            long ApiCode = 2000;
+
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                //message = await _authorizationService.CheckToken(_bearer_token, processId);
+
+                //if (message.MessageCode < 0)
+                //    return Unauthorized(message);
+
+                //UserModel userlogin = message.MessageData as UserModel;
+
+                message = await _baseInformationService.GetHardPages(null, processId, clientip, hosturl);
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                string log = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, LogTypes.TokenError);
+                return Unauthorized();
+                //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [HttpGet]
+        [Route("/api/getdisplaymodes")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetDisplayModes()
+        {
+            StackTrace stackTrace = new StackTrace();
+            SystemMessageModel message;
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string authHeader = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            UserModel user = null;
+            LoginLog loginLog = null;
+
+            long ApiCode = 2000;
+
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                //message = await _authorizationService.CheckToken(_bearer_token, processId);
+
+                //if (message.MessageCode < 0)
+                //    return Unauthorized(message);
+
+                //UserModel userlogin = message.MessageData as UserModel;
+
+                message = await _baseInformationService.GetDisplayModes(null, processId, clientip, hosturl);
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                string log = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, LogTypes.TokenError);
+                return Unauthorized();
+                //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [HttpGet]
+        [Route("/api/getbooksourcetypes")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetBookSourceTypes()
+        {
+            StackTrace stackTrace = new StackTrace();
+            SystemMessageModel message;
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string authHeader = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            UserModel user = null;
+            LoginLog loginLog = null;
+
+            long ApiCode = 2000;
+
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                //message = await _authorizationService.CheckToken(_bearer_token, processId);
+
+                //if (message.MessageCode < 0)
+                //    return Unauthorized(message);
+
+                //UserModel userlogin = message.MessageData as UserModel;
+
+                message = await _baseInformationService.GetBookSourceTypes(null, processId, clientip, hosturl);
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                string log = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, LogTypes.TokenError);
+                return Unauthorized();
+                //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        [HttpGet]
+        [Route("/api/getautoenablesounds")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAutoEnableSounds()
+        {
+            StackTrace stackTrace = new StackTrace();
+            SystemMessageModel message;
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string authHeader = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            UserModel user = null;
+            LoginLog loginLog = null;
+
+            long ApiCode = 2000;
+
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                //message = await _authorizationService.CheckToken(_bearer_token, processId);
+
+                //if (message.MessageCode < 0)
+                //    return Unauthorized(message);
+
+                //UserModel userlogin = message.MessageData as UserModel;
+
+                message = await _baseInformationService.GetAutoEnableSounds(null, processId, clientip, hosturl);
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                string log = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, LogTypes.TokenError);
+                return Unauthorized();
+                //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [HttpGet]
+        [Route("/api/getenabledownloads")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetEnableDownloads()
+        {
+            StackTrace stackTrace = new StackTrace();
+            SystemMessageModel message;
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string authHeader = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            UserModel user = null;
+            LoginLog loginLog = null;
+
+            long ApiCode = 2000;
+
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                //message = await _authorizationService.CheckToken(_bearer_token, processId);
+
+                //if (message.MessageCode < 0)
+                //    return Unauthorized(message);
+
+                //UserModel userlogin = message.MessageData as UserModel;
+
+                message = await _baseInformationService.GetEnableDownloads(null, processId, clientip, hosturl);
 
                 if (message.MessageCode < 0)
                     return BadRequest(message);
@@ -2110,5 +2649,6 @@ namespace NextTradeAPIs.Controllers
             }
         }
     }
+    
 }
 

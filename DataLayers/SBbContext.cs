@@ -121,9 +121,21 @@ namespace DataLayers
         public DbSet<PodcastCategory> PodcastCategories { get; set; }
         public DbSet<Webinar> Webinars { get; set; }
         public DbSet<WebinarCategory> WebinarCategories { get; set; }
-        
+
 
         #endregion [ Course ]
+
+        #region [ LearnToTrade ]
+        public DbSet<TopicType> TopicTypes { get; set; }
+        public DbSet<TopicStatus> TopicStatuses { get; set; }
+        public DbSet<PDFPageRenderSize> PDFPageRenderSizes { get; set; }
+        public DbSet<HardPage> HardPages { get; set; }
+        public DbSet<DisplayMode> DisplayModes { get; set; }
+        public DbSet<BookSourceType> BookSourceTypes { get; set; }
+        public DbSet<AutoEnableSound> AutoEnableSounds { get; set; }
+        public DbSet<EnableDownload> EnableDownloads { get; set; }
+        
+        #endregion [ LearnToTrade ]
 
         #region [  TicketType ]
         public DbSet<Priority> Priorities { get; set; }
