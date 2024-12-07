@@ -175,6 +175,7 @@ builder.Services.AddTransient<MarketPulsIndiceServices, MarketPulsIndiceServices
 
 builder.Services.AddTransient<WebinarServices, WebinarServices>();
 builder.Services.AddTransient<PodcastServices, PodcastServices>();
+builder.Services.AddTransient<LearnToTradeTopicServices, LearnToTradeTopicServices>();
 
 #endregion
 

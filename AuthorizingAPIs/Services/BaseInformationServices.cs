@@ -849,6 +849,159 @@ namespace NextTradeAPIs.Services
             return message;
         }
 
+        public async Task<SystemMessageModel> GetPageSizes(UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                List<PageSizeDto> datas = await _Context.PageSizes.Select(x => new PageSizeDto() { id = x.id, name = x.name }).ToListAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<SystemMessageModel> GetEnableAutoplayAutomaticallys(UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                List<EnableAutoplayAutomaticallyDto> datas = await _Context.EnableAutoplayAutomaticallies.Select(x => new EnableAutoplayAutomaticallyDto() { id = x.id, name = x.name }).ToListAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<SystemMessageModel> GetEnableAutoplays(UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                List<EnableAutoplayDto> datas = await _Context.EnableAutoplayes.Select(x => new EnableAutoplayDto() { id = x.id, name = x.name }).ToListAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<SystemMessageModel> GetDirections(UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                List<DirectionDto> datas = await _Context.Directions.Select(x => new DirectionDto() { id = x.id, name = x.name }).ToListAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<SystemMessageModel> GetControlsPositions(UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                List<ControlsPositionDto> datas = await _Context.ControlsPositions.Select(x => new ControlsPositionDto() { id = x.id, name = x.name }).ToListAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<SystemMessageModel> GetSinglePageModes(UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                List<SinglePageModeDto> datas = await _Context.SinglePageModes.Select(x => new SinglePageModeDto() { id = x.id, name = x.name }).ToListAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<SystemMessageModel> GetPageModes(UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                List<PageModeDto> datas = await _Context.PageModes.Select(x => new PageModeDto() { id = x.id, name = x.name }).ToListAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
 
     }
 

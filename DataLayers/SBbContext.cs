@@ -134,7 +134,21 @@ namespace DataLayers
         public DbSet<BookSourceType> BookSourceTypes { get; set; }
         public DbSet<AutoEnableSound> AutoEnableSounds { get; set; }
         public DbSet<EnableDownload> EnableDownloads { get; set; }
-        
+        public DbSet<LearnToTradeTopic> LearnToTradeTopics { get; set; }
+        public DbSet<NewBook> NewBooks { get; set; }
+
+        public DbSet<NewBookCategory> NewBookCategories { get; set; }
+        public DbSet<NewBookPageImage> NewBookPageImages { get; set; }
+
+        public DbSet<PageSize> PageSizes { get; set; }
+        public DbSet<EnableAutoplayAutomatically> EnableAutoplayAutomaticallies{ get; set; }
+        public DbSet<EnableAutoplay> EnableAutoplayes { get; set; }
+        public DbSet<Direction> Directions { get; set; }
+        public DbSet<ControlsPosition> ControlsPositions { get; set; }
+        public DbSet<SinglePageMode> SinglePageModes { get; set; }
+        public DbSet<PageMode> PageModes { get; set; }
+
+
         #endregion [ LearnToTrade ]
 
         #region [  TicketType ]
