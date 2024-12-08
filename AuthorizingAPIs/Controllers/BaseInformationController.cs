@@ -705,6 +705,7 @@ namespace NextTradeAPIs.Controllers
         }
 
         [HttpPost]
+        [HttpGet]
         [Route("/api/getcourseleveltype")]
         [AllowAnonymous]
         public async Task<IActionResult> GetCourseLevelTypes()
@@ -770,6 +771,7 @@ namespace NextTradeAPIs.Controllers
             }
         }
 
+        [HttpGet]
         [HttpPost]
         [Route("/api/getcoursetype")]
         [AllowAnonymous]
@@ -837,6 +839,7 @@ namespace NextTradeAPIs.Controllers
         }
 
         [HttpPost]
+        [HttpGet]
         [Route("/api/getcountries")]
         [AllowAnonymous]
         public async Task<IActionResult> GetCountry()
@@ -904,6 +907,7 @@ namespace NextTradeAPIs.Controllers
 
 
         [HttpPost]
+        [HttpGet]
         [Route("/api/getstates")]
         [AllowAnonymous]
         public async Task<IActionResult> GetStates(LocationDto model)
@@ -971,6 +975,7 @@ namespace NextTradeAPIs.Controllers
 
 
         [HttpPost]
+        [HttpGet]
         [Route("/api/getcities")]
         [AllowAnonymous]
         public async Task<IActionResult> GetCities(LocationDto model)
