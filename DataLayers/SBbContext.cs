@@ -213,6 +213,18 @@ namespace DataLayers
 
         #endregion   [ Market Puls Cominidity ]
 
+        #region [ Market Puls Crypto ]
+        public DbSet<Crypto> Cryptos { get; set; }
+        public DbSet<Crypto_FlexibleBlock> CryptoFlexibleBlocks { get; set; }
+        public DbSet<CryptoCountryData> CryptoCountryDatas { get; set; }
+        public DbSet<CryptoCountriesData> CryptoCountriesDatas { get; set; }
+        public DbSet<Crypto_FundamentalandNewsSection> CryptoFundamentalandNewsSections { get; set; }
+        public DbSet<Crypto_NewsMainContent> CryptoNewsMainContents { get; set; }
+        public DbSet<Crypto_TechnicalTab> CryptoTechnicalTabs { get; set; }
+        public DbSet<Crypto_TechnicalBreakingNews> CryptoTechnicalBreakingNewss { get; set; }
+        public DbSet<Crypto_FundamentalandNewsSection_RelatedReSorces_PDFSection> CryptoFundamentalandNewsSection_RelatedReSorces_PDFSections { get; set; }
+        public DbSet<Crypto_FundamentalandNewsSection_RelatedReSorces_URLSection> CryptoFundamentalandNewsSection_RelatedReSorces_URLSections { get; set; }
+        #endregion [ Market Puls Crypto ]
 
         #region OnModelCreating
         protected override void OnModelCreating(ModelBuilder builder)
