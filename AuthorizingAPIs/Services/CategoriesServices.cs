@@ -709,4 +709,66 @@ public class CategoriesServices
         }
         catch (Exception ex) { return new SystemMessageModel() { MessageCode = -501, MessageDescription = "File saving Error", MessageData = ex.Message }; }
     }
+
+    public async Task<SystemMessageModel> GetCategory4MarketPulsCrypto(CryptoFilterDto model, object value, string processId, string clientip, string hosturl, bool v)
+    {
+        SystemMessageModel message;
+        StackTrace stackTrace = new StackTrace();
+        string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+        long SerrvieCode = 130010;
+        List<CategoryBaseDto> datas = null;
+        try
+        {
+
+            datas = await _Context.Categories.Where(x => x.parentId == model.categoryid).Select(x => new CategoryBaseDto()
+            {
+                Id = x.Id,
+                parentId = x.parentId,
+                name = x.name,
+                categorytypeid = x.categorytypeid,
+                categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
+            }).ToListAsync();
+
+
+            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+        }
+        catch (Exception ex)
+        {
+            message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+            string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+            await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+        }
+        return message;
+    }
+
+    internal async Task<SystemMessageModel> GetCategoryCurrency4MarketPulsCrypto(CryptoFilterDto model, object value, string processId, string clientip, string hosturl, bool v)
+    {
+        SystemMessageModel message;
+        StackTrace stackTrace = new StackTrace();
+        string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+        long SerrvieCode = 130000;
+        List<CategoryBaseDto> datas = null;
+        try
+        {
+
+            datas = await _Context.Categories.Where(x => x.parentId == model.categoryid).Select(x => new CategoryBaseDto()
+            {
+                Id = x.Id,
+                parentId = x.parentId,
+                name = x.name,
+                categorytypeid = x.categorytypeid,
+                categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
+            }).ToListAsync();
+
+
+            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+        }
+        catch (Exception ex)
+        {
+            message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+            string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+            await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+        }
+        return message;
+    }
 }
