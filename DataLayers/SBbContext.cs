@@ -148,6 +148,9 @@ namespace DataLayers
         public DbSet<SinglePageMode> SinglePageModes { get; set; }
         public DbSet<PageMode> PageModes { get; set; }
 
+        public DbSet<Video> Videos { get; set; }
+        public DbSet<VideoCategory> VideoCategories { get; set; }
+        public DbSet<VideoSubtitle> VideoSubtitles { get; set; }
 
         #endregion [ LearnToTrade ]
 

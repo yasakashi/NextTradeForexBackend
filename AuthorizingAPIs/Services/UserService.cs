@@ -21,6 +21,7 @@ using System.Reflection.Metadata.Ecma335;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Data.SqlClient;
 
 namespace NextTradeAPIs.Services
 {
@@ -1216,14 +1217,20 @@ namespace NextTradeAPIs.Services
                     filter.username = userlogin.username;
                 }
 
-                string querystrnig = @"EXECUTE dbo.spGetUserReferalList @Username=" + filter.username;
+                string querystrnig = @"EXECUTE dbo.spGetUserReferalList @Username='?'".Replace("?", filter.username);
+                var user = new SqlParameter("username", filter.username);
 
-
-                datas = await _Context.Users.FromSql(FormattableStringFactory.Create(querystrnig)).Select(x => new UserModel()
+                datas = await _Context.Users.FromSql($"EXECUTE dbo.spGetUserReferalList @Username={user}").Select(x => new UserModel()
                 {
                     userid = x.UserId,
                     username = x.Username,
-                    EmployeeLevel = x.EmployeeLevel
+                    EmployeeLevel = x.EmployeeLevel,
+                    fname = x.Fname,
+                    lname = x.Lname,
+                    ispaid = x.ispaied,
+                    IsActive = x.IsActive,
+                    UserTypeId = x.UserTypeId,
+                    ParentUserId = x.ParentUserId
                 }).ToListAsync();
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };

@@ -1,5 +1,6 @@
 ﻿using Base.Common.Enums;
 using DataLayers;
+using DocumentFormat.OpenXml.Vml.Spreadsheet;
 using Entities.DBEntities;
 using Entities.Dtos;
 using Microsoft.EntityFrameworkCore;
@@ -33,7 +34,7 @@ namespace NextTradeAPIs.Services
 
             try
             {
-                if (await _Context.Comodities.Where(x => x.categoryid == model.categoryid).AnyAsync())
+                if (await _Context.Cryptos.Where(x => x.categoryid == model.categoryid).AnyAsync())
                 {
                     return new SystemMessageModel() { MessageCode = -103, MessageDescription = "For this category save before use update service", MessageData = model };
                 }
@@ -52,29 +53,95 @@ namespace NextTradeAPIs.Services
                     createdatetime = DateTime.Now,
                     changestatusdate = DateTime.Now,
                     coursestatusid = (int)CourseStatusList.Draft,
-                    fundamentalandtechnicaltabsection_instrumentname = model.fundamentalandtechnicaltabsection.instrumentname,
-                    fundamentalandtechnicaltabsection_fundamentalheading = model.fundamentalandtechnicaltabsection.fundamentalheading,
-                    fundamentalandtechnicaltabsection_technicalheading = model.fundamentalandtechnicaltabsection.technicalheading,
-                    fundamentalandtechnicaltabsection_marketsentimentstitle = model.fundamentalandtechnicaltabsection.marketsentimentstitle,
-                    fundamentalandtechnicaltabsection_marketsentimentsscript = model.fundamentalandtechnicaltabsection.marketsentimentsscript,
-                    fundamentalandtechnicaltabsection_marketsessiontitle = model.fundamentalandtechnicaltabsection.marketsessiontitle,
-                    fundamentalandtechnicaltabsection_marketsessionscript = model.fundamentalandtechnicaltabsection.marketsessionscript,
-                    fundamentalandtechnicaltabsection_relatedresorces = model.fundamentalandtechnicaltabsection.relatedresorces,
-                    fundamentalandtechnicaltabsection_privatenotes = model.fundamentalandtechnicaltabsection.privatenotes,
+                    cryptofundamentalandtechnicaltabsection_instrumentname = model.fundamentalandtechnicaltabsection.instrumentname,
+                    cryptofundamentalandtechnicaltabsection_fundamentalheading = model.fundamentalandtechnicaltabsection.fundamentalheading,
+                    cryptofundamentalandtechnicaltabsection_technicalheading = model.fundamentalandtechnicaltabsection.technicalheading,
+                    cryptofundamentalandtechnicaltabsection_marketsentimentstitle = model.fundamentalandtechnicaltabsection.marketsentimentstitle,
+                    cryptofundamentalandtechnicaltabsection_marketsentimentsscript = model.fundamentalandtechnicaltabsection.marketsentimentsscript,
+                    cryptofundamentalandtechnicaltabsection_marketsessiontitle = model.fundamentalandtechnicaltabsection.marketsessiontitle,
+                    cryptofundamentalandtechnicaltabsection_marketsessionscript = model.fundamentalandtechnicaltabsection.marketsessionscript,
+                    cryptofundamentalandtechnicaltabsection_relatedresorces = model.fundamentalandtechnicaltabsection.relatedresorces,
+                    cryptofundamentalandtechnicaltabsection_privatenotes = model.fundamentalandtechnicaltabsection.privatenotes,
                     tags = model.tags
                 };
-                await _Context.Comodities.AddAsync(data);
-
-                List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSection> PDFSectionlist = new List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSection>();
-                List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection> UrlSectionlist = new List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection>();
-                if (model.fundamentalandtechnicaltabsection.comoditiespdfsectionlist != null && model.fundamentalandtechnicaltabsection.comoditiespdfsectionlist.Count > 0)
+                await _Context.Cryptos.AddAsync(data);
+                if (model.fundamentalandtechnicaltabsection != null)
                 {
-                    foreach (Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSectionDto pdf in model.fundamentalandtechnicaltabsection.comoditiespdfsectionlist)
+                    List<Crypto_FundamentalandNewsSection> NewsSectioList = new List<Crypto_FundamentalandNewsSection>();
+                    List<Crypto_NewsMainContent> NewsMainContetList = new List<Crypto_NewsMainContent>();
+                    foreach (Crypto_FundamentalandNewsSectionDto news in model.fundamentalandtechnicaltabsection.fundamentalnewssections)
                     {
-                        PDFSectionlist.Add(new Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSection()
+                        Crypto_FundamentalandNewsSection newssection =  new Crypto_FundamentalandNewsSection() { 
+                            id = Guid.NewGuid(),
+                            cryptoid = data.id,
+                            maintitle = news.maintitle,
+                            script = news.script
+                        };
+
+                        foreach (Crypto_NewsMainContentDto newsmaincontent in news.newsmaincontentlist)
+                        {
+                            NewsMainContetList.Add(new Crypto_NewsMainContent() {
+                                id = Guid.NewGuid(),
+                                cryptoid = data.id,
+                                fundamentalandnewssectionid = newssection.id,
+                                description = newsmaincontent.description,
+                                descriptionfilecontenttype = newsmaincontent.descriptionfilecontenttype,
+                                descriptionfilename = newsmaincontent.descriptionfilename,
+                                descriptionfilepath = newsmaincontent.descriptionfilepath,
+                                descriptionfileurl = newsmaincontent.descriptionfileurl,
+                                link = newsmaincontent.link,
+                                title = newsmaincontent.title
+                            });
+                        }
+                        NewsSectioList.Add(newssection);
+                    }
+
+                    await _Context.CryptoFundamentalandNewsSections.AddRangeAsync(NewsSectioList);
+                    await _Context.CryptoNewsMainContents.AddRangeAsync(NewsMainContetList);
+
+                    List<Crypto_TechnicalTab> technicaltabList = new List<Crypto_TechnicalTab>();
+                    List<Crypto_TechnicalBreakingNews> technicalbreakList = new List<Crypto_TechnicalBreakingNews>();
+                    foreach (Crypto_TechnicalTabDto tab in model.fundamentalandtechnicaltabsection.technicaltabs)
+                    {
+                        Crypto_TechnicalTab newtab = new Crypto_TechnicalTab()
                         {
                             id = Guid.NewGuid(),
-                            Cryptoid = data.id,
+                            cryptoid = data.id,
+                            tabtitle = tab.tabtitle,
+                            script = tab.script
+                        };
+
+                        foreach (Crypto_TechnicalBreakingNewsDto newsmaincontent in tab.newsmaincontentlist)
+                        {
+                            technicalbreakList.Add(new Crypto_TechnicalBreakingNews()
+                            {
+                                id = Guid.NewGuid(),
+                                cryptoid = data.id,
+                                technicaltabid = (Guid)newtab.id,
+                                description = newsmaincontent.description,
+                                descriptionfilecontenttype = newsmaincontent.descriptionfilecontenttype,
+                                descriptionfilename = newsmaincontent.descriptionfilename,
+                                descriptionfilepath = newsmaincontent.descriptionfilepath,
+                                descriptionfileurl = newsmaincontent.descriptionfileurl,
+                                link = newsmaincontent.link,
+                                title = newsmaincontent.title
+                            });
+                        }
+                        technicaltabList.Add(newtab);
+                    }
+
+                    await _Context.CryptoTechnicalTabs.AddRangeAsync(technicaltabList);
+                    await _Context.CryptoTechnicalBreakingNewss.AddRangeAsync(technicalbreakList);
+
+                    List<Crypto_FundamentalandNewsSection_RelatedReSorces_PDFSection> PDFSectionlist = new List<Crypto_FundamentalandNewsSection_RelatedReSorces_PDFSection>();
+                if (model.fundamentalandtechnicaltabsection.pdfsectionlist != null && model.fundamentalandtechnicaltabsection.pdfsectionlist.Count > 0)
+                {
+                    foreach (Crypto_FundamentalandNewsSection_RelatedReSorces_PDFSectionDto pdf in model.fundamentalandtechnicaltabsection.pdfsectionlist)
+                    {
+                        PDFSectionlist.Add(new Crypto_FundamentalandNewsSection_RelatedReSorces_PDFSection()
+                        {
+                            id = Guid.NewGuid(),
+                            cryptoid = data.id,
                             author = pdf.author,
                             pdfshortcodeid = pdf.pdfshortcodeid,
                             pdftitle = pdf.pdftitle,
@@ -82,327 +149,110 @@ namespace NextTradeAPIs.Services
                         });
                     }
                     if (PDFSectionlist.Count > 0)
-                        await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections.AddRangeAsync(PDFSectionlist);
+                        await _Context.CryptoFundamentalandNewsSection_RelatedReSorces_PDFSections.AddRangeAsync(PDFSectionlist);
                 }
-                if (model.fundamentalandtechnicaltabsection.comoditiesurlsectionlist != null && model.fundamentalandtechnicaltabsection.comoditiesurlsectionlist.Count > 0)
+                List<Crypto_FundamentalandNewsSection_RelatedReSorces_URLSection> UrlSectionlist = new List<Crypto_FundamentalandNewsSection_RelatedReSorces_URLSection>();
+                if (model.fundamentalandtechnicaltabsection.urlsectionlist != null && model.fundamentalandtechnicaltabsection.urlsectionlist.Count > 0)
                 {
-                    foreach (Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionDto pdf in model.fundamentalandtechnicaltabsection.comoditiesurlsectionlist)
+                    foreach (Crypto_FundamentalandNewsSection_RelatedReSorces_URLSectionDto pdf in model.fundamentalandtechnicaltabsection.urlsectionlist)
                     {
-                        UrlSectionlist.Add(new Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection()
+                        UrlSectionlist.Add(new Crypto_FundamentalandNewsSection_RelatedReSorces_URLSection()
                         {
                             id = Guid.NewGuid(),
-                            Cryptoid = data.id,
+                            cryptoid = data.id,
                             url = pdf.url,
                             urltitle = pdf.urltitle
                         });
                     }
                     if (UrlSectionlist.Count > 0)
-                        await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSections.AddRangeAsync(UrlSectionlist);
+                        await _Context.CryptoFundamentalandNewsSection_RelatedReSorces_URLSections.AddRangeAsync(UrlSectionlist);
                 }
-                List<Comodities_FlexibleBlock> flexibleBlocklist = new List<Comodities_FlexibleBlock>();
-                List<ComoditiesCountriesData> countriesDatalist = new List<ComoditiesCountriesData>();
-                List<ComoditiesFirstCountryDataCountriesData> firstcountriesDatalist = new List<ComoditiesFirstCountryDataCountriesData>();
-                List<ComoditiesSecondCountryDataCountriesData> SecondcountriesDatalist = new List<ComoditiesSecondCountryDataCountriesData>();
-                foreach (Comodities_FlexibleBlockDto flex in model.comodities)
+
+                }
+
+
+                List<Crypto_FlexibleBlock> flexibleBlocklist = new List<Crypto_FlexibleBlock>();
+                List<CryptoCountriesData> countriesDatalist = new List<CryptoCountriesData>();
+                List<CryptoCountryData> countryDatalist = new List<CryptoCountryData>();
+
+                foreach (Crypto_FlexibleBlockDto flex in model.crypto_flexi_block)
                 {
-                    Comodities_FlexibleBlock FlexibleBlock = new Comodities_FlexibleBlock();
+                    Crypto_FlexibleBlock FlexibleBlock = new Crypto_FlexibleBlock();
                     FlexibleBlock.id = Guid.NewGuid();
-                    FlexibleBlock.bottomdescription = flex.bottomdescription;
-                    FlexibleBlock.bottomdescriptionfilecontenttype = flex.bottomdescriptionfilecontenttype;
-                    FlexibleBlock.bottomdescriptionfilename = flex.bottomdescriptionfilename;
-                    FlexibleBlock.bottomdescriptionfilepath = flex.bottomdescriptionfilepath;
-                    FlexibleBlock.bottomdescriptionfileurl = flex.bottomdescriptionfileurl;
-                    FlexibleBlock.chartdescription = flex.chartdescription;
-                    FlexibleBlock.chartdescriptionfilecontenttype = flex.chartdescriptionfilecontenttype;
-                    FlexibleBlock.chartdescriptionfilename = flex.chartdescriptionfilename;
-                    FlexibleBlock.chartdescriptionfilepath = flex.chartdescriptionfilepath;
-                    FlexibleBlock.chartdescriptionfileurl = flex.chartdescriptionfileurl;
-                    FlexibleBlock.Cryptoid = data.id;
-                    FlexibleBlock.firstcontryheading = flex.firstcontryheading;
-                    FlexibleBlock.firstcontrydescriptionfilename = flex.firstcontrydescriptionfilename;
-                    FlexibleBlock.firstcontrydescriptionfilecontentype = flex.firstcontrydescriptionfilecontentype;
-                    FlexibleBlock.firstcontrydescription = flex.firstcontrydescription;
-                    FlexibleBlock.firstcontrydescriptionfilepath = flex.firstcontrydescriptionfilepath;
-                    FlexibleBlock.firstcontrydescriptionfileurl = flex.firstcontrydescriptionfileurl;
-                    FlexibleBlock.maindescrition = flex.maindescrition;
-                    FlexibleBlock.maindescritionfilecontenttype = flex.maindescritionfilecontenttype;
-                    FlexibleBlock.maindescritionfilename = flex.maindescritionfilename;
-                    FlexibleBlock.maindescritionfilepath = flex.maindescritionfilepath;
-                    FlexibleBlock.maindescritionfileurl = flex.maindescritionfileurl;
+                    FlexibleBlock.cryptoid = data.id;
+                    FlexibleBlock.maintitle = flex.maintitle;
                     FlexibleBlock.oneyeardescription = flex.oneyeardescription;
                     FlexibleBlock.oneyeardescriptionfilecontenttype = flex.oneyeardescriptionfilecontenttype;
                     FlexibleBlock.oneyeardescriptionfilename = flex.oneyeardescriptionfilename;
                     FlexibleBlock.oneyeardescriptionfilepath = flex.oneyeardescriptionfilepath;
                     FlexibleBlock.oneyeardescriptionfileurl = flex.oneyeardescriptionfileurl;
-                    FlexibleBlock.secoundcontrydescription = flex.secoundcontrydescription;
-                    FlexibleBlock.maintitle = flex.maintitle;
-                    FlexibleBlock.secoundcontrydescriptionfilecontenttype = flex.secoundcontrydescriptionfilecontenttype;
-                    FlexibleBlock.secoundcontrydescriptionfilename = flex.secoundcontrydescriptionfilename;
-                    FlexibleBlock.secoundcontrydescriptionfilepath = flex.secoundcontrydescriptionfilepath;
-                    FlexibleBlock.secoundcontrydescriptionfileurl = flex.secoundcontrydescriptionfileurl;
+                    FlexibleBlock.chartdescription = flex.chartdescription;
+                    FlexibleBlock.chartdescriptionfilecontenttype = flex.chartdescriptionfilecontenttype;
+                    FlexibleBlock.chartdescriptionfilename = flex.chartdescriptionfilename;
+                    FlexibleBlock.chartdescriptionfilepath = flex.chartdescriptionfilepath;
+                    FlexibleBlock.chartdescriptionfileurl = flex.chartdescriptionfileurl;
+                    FlexibleBlock.contryheading = flex.contryheading;
+                    FlexibleBlock.contrydescription = flex.contrydescription;
+                    FlexibleBlock.contrydescriptionfilename = flex.contrydescriptionfilename;
+                    FlexibleBlock.contrydescriptionfilecontentype = flex.contrydescriptionfilecontentype;
+                    FlexibleBlock.contrydescriptionfilepath = flex.contrydescriptionfilepath;
+                    FlexibleBlock.contrydescriptionfileurl = flex.contrydescriptionfileurl;
+                    FlexibleBlock.bottomdescription = flex.bottomdescription;
+                    FlexibleBlock.bottomdescriptionfilecontenttype = flex.bottomdescriptionfilecontenttype;
+                    FlexibleBlock.bottomdescriptionfilename = flex.bottomdescriptionfilename;
+                    FlexibleBlock.bottomdescriptionfilepath = flex.bottomdescriptionfilepath;
+                    FlexibleBlock.bottomdescriptionfileurl = flex.bottomdescriptionfileurl;
+                    FlexibleBlock.maindescrition = flex.maindescrition;
+                    FlexibleBlock.maindescritionfilecontenttype = flex.maindescritionfilecontenttype;
+                    FlexibleBlock.maindescritionfilename = flex.maindescritionfilename;
+                    FlexibleBlock.maindescritionfilepath = flex.maindescritionfilepath;
+                    FlexibleBlock.maindescritionfileurl = flex.maindescritionfileurl;
                     FlexibleBlock.singlepagechartimage = flex.singlepagechartimage;
 
 
-                    if (flex.comoditiescountriesdatalist != null && flex.comoditiescountriesdatalist.Count > 0)
+                    if (flex.countriesdatalist != null && flex.countriesdatalist.Count > 0)
                     {
-                        foreach (ComoditiesCountriesDataDto contrydata in flex.comoditiescountriesdatalist)
+                        foreach (CryptoCountriesDataDto contrydata in flex.countriesdatalist)
                         {
-                            countriesDatalist.Add(new ComoditiesCountriesData()
+                            countriesDatalist.Add(new CryptoCountriesData()
                             {
                                 id = Guid.NewGuid(),
-                                Cryptoid = data.id,
-                                Cryptoflexibleblockid = FlexibleBlock.id,
+                                cryptoid = data.id,
+                                cryptoflexibleblockid = FlexibleBlock.id,
+                                contry = contrydata.contry,
+                                centeralbank = contrydata.centeralbank,
+                                nickname = contrydata.nickname,
+                                ofaveragedailyturnover = contrydata.ofaveragedailyturnover
+                            });
+                        }
+                        await _Context.CryptoCountriesDatas.AddRangeAsync(countriesDatalist);
+                    }
+
+
+                    if (flex.countrydatalist != null && flex.countrydatalist.Count > 0)
+                    {
+                        foreach (CryptoCountryDataDto contrydata in flex.countrydatalist)
+                        {
+                            countryDatalist.Add(new CryptoCountryData()
+                            {
+                                id = Guid.NewGuid(),
+                                cryptoid = data.id,
+                                cryptoflexibleblockid = FlexibleBlock.id,
                                 contries = contrydata.contries,
-                                highslows = contrydata.highslows,
                                 pairsthatcorrelate = contrydata.pairsthatcorrelate,
-                                pairtype = contrydata.pairtype,
-                                dailyaveragemovementinpips = contrydata.dailyaveragemovementinpips
+                                highslows = contrydata.highslows,
+                                dailyaveragemovementinpips = contrydata.dailyaveragemovementinpips,
+                                pairtype = contrydata.pairtype
                             });
                         }
-                        await _Context.ComoditiesCountriesDatas.AddRangeAsync(countriesDatalist);
+                        await _Context.CryptoCountryDatas.AddRangeAsync(countryDatalist);
                     }
-                    if (flex.comoditiesfirstcountrydatacountriesdatalist != null && flex.comoditiesfirstcountrydatacountriesdatalist.Count > 0)
-                    {
-                        foreach (ComoditiesFirstCountryDataCountriesDataDto contrydata in flex.comoditiesfirstcountrydatacountriesdatalist)
-                        {
-                            firstcountriesDatalist.Add(new ComoditiesFirstCountryDataCountriesData()
-                            {
-                                id = Guid.NewGuid(),
-                                Cryptoid = data.id,
-                                Cryptoflexibleblockid = FlexibleBlock.id,
-                                centeralbank = contrydata.centeralbank,
-                                contries = contrydata.contries,
-                                nickname = contrydata.nickname,
-                                ofaveragedailyturnover = contrydata.ofaveragedailyturnover
-                            });
-                        }
-                        await _Context.ComoditiesFirstCountryDataCountriesDatas.AddRangeAsync(firstcountriesDatalist);
-                    }
-                    if (flex.comoditiessecondcountrydatacountriesdatalist != null && flex.comoditiessecondcountrydatacountriesdatalist.Count > 0)
-                    {
-                        foreach (ComoditiesSecondCountryDataCountriesDataDto contrydata in flex.comoditiessecondcountrydatacountriesdatalist)
-                        {
-                            SecondcountriesDatalist.Add(new ComoditiesSecondCountryDataCountriesData()
-                            {
-                                id = Guid.NewGuid(),
-                                Cryptoid = data.id,
-                                Cryptoflexibleblockid = FlexibleBlock.id,
-                                centeralbank = contrydata.centeralbank,
-                                contries = contrydata.contries,
-                                nickname = contrydata.nickname,
-                                ofaveragedailyturnover = contrydata.ofaveragedailyturnover
-                            });
-                        }
-                        await _Context.ComoditiesSecondCountryDataCountriesDatas.AddRangeAsync(SecondcountriesDatalist);
-                        await _Context.SaveChangesAsync();
-                    }
-                    //public List<>?  { get; set; }
                     flexibleBlocklist.Add(FlexibleBlock);
                 }
 
-                await _Context.ComoditiyFlexibleBlocks.AddRangeAsync(flexibleBlocklist);
+                await _Context.CryptoFlexibleBlocks.AddRangeAsync(flexibleBlocklist);
 
-
-
-                /*
-
-                    bottomdescription = model.fundamentalandtechnicaltabsection.bottomdescription
-
-                                    comodities_maintitle = model.comodities_maintitle,
-                    oneyeardescription = model.oneyeardescription,
-                    oneyeardescriptionfilename = model.oneyeardescriptionfilename,
-                    oneyeardescriptionfilecontenttype = model.oneyeardescriptionfilecontenttype,
-                    oneyeardescriptionfilepath = model.oneyeardescriptionfilepath,
-                    chartdescription = model.chartdescription,
-                    chartdescriptionfilename = model.chartdescriptionfilename,
-                    chartdescriptionfilepath = model.chartdescriptionfilepath,
-                    chartdescriptionfilecontenttype = model.chartdescriptionfilecontenttype,
-                    firstcountryheading = model.firstcountryheading,
-                    firstcountrydescription = model.firstcountrydescription,
-                    firstcountrydescriptionfilename = model.firstcountrydescriptionfilename,
-                    firstcountrydescriptionfilepath = model.firstcountrydescriptionfilepath,
-                    firstcountrydescriptionfilecontenttype = model.firstcountrydescriptionfilecontenttype,
-                    secondcountryheading = model.secondcountryheading,
-                    secondcountrydescription = model.secondcountrydescription,
-                    secondcountrydescriptionfilename = model.secondcountrydescriptionfilename,
-                    secondcountrydescriptionfilepath = model.secondcountrydescriptionfilepath,
-                    secondcountrydescriptionfilecontenttype = model.secondcountrydescriptionfilecontenttype,
-                    bottomdescription = model.bottomdescription,
-                    bottomdescriptionfilename = model.bottomdescriptionfilename,
-                    bottomdescriptionfilepath = model.bottomdescriptionfilepath,
-                    bottomdescriptionfilecontenttype = model.bottomdescriptionfilecontenttype,
-                    maindescription = model.maindescription,
-                    maindescriptionfilecontenttype = model.maindescriptionfilecontenttype,
-                    maindescriptionfilename = model.maindescriptionfilename,
-                    maindescriptionfilepath = model.maindescriptionfilepath,
-                    singlepagechartimage = model.singlepagechartimage,
-
-
-
-                                if (model.Comodities_fundamentalandtechnicaltabsection_fundamentalnewssectionlist != null && model.Comodities_fundamentalandtechnicaltabsection_fundamentalnewssectionlist.Count() > 0)
-                                {
-                                    List<Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection> list = new List<Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection>();
-                                    foreach (Comodities_fundamentalandtechnicaltabsection_fundamentalnewssectionDto x in model.Comodities_fundamentalandtechnicaltabsection_fundamentalnewssectionlist)
-                                    {
-                                        list.Add(new Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection()
-                                        {
-                                            url = x.url,
-                                            urltitle = x.urltitle,
-                                            id = Guid.NewGuid(),
-                                            marketpulsforexid = data.id
-                                        });
-                                    }
-                                    await _Context.Comodities_fundamentalandtechnicaltabsection_fundamentalnewssections.AddRangeAsync(list);
-                                }
-                                if (model.TechnicalTabslist != null && model.TechnicalTabslist.Count() > 0)
-                                {
-                                    List<TechnicalTabs> TechnicalTabslist = new List<TechnicalTabs>();
-                                    foreach (TechnicalTabsDto x in model.TechnicalTabslist)
-                                    {
-                                        TechnicalTabs _technicalTabs = new TechnicalTabs()
-                                        {
-                                            maintitle = x.maintitle,
-                                            script = x.script,
-                                            id = Guid.NewGuid(),
-                                            marketpulsforexid = data.id
-                                        };
-
-                                        if (x.TechnicalBreakingNewslist != null && x.TechnicalBreakingNewslist.Count() > 0)
-                                        {
-                                            List<TechnicalBreakingNews> TechnicalBreakingNewslist = new List<TechnicalBreakingNews>();
-                                            foreach (TechnicalBreakingNewsDto xn in x.TechnicalBreakingNewslist)
-                                            {
-                                                TechnicalBreakingNewslist.Add(new TechnicalBreakingNews()
-                                                {
-                                                    maintitle = xn.maintitle,
-                                                    script = xn.script,
-                                                    id = Guid.NewGuid(),
-                                                    technicaltabid = _technicalTabs.id,
-                                                    marketpulsforexid = data.id
-                                                });
-                                            }
-                                            await _Context.TechnicalBreakingNewss.AddRangeAsync(TechnicalBreakingNewslist);
-                                        }
-                                        TechnicalTabslist.Add(_technicalTabs);
-
-                                    }
-                                    await _Context.TechnicalTabss.AddRangeAsync(TechnicalTabslist);
-                                }
-
-
-                                if (model.SecondCountryDatalist != null && model.SecondCountryDatalist.Count() > 0)
-                                {
-                                    List<SecondCountryData> SecondCountryDatalist = new List<SecondCountryData>();
-                                    foreach (SecondCountryDataDto x in model.SecondCountryDatalist)
-                                    {
-                                        SecondCountryDatalist.Add(new SecondCountryData()
-                                        {
-                                            id = Guid.NewGuid(),
-                                            marketpulsforexid = data.id,
-                                            avragedaily = x.avragedaily,
-                                            centralbank = x.centralbank,
-                                            countries = x.countries,
-                                            nickname = x.nickname
-                                        });
-                                    }
-                                    await _Context.SecondCountryDatas.AddRangeAsync(SecondCountryDatalist);
-                                }
-
-                                if (model.PDFSectionlist != null && model.PDFSectionlist.Count() > 0)
-                                {
-                                    List<PDFSection> PDFSectionlist = new List<PDFSection>();
-                                    foreach (PDFSectionDto x in model.PDFSectionlist)
-                                    {
-                                        PDFSectionlist.Add(new PDFSection()
-                                        {
-                                            id = Guid.NewGuid(),
-                                            marketpulsforexid = data.id,
-                                            author = x.author,
-                                            pdfshortcodeid = x.pdfshortcodeid,
-                                            pdftitle = x.pdftitle,
-                                            shortdescription = x.shortdescription
-                                        });
-                                    }
-                                    await _Context.PDFSections.AddRangeAsync(PDFSectionlist);
-                                }
-
-
-                                if (model.FundamentalNewsSectionlist != null && model.FundamentalNewsSectionlist.Count() > 0)
-                                {
-                                    List<FundamentalNewsSection> FundamentalNewsSectionlist = new List<FundamentalNewsSection>();
-                                    foreach (FundamentalNewsSectionDto x in model.FundamentalNewsSectionlist)
-                                    {
-                                        FundamentalNewsSection _fundamentalNewsSection = new FundamentalNewsSection()
-                                        {
-                                            maintitle = x.maintitle,
-                                            script = x.script,
-                                            id = Guid.NewGuid(),
-                                            marketpulsforexid = data.id
-                                        };
-
-
-                                        if (x.NewsMainContentlist != null && x.NewsMainContentlist.Count() > 0)
-                                        {
-                                            List<NewsMainContent> NewsMainContentlist = new List<NewsMainContent>();
-                                            foreach (NewsMainContentDto xn in x.NewsMainContentlist)
-                                            {
-                                                NewsMainContentlist.Add(new NewsMainContent()
-                                                {
-                                                    maintitle = xn.maintitle,
-                                                    script = xn.script,
-                                                    id = Guid.NewGuid(),
-                                                    marketpulsforexid = data.id,
-                                                    fundamentalnewssectionid = _fundamentalNewsSection.id
-                                                });
-                                            }
-                                            await _Context.NewsMainContents.AddRangeAsync(NewsMainContentlist);
-                                        }
-                                        FundamentalNewsSectionlist.Add(_fundamentalNewsSection);
-                                    }
-                                    await _Context.FundamentalNewsSections.AddRangeAsync(FundamentalNewsSectionlist);
-                                }
-
-                                if (model.FlexibleBlocklist != null && model.FlexibleBlocklist.Count() > 0)
-                                {
-                                    List<FlexibleBlock> FlexibleBlocklist = new List<FlexibleBlock>();
-                                    foreach (FlexibleBlockDto x in model.FlexibleBlocklist)
-                                    {
-                                        FlexibleBlocklist.Add(new FlexibleBlock()
-                                        {
-                                            id = Guid.NewGuid(),
-                                            marketpulsforexid = data.id,
-                                            countries = x.countries,
-                                            dailyavrage = x.dailyavrage,
-                                            highslows = x.highslows,
-                                            MainTitle = x.MainTitle,
-                                            pairsthatcorrelate = x.pairsthatcorrelate,
-                                            pairtype = x.pairtype
-                                        });
-                                    }
-                                    await _Context.FlexibleBlocks.AddRangeAsync(FlexibleBlocklist);
-                                }
-
-                                if (model.FirstCountryDatalist != null && model.FirstCountryDatalist.Count() > 0)
-                                {
-                                    List<FirstCountryData> FirstCountryDatalist = new List<FirstCountryData>();
-                                    foreach (FirstCountryDataDto x in model.FirstCountryDatalist)
-                                    {
-                                        FirstCountryDatalist.Add(new FirstCountryData()
-                                        {
-                                            id = Guid.NewGuid(),
-                                            marketpulsforexid = data.id,
-                                            countries = x.countries,
-                                            avragedaily = x.avragedaily,
-                                            centralbank = x.centralbank,
-                                            nickname = x.nickname
-                                        });
-                                    }
-                                    await _Context.FirstCountryDatas.AddRangeAsync(FirstCountryDatalist);
-                                }
-                                */
                 await _Context.SaveChangesAsync();
-
-                model.id = data.id;
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
             }
@@ -424,8 +274,8 @@ namespace NextTradeAPIs.Services
 
             try
             {
-                List<CryptoModel> datas;
-                IQueryable<Crypto> query = _Context.Comodities;
+                List<CryptoDto> datas;
+                IQueryable<Crypto> query = _Context.Cryptos;
 
                 if (model.id != null)
                     query = query.Where(x => x.id == model.id);
@@ -470,7 +320,7 @@ namespace NextTradeAPIs.Services
                     pagecount++;
 
                 datas = await query.Skip((pageIndex - 1) * PageRowCount)
-                                .Take(PageRowCount).Select(x => new CryptoModel()
+                                .Take(PageRowCount).Select(x => new CryptoDto()
                                 {
                                     id = x.id,
                                     categoryid = x.categoryid,
@@ -485,86 +335,115 @@ namespace NextTradeAPIs.Services
                                     changestatusdate = x.changestatusdate,
                                     coursestatusid = x.coursestatusid,
                                     tags = x.tags,
-                                    fundamentalandtechnicaltabsection = new FundamentalAndTechnicalTabSection()
+                                    fundamentalandtechnicaltabsection = new CryptoFundamentalAndTechnicalTabSectionDto()
                                     {
-                                        instrumentname = x.fundamentalandtechnicaltabsection_instrumentname,
-                                        fundamentalheading = x.fundamentalandtechnicaltabsection_fundamentalheading,
-                                        marketsentimentsscript = x.fundamentalandtechnicaltabsection_marketsentimentsscript,
-                                        marketsessionscript = x.fundamentalandtechnicaltabsection_marketsessionscript,
-                                        privatenotes = x.fundamentalandtechnicaltabsection_privatenotes,
-                                        relatedresorces = x.fundamentalandtechnicaltabsection_relatedresorces,
-                                        technicalheading = x.fundamentalandtechnicaltabsection_technicalheading,
-                                        marketsentimentstitle = x.fundamentalandtechnicaltabsection_marketsessiontitle,
-                                        marketsessiontitle = x.fundamentalandtechnicaltabsection_marketsessiontitle
+                                        instrumentname = x.cryptofundamentalandtechnicaltabsection_instrumentname,
+                                        fundamentalheading = x.cryptofundamentalandtechnicaltabsection_fundamentalheading,
+                                        marketsentimentsscript = x.cryptofundamentalandtechnicaltabsection_marketsentimentsscript,
+                                        marketsessionscript = x.cryptofundamentalandtechnicaltabsection_marketsessionscript,
+                                        privatenotes = x.cryptofundamentalandtechnicaltabsection_privatenotes,
+                                        relatedresorces = x.cryptofundamentalandtechnicaltabsection_relatedresorces,
+                                        technicalheading = x.cryptofundamentalandtechnicaltabsection_technicalheading,
+                                        marketsentimentstitle = x.cryptofundamentalandtechnicaltabsection_marketsessiontitle,
+                                        marketsessiontitle = x.cryptofundamentalandtechnicaltabsection_marketsessiontitle
                                     }
                                 }).ToListAsync();
 
-                foreach (CryptoModel data in datas)
+                foreach (CryptoDto data in datas)
                 {
-                    data.fundamentalandtechnicaltabsection.comoditiesurlsectionlist = await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSections.Where(x => x.Cryptoid == data.id).Select(x => new Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionDto()
+                    data.fundamentalandtechnicaltabsection.urlsectionlist = await _Context.CryptoFundamentalandNewsSection_RelatedReSorces_URLSections.Where(x => x.cryptoid == data.id).Select(x => new Crypto_FundamentalandNewsSection_RelatedReSorces_URLSectionDto()
                     {
                         id = x.id,
-                        Cryptoid = x.Cryptoid,
+                        cryptoid = x.cryptoid,
                         url = x.url,
                         urltitle = x.urltitle
                     }).ToListAsync();
 
-                    data.fundamentalandtechnicaltabsection.comoditiespdfsectionlist = await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections.Where(x => x.Cryptoid == data.id).Select(x => new Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSectionDto()
+                    data.fundamentalandtechnicaltabsection.pdfsectionlist = await _Context.CryptoFundamentalandNewsSection_RelatedReSorces_PDFSections.Where(x => x.cryptoid == data.id).Select(x => new Crypto_FundamentalandNewsSection_RelatedReSorces_PDFSectionDto()
                     {
                         id = x.id,
-                        Cryptoid = x.Cryptoid,
+                        cryptoid = x.cryptoid,
                         author = x.author,
                         pdfshortcodeid = x.pdfshortcodeid,
                         pdftitle = x.pdftitle,
                         shortdescription = x.shortdescription
                     }).ToListAsync();
 
-                    data.comodities = await _Context.ComoditiyFlexibleBlocks.Where(x => x.Cryptoid == data.id).Select(x => new Comodities_FlexibleBlockDto()
+                    data.fundamentalandtechnicaltabsection.fundamentalnewssections = await _Context.CryptoFundamentalandNewsSections.Where(x => x.cryptoid == data.id).Select(x => new Crypto_FundamentalandNewsSectionDto() {id = x.id, cryptoid = x.cryptoid, maintitle = x.maintitle, script = x.script }).ToListAsync();
+
+                    foreach (Crypto_FundamentalandNewsSectionDto news in data.fundamentalandtechnicaltabsection.fundamentalnewssections)
+                    {
+                        news.newsmaincontentlist = await _Context.CryptoNewsMainContents.Where(x => x.cryptoid == data.id && x.fundamentalandnewssectionid == news.id).Select(x => new Crypto_NewsMainContentDto() { id = x.id, cryptoid = x.cryptoid, fundamentalandnewssectionid = x.fundamentalandnewssectionid ,
+                            description = x.description,
+                            descriptionfilecontenttype = x.descriptionfilecontenttype,
+                            descriptionfilename = x.descriptionfilename,
+                            descriptionfilepath = x.descriptionfilepath,
+                            descriptionfileurl = x.descriptionfileurl,
+                            link = x.link,
+                            title = x.title
+                        }).ToListAsync();
+                    }
+
+                    data.fundamentalandtechnicaltabsection.technicaltabs = await _Context.CryptoTechnicalTabs.Where(x => x.cryptoid == data.id).Select(x => new Crypto_TechnicalTabDto() { id = x.id, cryptoid = x.cryptoid, tabtitle = x.tabtitle, script = x.script }).ToListAsync();
+
+                    foreach (Crypto_TechnicalTabDto tab in data.fundamentalandtechnicaltabsection.technicaltabs)
+                    {
+                        tab.newsmaincontentlist = await _Context.CryptoNewsMainContents.Where(x => x.cryptoid == data.id && x.fundamentalandnewssectionid == tab.id).Select(x => new Crypto_TechnicalBreakingNewsDto()
+                        {
+                            id = x.id,
+                            cryptoid = x.cryptoid,
+                            technicaltabid = x.fundamentalandnewssectionid,
+                            description = x.description,
+                            descriptionfilecontenttype = x.descriptionfilecontenttype,
+                            descriptionfilename = x.descriptionfilename,
+                            descriptionfilepath = x.descriptionfilepath,
+                            descriptionfileurl = x.descriptionfileurl,
+                            link = x.link,
+                            title = x.title
+                        }).ToListAsync();
+                    }
+
+                    data.crypto_flexi_block = await _Context.CryptoFlexibleBlocks.Where(x => x.cryptoid == data.id).Select(x => new Crypto_FlexibleBlockDto()
                     {
                         id = x.id,
-                        Cryptoid = x.Cryptoid,
-                        bottomdescription = x.bottomdescription,
-                        bottomdescriptionfilecontenttype = x.bottomdescriptionfilecontenttype,
-                        bottomdescriptionfilename = x.bottomdescriptionfilename,
-                        bottomdescriptionfilepath = x.bottomdescriptionfilepath,
-                        bottomdescriptionfileurl = x.bottomdescriptionfileurl,
+                        cryptoid = x.cryptoid,
+                        maintitle = x.maintitle,
+                        oneyeardescription = x.oneyeardescription,
+                        oneyeardescriptionfilecontenttype = x.oneyeardescriptionfilecontenttype,
+                        oneyeardescriptionfilename = x.oneyeardescriptionfilename,
+                        oneyeardescriptionfilepath = x.oneyeardescriptionfilepath,
+                        oneyeardescriptionfileurl = x.oneyeardescriptionfileurl,
                         chartdescription = x.chartdescription,
                         chartdescriptionfilecontenttype = x.chartdescriptionfilecontenttype,
                         chartdescriptionfilename = x.chartdescriptionfilename,
                         chartdescriptionfilepath = x.chartdescriptionfilepath,
                         chartdescriptionfileurl = x.chartdescriptionfileurl,
-                        firstcontrydescription = x.firstcontrydescription,
-                        firstcontrydescriptionfilecontentype = x.firstcontrydescriptionfilecontentype,
-                        firstcontrydescriptionfilename = x.firstcontrydescriptionfilename,
-                        firstcontrydescriptionfilepath = x.firstcontrydescriptionfilepath,
-                        firstcontrydescriptionfileurl = x.firstcontrydescriptionfileurl,
-                        firstcontryheading = x.firstcontryheading,
+                        contryheading = x.contryheading,
+                        contrydescription = x.contrydescription,
+                        contrydescriptionfilename = x.contrydescriptionfilename,
+                        contrydescriptionfilecontentype = x.contrydescriptionfilecontentype,
+                        contrydescriptionfilepath = x.contrydescriptionfilepath,
+                        contrydescriptionfileurl = x.contrydescriptionfileurl,
+                        bottomdescription = x.bottomdescription,
+                        bottomdescriptionfilecontenttype = x.bottomdescriptionfilecontenttype,
+                        bottomdescriptionfilename = x.bottomdescriptionfilename,
+                        bottomdescriptionfilepath = x.bottomdescriptionfilepath,
+                        bottomdescriptionfileurl = x.bottomdescriptionfileurl,
                         maindescrition = x.maindescrition,
+                        maindescritionfilecontenttype = x.maindescritionfilecontenttype,
                         maindescritionfilename = x.maindescritionfilename,
                         maindescritionfilepath = x.maindescritionfilepath,
                         maindescritionfileurl = x.maindescritionfileurl,
-                        maintitle = x.maintitle,
-                        oneyeardescription = x.oneyeardescription,
-                        maindescritionfilecontenttype = x.maindescritionfilecontenttype,
-                        oneyeardescriptionfilename = x.oneyeardescriptionfilename,
-                        oneyeardescriptionfilecontenttype = x.oneyeardescriptionfilecontenttype,
-                        oneyeardescriptionfilepath = x.oneyeardescriptionfilepath,
-                        oneyeardescriptionfileurl = x.oneyeardescriptionfileurl,
-                        secoundcontrydescription = x.secoundcontrydescription,
-                        secoundcontrydescriptionfilecontenttype = x.secoundcontrydescriptionfilecontenttype,
-                        secoundcontrydescriptionfilename = x.secoundcontrydescriptionfilename,
-                        secoundcontrydescriptionfilepath = x.secoundcontrydescriptionfilepath,
-                        secoundcontrydescriptionfileurl = x.secoundcontrydescriptionfileurl,
                         singlepagechartimage = x.singlepagechartimage
                     }).ToListAsync();
 
-                    foreach (Comodities_FlexibleBlockDto FlexibleBlockitem in data.comodities)
+                    foreach (Crypto_FlexibleBlockDto FlexibleBlockitem in data.crypto_flexi_block)
                     {
-                        FlexibleBlockitem.comoditiescountriesdatalist = await _Context.ComoditiesCountriesDatas.Where(x => x.Cryptoid == data.id && x.Cryptoflexibleblockid == FlexibleBlockitem.id).Select(x => new ComoditiesCountriesDataDto()
+                        FlexibleBlockitem.countrydatalist = await _Context.CryptoCountryDatas.Where(x => x.cryptoid == data.id && x.cryptoflexibleblockid == FlexibleBlockitem.id).Select(x => new CryptoCountryDataDto()
                         {
                             id = x.id,
-                            Cryptoflexibleblockid = x.Cryptoflexibleblockid,
-                            Cryptoid = x.Cryptoid,
+                            cryptoflexibleblockid = x.cryptoflexibleblockid,
+                            cryptoid = x.cryptoid,
                             contries = x.contries,
                             dailyaveragemovementinpips = x.dailyaveragemovementinpips,
                             highslows = x.highslows,
@@ -572,24 +451,15 @@ namespace NextTradeAPIs.Services
                             pairtype = x.pairtype
                         }).ToListAsync();
 
-                        FlexibleBlockitem.comoditiessecondcountrydatacountriesdatalist = await _Context.ComoditiesSecondCountryDataCountriesDatas.Where(x => x.Cryptoid == data.id && x.Cryptoflexibleblockid == FlexibleBlockitem.id).Select(x => new ComoditiesSecondCountryDataCountriesDataDto()
+                        FlexibleBlockitem.countriesdatalist = await _Context.CryptoCountriesDatas.Where(x => x.cryptoid == data.id && x.cryptoflexibleblockid == FlexibleBlockitem.id).Select(x => new CryptoCountriesDataDto()
                         {
                             id = x.id,
-                            Cryptoid = x.Cryptoid,
+                            cryptoflexibleblockid = x.cryptoflexibleblockid,
+                            cryptoid = x.cryptoid,
+                            contry = x.contry,
                             centeralbank = x.centeralbank,
                             nickname = x.nickname,
-                            ofaveragedailyturnover = x.ofaveragedailyturnover,
-                            contries = x.contries
-                        }).ToListAsync();
-
-                        FlexibleBlockitem.comoditiesfirstcountrydatacountriesdatalist = await _Context.ComoditiesFirstCountryDataCountriesDatas.Where(x => x.Cryptoid == data.id && x.Cryptoflexibleblockid == FlexibleBlockitem.id).Select(x => new ComoditiesFirstCountryDataCountriesDataDto()
-                        {
-                            id = x.id,
-                            Cryptoid = x.Cryptoid,
-                            centeralbank = x.centeralbank,
-                            nickname = x.nickname,
-                            ofaveragedailyturnover = x.ofaveragedailyturnover,
-                            contries = x.contries
+                            ofaveragedailyturnover = x.ofaveragedailyturnover
                         }).ToListAsync();
                     }
                 }
@@ -615,7 +485,7 @@ namespace NextTradeAPIs.Services
             try
             {
                 Crypto data;
-                IQueryable<Crypto> query = _Context.Comodities;
+                IQueryable<Crypto> query = _Context.Cryptos;
 
                 if (model.id != null)
                     query = query.Where(x => x.id == model.id);
@@ -625,38 +495,35 @@ namespace NextTradeAPIs.Services
 
                 data = await query.FirstOrDefaultAsync();
 
-                _Context.Comodities.Remove(data);
+                _Context.Cryptos.Remove(data);
 
 
-                List<Comodities_FlexibleBlock> _ComoditiyFlexibleBlocks = await _Context.ComoditiyFlexibleBlocks.Where(x => x.Cryptoid == data.id).ToListAsync();
-                _Context.ComoditiyFlexibleBlocks.RemoveRange(_ComoditiyFlexibleBlocks);
+                List<Crypto_FlexibleBlock> _CryptoFlexibleBlocks = await _Context.CryptoFlexibleBlocks.Where(x => x.cryptoid == data.id).ToListAsync();
+                _Context.CryptoFlexibleBlocks.RemoveRange(_CryptoFlexibleBlocks);
 
-                List<ComoditiesCountriesData> _ComoditiesCountriesDatas = await _Context.ComoditiesCountriesDatas.Where(x => x.Cryptoid == data.id).ToListAsync();
-                _Context.ComoditiesCountriesDatas.RemoveRange(_ComoditiesCountriesDatas);
+                List<CryptoCountriesData> _CryptoCountriesDatas = await _Context.CryptoCountriesDatas.Where(x => x.cryptoid == data.id).ToListAsync();
+                _Context.CryptoCountriesDatas.RemoveRange(_CryptoCountriesDatas);
 
-                List<ComoditiesFirstCountryDataCountriesData> _ComoditiesFirstCountryDataCountriesDatas = await _Context.ComoditiesFirstCountryDataCountriesDatas.Where(x => x.Cryptoid == data.id).ToListAsync();
-                _Context.ComoditiesFirstCountryDataCountriesDatas.RemoveRange(_ComoditiesFirstCountryDataCountriesDatas);
+                List<CryptoCountryData> _CryptoFirstCountryDataCountriesDatas = await _Context.CryptoCountryDatas.Where(x => x.cryptoid == data.id).ToListAsync();
+                _Context.CryptoCountryDatas.RemoveRange(_CryptoFirstCountryDataCountriesDatas);
 
-                List<ComoditiesSecondCountryDataCountriesData> _ComoditiesSecondCountryDataCountriesDatas = await _Context.ComoditiesSecondCountryDataCountriesDatas.Where(x => x.Cryptoid == data.id).ToListAsync();
-                _Context.ComoditiesSecondCountryDataCountriesDatas.RemoveRange(_ComoditiesSecondCountryDataCountriesDatas);
+                List<Crypto_FundamentalandNewsSection> _Crypto_fundamentalandtechnicaltabsection_fundamentalnewssections = await _Context.CryptoFundamentalandNewsSections.Where(x => x.cryptoid == data.id).ToListAsync();
+                _Context.CryptoFundamentalandNewsSections.RemoveRange(_Crypto_fundamentalandtechnicaltabsection_fundamentalnewssections);
 
-                List<Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection> _Comodities_fundamentalandtechnicaltabsection_fundamentalnewssections = await _Context.Comodities_fundamentalandtechnicaltabsection_fundamentalnewssections.Where(x => x.Cryptoid == data.id).ToListAsync();
-                _Context.Comodities_fundamentalandtechnicaltabsection_fundamentalnewssections.RemoveRange(_Comodities_fundamentalandtechnicaltabsection_fundamentalnewssections);
+                List<Crypto_NewsMainContent> _Crypto_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontents = await _Context.CryptoNewsMainContents.Where(x => x.cryptoid == data.id).ToListAsync();
+                _Context.CryptoNewsMainContents.RemoveRange(_Crypto_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontents);
 
-                List<Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontent> _Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontents = await _Context.Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontents.Where(x => x.Cryptoid == data.id).ToListAsync();
-                _Context.Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontents.RemoveRange(_Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontents);
+                List<Crypto_TechnicalTab> _Crypto_Fundamentalandtechnicaltabsection_TechnicalTabses = await _Context.CryptoTechnicalTabs.Where(x => x.cryptoid == data.id).ToListAsync();
+                _Context.CryptoTechnicalTabs.RemoveRange(_Crypto_Fundamentalandtechnicaltabsection_TechnicalTabses);
 
-                List<Comodities_Fundamentalandtechnicaltabsection_TechnicalTabs> _Comodities_Fundamentalandtechnicaltabsection_TechnicalTabses = await _Context.Comodities_Fundamentalandtechnicaltabsection_TechnicalTabses.Where(x => x.Cryptoid == data.id).ToListAsync();
-                _Context.Comodities_Fundamentalandtechnicaltabsection_TechnicalTabses.RemoveRange(_Comodities_Fundamentalandtechnicaltabsection_TechnicalTabses);
+                List<Crypto_TechnicalBreakingNews> _Crypto_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewses = await _Context.CryptoTechnicalBreakingNewss.Where(x => x.cryptoid == data.id).ToListAsync();
+                _Context.CryptoTechnicalBreakingNewss.RemoveRange(_Crypto_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewses);
 
-                List<Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNews> _Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewses = await _Context.Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewses.Where(x => x.Cryptoid == data.id).ToListAsync();
-                _Context.Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewses.RemoveRange(_Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewses);
+                List<Crypto_FundamentalandNewsSection_RelatedReSorces_PDFSection> _Crypto_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections = await _Context.CryptoFundamentalandNewsSection_RelatedReSorces_PDFSections.Where(x => x.cryptoid == data.id).ToListAsync();
+                _Context.CryptoFundamentalandNewsSection_RelatedReSorces_PDFSections.RemoveRange(_Crypto_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections);
 
-                List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSection> _Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections = await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections.Where(x => x.Cryptoid == data.id).ToListAsync();
-                _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections.RemoveRange(_Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections);
-
-                List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection> _Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionsawait = await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSections.Where(x => x.Cryptoid == data.id).ToListAsync();
-                _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSections.RemoveRange(_Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionsawait);
+                List<Crypto_FundamentalandNewsSection_RelatedReSorces_URLSection> _Crypto_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionsawait = await _Context.CryptoFundamentalandNewsSection_RelatedReSorces_URLSections.Where(x => x.cryptoid == data.id).ToListAsync();
+                _Context.CryptoFundamentalandNewsSection_RelatedReSorces_URLSections.RemoveRange(_Crypto_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionsawait);
 
 
 
@@ -674,7 +541,7 @@ namespace NextTradeAPIs.Services
         }
 
 
-        public async Task<SystemMessageModel> UpdateCryptoItem(CryptoModel model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        public async Task<SystemMessageModel> UpdateCryptoItem(CryptoDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
             SystemMessageModel message;
             StackTrace stackTrace = new StackTrace();
@@ -686,11 +553,11 @@ namespace NextTradeAPIs.Services
                 if (model.id == null)
                     return new SystemMessageModel() { MessageCode = -102, MessageDescription = "Id is Wrong" };
 
-                Crypto data = await _Context.Comodities.FindAsync(model.id);
+                Crypto data = await _Context.Cryptos.FindAsync(model.id);
                 if (data == null)
                     return new SystemMessageModel() { MessageCode = -103, MessageDescription = "data not find" };
 
-                if (data.categoryid != model.categoryid && await _Context.Comodities.AnyAsync(x => x.categoryid == model.categoryid))
+                if (data.categoryid != model.categoryid && await _Context.Cryptos.AnyAsync(x => x.categoryid == model.categoryid))
                     return new SystemMessageModel() { MessageCode = -104, MessageDescription = "this category is exist" };
 
                 data.categoryid = (long)model.categoryid;
@@ -702,182 +569,20 @@ namespace NextTradeAPIs.Services
                 data.authorname = model.authorname;
                 data.changestatusdate = DateTime.Now;
                 data.coursestatusid = model.coursestatusid;
-                data.fundamentalandtechnicaltabsection_instrumentname = model.fundamentalandtechnicaltabsection.instrumentname;
-                data.fundamentalandtechnicaltabsection_fundamentalheading = model.fundamentalandtechnicaltabsection.fundamentalheading;
-                data.fundamentalandtechnicaltabsection_technicalheading = model.fundamentalandtechnicaltabsection.technicalheading;
-                data.fundamentalandtechnicaltabsection_marketsentimentstitle = model.fundamentalandtechnicaltabsection.marketsentimentstitle;
-                data.fundamentalandtechnicaltabsection_marketsentimentsscript = model.fundamentalandtechnicaltabsection.marketsentimentsscript;
-                data.fundamentalandtechnicaltabsection_marketsessiontitle = model.fundamentalandtechnicaltabsection.marketsessiontitle;
-                data.fundamentalandtechnicaltabsection_marketsessionscript = model.fundamentalandtechnicaltabsection.marketsessionscript;
-                data.fundamentalandtechnicaltabsection_relatedresorces = model.fundamentalandtechnicaltabsection.relatedresorces;
-                data.fundamentalandtechnicaltabsection_privatenotes = model.fundamentalandtechnicaltabsection.privatenotes;
+                data.cryptofundamentalandtechnicaltabsection_instrumentname = model.fundamentalandtechnicaltabsection.instrumentname;
+                data.cryptofundamentalandtechnicaltabsection_fundamentalheading = model.fundamentalandtechnicaltabsection.fundamentalheading;
+                data.cryptofundamentalandtechnicaltabsection_technicalheading = model.fundamentalandtechnicaltabsection.technicalheading;
+                data.cryptofundamentalandtechnicaltabsection_marketsentimentstitle = model.fundamentalandtechnicaltabsection.marketsentimentstitle;
+                data.cryptofundamentalandtechnicaltabsection_marketsentimentsscript = model.fundamentalandtechnicaltabsection.marketsentimentsscript;
+                data.cryptofundamentalandtechnicaltabsection_marketsessiontitle = model.fundamentalandtechnicaltabsection.marketsessiontitle;
+                data.cryptofundamentalandtechnicaltabsection_marketsessionscript = model.fundamentalandtechnicaltabsection.marketsessionscript;
+                data.cryptofundamentalandtechnicaltabsection_relatedresorces = model.fundamentalandtechnicaltabsection.relatedresorces;
+                data.cryptofundamentalandtechnicaltabsection_privatenotes = model.fundamentalandtechnicaltabsection.privatenotes;
+                data.tags = model.tags;
+
+                _Context.Cryptos.Update(data);
 
 
-
-                _Context.Comodities.Update(data);
-
-
-
-                List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSection> PDFSectionlist = new List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSection>();
-                List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection> UrlSectionlist = new List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection>();
-                if (model.fundamentalandtechnicaltabsection.comoditiespdfsectionlist != null && model.fundamentalandtechnicaltabsection.comoditiespdfsectionlist.Count > 0)
-                {
-                     PDFSectionlist = await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections.Where(x => x.Cryptoid == data.id).ToListAsync();
-                    _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections.RemoveRange(PDFSectionlist);
-
-                    foreach (Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSectionDto pdf in model.fundamentalandtechnicaltabsection.comoditiespdfsectionlist)
-                    {
-                        PDFSectionlist.Add(new Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSection()
-                        {
-                            id = Guid.NewGuid(),
-                            Cryptoid = data.id,
-                            author = pdf.author,
-                            pdfshortcodeid = pdf.pdfshortcodeid,
-                            pdftitle = pdf.pdftitle,
-                            shortdescription = pdf.shortdescription
-                        });
-                    }
-                    if (PDFSectionlist.Count > 0)
-                        await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections.AddRangeAsync(PDFSectionlist);
-                }
-                if (model.fundamentalandtechnicaltabsection.comoditiesurlsectionlist != null && model.fundamentalandtechnicaltabsection.comoditiesurlsectionlist.Count > 0)
-                {
-                    List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection> _Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionsawait = await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSections.Where(x => x.Cryptoid == data.id).ToListAsync();
-                    _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSections.RemoveRange(_Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionsawait);
-
-                    foreach (Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionDto pdf in model.fundamentalandtechnicaltabsection.comoditiesurlsectionlist)
-                    {
-                        UrlSectionlist.Add(new Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection()
-                        {
-                            id = Guid.NewGuid(),
-                            Cryptoid = data.id,
-                            url = pdf.url,
-                            urltitle = pdf.urltitle
-                        });
-                    }
-                    if (UrlSectionlist.Count > 0)
-                        await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSections.AddRangeAsync(UrlSectionlist);
-                }
-             
-                List<Comodities_FlexibleBlock> flexibleBlocklist = new List<Comodities_FlexibleBlock>();
-                List<ComoditiesCountriesData> countriesDatalist = new List<ComoditiesCountriesData>();
-                List<ComoditiesFirstCountryDataCountriesData> firstcountriesDatalist = new List<ComoditiesFirstCountryDataCountriesData>();
-                List<ComoditiesSecondCountryDataCountriesData> SecondcountriesDatalist = new List<ComoditiesSecondCountryDataCountriesData>();
-
-                if (model.comodities != null)
-                {
-                    List<Comodities_FlexibleBlock> _ComoditiyFlexibleBlocks = await _Context.ComoditiyFlexibleBlocks.Where(x => x.Cryptoid == data.id).ToListAsync();
-                    _Context.ComoditiyFlexibleBlocks.RemoveRange(_ComoditiyFlexibleBlocks);
-
-
-                    foreach (Comodities_FlexibleBlockDto flex in model.comodities)
-                    {
-                        Comodities_FlexibleBlock FlexibleBlock = new Comodities_FlexibleBlock();
-                        FlexibleBlock.id = Guid.NewGuid();
-                        FlexibleBlock.bottomdescription = flex.bottomdescription;
-                        FlexibleBlock.bottomdescriptionfilecontenttype = flex.bottomdescriptionfilecontenttype;
-                        FlexibleBlock.bottomdescriptionfilename = flex.bottomdescriptionfilename;
-                        FlexibleBlock.bottomdescriptionfilepath = flex.bottomdescriptionfilepath;
-                        FlexibleBlock.bottomdescriptionfileurl = flex.bottomdescriptionfileurl;
-                        FlexibleBlock.chartdescription = flex.chartdescription;
-                        FlexibleBlock.chartdescriptionfilecontenttype = flex.chartdescriptionfilecontenttype;
-                        FlexibleBlock.chartdescriptionfilename = flex.chartdescriptionfilename;
-                        FlexibleBlock.chartdescriptionfilepath = flex.chartdescriptionfilepath;
-                        FlexibleBlock.chartdescriptionfileurl = flex.chartdescriptionfileurl;
-                        FlexibleBlock.Cryptoid = data.id;
-                        FlexibleBlock.firstcontryheading = flex.firstcontryheading;
-                        FlexibleBlock.firstcontrydescriptionfilename = flex.firstcontrydescriptionfilename;
-                        FlexibleBlock.firstcontrydescriptionfilecontentype = flex.firstcontrydescriptionfilecontentype;
-                        FlexibleBlock.firstcontrydescription = flex.firstcontrydescription;
-                        FlexibleBlock.firstcontrydescriptionfilepath = flex.firstcontrydescriptionfilepath;
-                        FlexibleBlock.firstcontrydescriptionfileurl = flex.firstcontrydescriptionfileurl;
-                        FlexibleBlock.maindescrition = flex.maindescrition;
-                        FlexibleBlock.maindescritionfilecontenttype = flex.maindescritionfilecontenttype;
-                        FlexibleBlock.maindescritionfilename = flex.maindescritionfilename;
-                        FlexibleBlock.maindescritionfilepath = flex.maindescritionfilepath;
-                        FlexibleBlock.maindescritionfileurl = flex.maindescritionfileurl;
-                        FlexibleBlock.oneyeardescription = flex.oneyeardescription;
-                        FlexibleBlock.oneyeardescriptionfilecontenttype = flex.oneyeardescriptionfilecontenttype;
-                        FlexibleBlock.oneyeardescriptionfilename = flex.oneyeardescriptionfilename;
-                        FlexibleBlock.oneyeardescriptionfilepath = flex.oneyeardescriptionfilepath;
-                        FlexibleBlock.oneyeardescriptionfileurl = flex.oneyeardescriptionfileurl;
-                        FlexibleBlock.secoundcontrydescription = flex.secoundcontrydescription;
-                        FlexibleBlock.maintitle = flex.maintitle;
-                        FlexibleBlock.secoundcontrydescriptionfilecontenttype = flex.secoundcontrydescriptionfilecontenttype;
-                        FlexibleBlock.secoundcontrydescriptionfilename = flex.secoundcontrydescriptionfilename;
-                        FlexibleBlock.secoundcontrydescriptionfilepath = flex.secoundcontrydescriptionfilepath;
-                        FlexibleBlock.secoundcontrydescriptionfileurl = flex.secoundcontrydescriptionfileurl;
-                        FlexibleBlock.singlepagechartimage = flex.singlepagechartimage;
-
-
-                        if (flex.comoditiescountriesdatalist != null && flex.comoditiescountriesdatalist.Count > 0)
-                        {
-                            List<ComoditiesCountriesData> _ComoditiesCountriesDatas = await _Context.ComoditiesCountriesDatas.Where(x => x.Cryptoid == data.id).ToListAsync();
-                            _Context.ComoditiesCountriesDatas.RemoveRange(_ComoditiesCountriesDatas);
-
-                            foreach (ComoditiesCountriesDataDto contrydata in flex.comoditiescountriesdatalist)
-                            {
-                                countriesDatalist.Add(new ComoditiesCountriesData()
-                                {
-                                    id = Guid.NewGuid(),
-                                    Cryptoid = data.id,
-                                    Cryptoflexibleblockid = FlexibleBlock.id,
-                                    contries = contrydata.contries,
-                                    highslows = contrydata.highslows,
-                                    pairsthatcorrelate = contrydata.pairsthatcorrelate,
-                                    pairtype = contrydata.pairtype,
-                                    dailyaveragemovementinpips = contrydata.dailyaveragemovementinpips
-                                });
-                            }
-                            await _Context.ComoditiesCountriesDatas.AddRangeAsync(countriesDatalist);
-                        }
-                        if (flex.comoditiesfirstcountrydatacountriesdatalist != null && flex.comoditiesfirstcountrydatacountriesdatalist.Count > 0)
-                        {
-                            List<ComoditiesFirstCountryDataCountriesData> _ComoditiesFirstCountryDataCountriesDatas = await _Context.ComoditiesFirstCountryDataCountriesDatas.Where(x => x.Cryptoid == data.id).ToListAsync();
-                            _Context.ComoditiesFirstCountryDataCountriesDatas.RemoveRange(_ComoditiesFirstCountryDataCountriesDatas);
-
-                            foreach (ComoditiesFirstCountryDataCountriesDataDto contrydata in flex.comoditiesfirstcountrydatacountriesdatalist)
-                            {
-                                firstcountriesDatalist.Add(new ComoditiesFirstCountryDataCountriesData()
-                                {
-                                    id = Guid.NewGuid(),
-                                    Cryptoid = data.id,
-                                    Cryptoflexibleblockid = FlexibleBlock.id,
-                                    centeralbank = contrydata.centeralbank,
-                                    contries = contrydata.contries,
-                                    nickname = contrydata.nickname,
-                                    ofaveragedailyturnover = contrydata.ofaveragedailyturnover
-                                });
-                            }
-                            await _Context.ComoditiesFirstCountryDataCountriesDatas.AddRangeAsync(firstcountriesDatalist);
-                        }
-                        if (flex.comoditiessecondcountrydatacountriesdatalist != null && flex.comoditiessecondcountrydatacountriesdatalist.Count > 0)
-                        {
-                            List<ComoditiesSecondCountryDataCountriesData> _ComoditiesSecondCountryDataCountriesDatas = await _Context.ComoditiesSecondCountryDataCountriesDatas.Where(x => x.Cryptoid == data.id).ToListAsync();
-                            _Context.ComoditiesSecondCountryDataCountriesDatas.RemoveRange(_ComoditiesSecondCountryDataCountriesDatas);
-
-                            foreach (ComoditiesSecondCountryDataCountriesDataDto contrydata in flex.comoditiessecondcountrydatacountriesdatalist)
-                            {
-                                SecondcountriesDatalist.Add(new ComoditiesSecondCountryDataCountriesData()
-                                {
-                                    id = Guid.NewGuid(),
-                                    Cryptoid = data.id,
-                                    Cryptoflexibleblockid = FlexibleBlock.id,
-                                    centeralbank = contrydata.centeralbank,
-                                    contries = contrydata.contries,
-                                    nickname = contrydata.nickname,
-                                    ofaveragedailyturnover = contrydata.ofaveragedailyturnover
-                                });
-                            }
-                            await _Context.ComoditiesSecondCountryDataCountriesDatas.AddRangeAsync(SecondcountriesDatalist);
-                            await _Context.SaveChangesAsync();
-                        }
-                        //public List<>?  { get; set; }
-                        flexibleBlocklist.Add(FlexibleBlock);
-                    }
-
-                    await _Context.ComoditiyFlexibleBlocks.AddRangeAsync(flexibleBlocklist);
-                }
 
 
                 await _Context.SaveChangesAsync();
@@ -895,30 +600,3 @@ namespace NextTradeAPIs.Services
 
     }
 }
-/*oneyeardescription	ntext	Checked
-oneyeardescriptionfilename	nvarchar(500)	Checked
-oneyeardescriptionfilecontenttype	nvarchar(50)	Checked
-oneyeardescriptionfilepath	nvarchar(2000)	Checked
-chartdescription	ntext	Checked
-chartdescriptionfilename	nvarchar(500)	Checked
-chartdescriptionfilepath	nvarchar(1800)	Checked
-chartdescriptionfilecontenttype	nvarchar(50)	Checked
-firstcountryheading	nvarchar(3000)	Checked
-firstcountrydescription	ntext	Checked
-firstcountrydescriptionfilename	nvarchar(500)	Checked
-firstcountrydescriptionfilepath	nvarchar(1800)	Checked
-firstcountrydescriptionfilecontenttype	nvarchar(50)	Checked
-secondcountryheading	nvarchar(1500)	Checked
-secondcountrydescription	ntext	Checked
-secondcountrydescriptionfilename	nvarchar(500)	Checked
-secondcountrydescriptionfilepath	nvarchar(1800)	Checked
-secondcountrydescriptionfilecontenttype	nvarchar(50)	Checked
-bottomdescription	ntext	Checked
-bottomdescriptionfilename	nvarchar(500)	Checked
-bottomdescriptionfilepath	nvarchar(1800)	Checked
-bottomdescriptionfilecontenttype	nvarchar(50)	Checked
-maindescription	ntext	Checked
-maindescriptionfilecontenttype	nvarchar(50)	Checked
-maindescriptionfilename	nvarchar(500)	Checked
-maindescriptionfilepath	nvarchar(1800)	Checked
-singlepagechartimage	ntext	Checked*/

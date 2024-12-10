@@ -998,7 +998,7 @@ namespace NextTradeAPIs.Controllers
 
                     message = await _userServices.SetUserActiveOrDisactive(model, userlogin, processId, clientip, hosturl);
                 else
-                    message = new SystemMessageModel() { MessageCode=403,MessageDescription="you have not access"};
+                    message = new SystemMessageModel() { MessageCode = 403, MessageDescription = "you have not access" };
 
                 if (message.MessageCode < 0)
                     return BadRequest(message);
@@ -1016,7 +1016,7 @@ namespace NextTradeAPIs.Controllers
         }
 
 
-        
+
         [HttpPost]
         [Route("/api/users/activedisactiveuser")]
         public async Task<IActionResult> ChangeUserAccountAtivationStatus(UserSearchModel model)
@@ -1083,7 +1083,7 @@ namespace NextTradeAPIs.Controllers
 
                 User user = message.MessageData as User;
 
-                message = await _userServices.ChangeUserAccountAtivationStatus(user.Username,user.IsActive, processId);
+                message = await _userServices.ChangeUserAccountAtivationStatus(user.Username, user.IsActive, processId);
                 if (message.MessageCode > 0)
                 {
                     //User user = await _userServices.GetUserById(usermodel.userid, processId,clientip,hosturl);
@@ -1150,11 +1150,13 @@ namespace NextTradeAPIs.Controllers
                 _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
 
                 message = await _authorizationService.CheckToken(_bearer_token, processId);
+                UserModel userlogin = null;
+                if (message.MessageCode > 0)
+                {
 
-                if (message.MessageCode < 0)
-                    return Unauthorized(message);
 
-                UserModel userlogin = message.MessageData as UserModel;
+                    userlogin = message.MessageData as UserModel;
+                }
                 message = await _userServices.GetUserListByReferralCode(model, userlogin, processId, clientip, hosturl);
 
                 if (message.MessageCode < 0)

@@ -543,9 +543,17 @@ namespace NextTradeAPIs.Services
 
                 query = query.Where(x => x.parentId == null);
                 query = query.Where(x => x.isneedpaid == false);
+
                 if (forummessageIds != null && forummessageIds.Count > 0)
                     query = query.Where(x => forummessageIds.Contains(x.Id));
 
+                /// برای تست و توسعه فعلا کامنت می کنم 
+                ///  yasa
+                if (model.categoryid != null)
+                {
+                    //List<Guid> Ids = await _Context.ForumMessageCategorys.Where(x => x.categoryid == model.categoryid).Select(x => x.forummessageId).ToListAsync();
+                    //query = query.Where(x=> Ids.Contains(x.Id));
+                }
 
                 int pageIndex = (model.pageindex == null || model.pageindex == 0) ? 1 : (int)model.pageindex;
                 int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 50 : (int)model.rowcount;

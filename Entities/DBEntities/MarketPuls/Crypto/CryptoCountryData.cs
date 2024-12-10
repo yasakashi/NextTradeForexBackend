@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Entities.DBEntities
 {
-    [Table("tblMarketPuls_CryptoCountryDatas")]
+    [Table("tblMarketPuls_Crypto_CountryDatas")]
     public class CryptoCountryData
     {
         [Key]

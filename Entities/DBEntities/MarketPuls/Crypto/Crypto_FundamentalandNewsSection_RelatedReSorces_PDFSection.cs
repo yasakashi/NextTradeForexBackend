@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Entities.DBEntities
 {
-    [Table("tblMarketPuls_rypto_FundamentalandNewsSection_RelatedReSorces_PDFSections")]
+    [Table("tblMarketPuls_Crypto_FundamentalandNewsSection_RelatedReSorces_PDFSections")]
     public  class Crypto_FundamentalandNewsSection_RelatedReSorces_PDFSection
     {
         public Guid id { get; set; }

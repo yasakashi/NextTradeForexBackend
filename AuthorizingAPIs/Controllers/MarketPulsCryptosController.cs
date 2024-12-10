@@ -227,12 +227,13 @@ namespace NextTradeAPIs.Controllers
 
                 message = await _authorizationService.CheckToken(_bearer_token, processId);
 
-                if (message.MessageCode < 0)
-                    return Unauthorized(message);
+                UserModel userlogin = null;
+                if (message.MessageCode > 0)
+                { userlogin = message.MessageData as UserModel; }
 
-                UserModel userlogin = message.MessageData as UserModel;
 
-                message = await _service.GetcryptoItems(model, userlogin, processId, clientip, hosturl);
+
+                message = await _service.GetCryptoItems(model, userlogin, processId, clientip, hosturl);
 
                 if (message.MessageCode < 0)
                     return BadRequest(message);
@@ -298,7 +299,7 @@ namespace NextTradeAPIs.Controllers
 
                 UserModel userlogin = message.MessageData as UserModel;
 
-                message = await _service.DeletecryptoItem(model, userlogin, processId, clientip, hosturl);
+                message = await _service.DeleteCryptoItem(model, userlogin, processId, clientip, hosturl);
 
                 if (message.MessageCode < 0)
                     return BadRequest(message);
@@ -364,8 +365,8 @@ namespace NextTradeAPIs.Controllers
 
                 //UserModel userlogin = message.MessageData as UserModel;
 
-                model.categoryid = 1085;
-                message = await _baseInformationService.GetCategory4MarketPulsCrypto(model, null, processId, clientip, hosturl, true);
+                model.categoryid = 1560;
+                message = await _baseInformationService.GetTopCategory4MarketPulsCrypto(model, null, processId, clientip, hosturl, true);
 
                 if (message.MessageCode < 0)
                     return BadRequest(message);
@@ -515,7 +516,7 @@ namespace NextTradeAPIs.Controllers
             }
         }
 
-        
+
         [HttpPost]
         [Route("/api/marketpuls/getcryptoforummessages")]
         public async Task<IActionResult> GetForumMessages(ForexFilterDto model)
@@ -580,7 +581,7 @@ namespace NextTradeAPIs.Controllers
                 //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
             }
         }
-        
+
 
     }
 }
