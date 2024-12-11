@@ -25,7 +25,8 @@ namespace Entities.Dtos
         public string? featuredimagecontenttype { get; set; }
 
         public List<long>? categoriesIds { get; set; }
-        public List<CategoryBaseDto> categories { get; set; }
+        public List<CategoryBaseDto>? categories { get; set; }
+        public List<VideoSubtitleDto>? videosubtitles { get; set; }
 
         public IFormFile? videofile { get; set; }
         public IFormFile? featuredimage { get; set; }
