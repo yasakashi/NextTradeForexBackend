@@ -11,7 +11,7 @@ namespace Entities.Dtos
     {
         public Guid? id { get; set; }
         public Guid? comodityid { get; set; }
-        public Guid? comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_id { get; set; }
+        public Guid? comodities_fundamentalandtechnicaltabsection_fundamentalnewssectionid { get; set; }
 
         public string? title { get; set; }
         public string? description { get; set; }

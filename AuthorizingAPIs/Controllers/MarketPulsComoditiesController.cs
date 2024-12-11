@@ -227,11 +227,11 @@ namespace NextTradeAPIs.Controllers
 
                 message = await _authorizationService.CheckToken(_bearer_token, processId);
 
-                if (message.MessageCode < 0)
-                    return Unauthorized(message);
-
-                UserModel userlogin = message.MessageData as UserModel;
-
+                UserModel userlogin = null;
+                if (message.MessageCode > 0)
+                {
+                    userlogin = message.MessageData as UserModel;
+                }
                 message = await _service.GetComodityItems(model, userlogin, processId, clientip, hosturl);
 
                 if (message.MessageCode < 0)

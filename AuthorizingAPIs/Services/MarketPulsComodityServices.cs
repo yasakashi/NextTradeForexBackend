@@ -120,7 +120,7 @@ namespace NextTradeAPIs.Services
                                 {
                                     id = Guid.NewGuid(),
                                     comodityid = data.id,
-                                    comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_id = news.id,
+                                    comodities_fundamentalandtechnicaltabsection_fundamentalnewssectionid = news.id,
                                     description = item.description,
                                     title = item.title,
                                     link = item.link,
@@ -273,7 +273,6 @@ namespace NextTradeAPIs.Services
                             });
                         }
                         await _Context.ComoditiesSecondCountryDataCountriesDatas.AddRangeAsync(SecondcountriesDatalist);
-                        await _Context.SaveChangesAsync();
                     }
                     //public List<>?  { get; set; }
                     flexibleBlocklist.Add(FlexibleBlock);
@@ -481,8 +480,6 @@ namespace NextTradeAPIs.Services
                                 */
                 await _Context.SaveChangesAsync();
 
-                model.id = data.id;
-
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
             }
             catch (Exception ex)
@@ -632,11 +629,11 @@ namespace NextTradeAPIs.Services
 
                     foreach (Comodities_fundamentalandtechnicaltabsection_fundamentalnewssectionDto news in data.fundamentalandtechnicaltabsection.fundamentalnewssections)
                     {
-                        news.newsmaincontentlist = await _Context.Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontents.Where(x => x.comodityid == data.id && x.comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_id == news.id).Select(x => new Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontentDto()
+                        news.newsmaincontentlist = await _Context.Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontents.Where(x => x.comodityid == data.id && x.comodities_fundamentalandtechnicaltabsection_fundamentalnewssectionid == news.id).Select(x => new Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontentDto()
                         {
                             id = x.id,
                             comodityid = x.comodityid,
-                            comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_id = x.comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_id,
+                            comodities_fundamentalandtechnicaltabsection_fundamentalnewssectionid = x.comodities_fundamentalandtechnicaltabsection_fundamentalnewssectionid,
                             description = x.description,
                             link = x.link,
                             title = x.title,
@@ -916,7 +913,7 @@ namespace NextTradeAPIs.Services
                                 {
                                     id = Guid.NewGuid(),
                                     comodityid = data.id,
-                                    comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_id = news.id,
+                                    comodities_fundamentalandtechnicaltabsection_fundamentalnewssectionid = news.id,
                                     description = item.description,
                                     title = item.title,
                                     link = item.link,

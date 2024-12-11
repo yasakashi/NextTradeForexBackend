@@ -14,7 +14,7 @@ namespace Entities.DBEntities
         [Key]
         public Guid id { get; set; }
         public Guid comodityid { get; set; }
-        public Guid comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_id { get; set; }
+        public Guid comodities_fundamentalandtechnicaltabsection_fundamentalnewssectionid { get; set; }
         public virtual Comodity? comodity { get; set; }
         public virtual Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection? comodities_fundamentalandtechnicaltabsection_fundamentalnewssection { get; set; }
 
