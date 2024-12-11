@@ -131,7 +131,7 @@ public class UserRegisterModel
     /// </summary>
     [Display(Name = "عکس یا لگوی کاربر")]
     public byte[]? UserPic { get; set; }
-    public int?  cityId { get; set; }
+    public int? cityId { get; set; }
     public int? countryId { get; set; }
     public int? stateId { get; set; }
     public string? fathername { get; set; }
@@ -150,4 +150,17 @@ public class UserRegisterModel
     public List<int>? targettrainerIds { get; set; }
     public int? interestforexId { get; set; }
     public bool? hobbyoftradingfulltime { get; set; }
+}
+
+public class UserReferralModel
+{
+    public long? id { get; set; }
+    public string? username { get; set; }
+    public int? EmployeeLevel { get; set; }
+    public string? fname { get; set; }
+    public string? lname { get; set; }
+    public bool? ispaid { get; set; }
+    public bool? IsActive { get; set; }
+    public long? UserTypeId { get; set; }
+    public long? ParentUserId { get; set; }
 }

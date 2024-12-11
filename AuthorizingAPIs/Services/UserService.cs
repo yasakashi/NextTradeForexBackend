@@ -1197,7 +1197,7 @@ namespace NextTradeAPIs.Services
             SystemMessageModel message;
             StackTrace stackTrace = new StackTrace();
             string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
-            List<UserModel> datas = null;
+            List<UserReferralModel> datas = null;
             long SerrvieCode = 120000;
 
             string username = string.Empty;
@@ -1217,21 +1217,22 @@ namespace NextTradeAPIs.Services
                     filter.username = userlogin.username;
                 }
 
-                string querystrnig = @"EXECUTE dbo.spGetUserReferalList @Username='?'".Replace("?", filter.username);
+                string querystrnig = $"EXECUTE dbo.spGetUserReferalList @Username='?'".Replace("?", filter.username);
                 var user = new SqlParameter("username", filter.username);
-
-                datas = await _Context.Users.FromSql($"EXECUTE dbo.spGetUserReferalList @Username={user}").Select(x => new UserModel()
-                {
-                    userid = x.UserId,
-                    username = x.Username,
-                    EmployeeLevel = x.EmployeeLevel,
-                    fname = x.Fname,
-                    lname = x.Lname,
-                    ispaid = x.ispaied,
-                    IsActive = x.IsActive,
-                    UserTypeId = x.UserTypeId,
-                    ParentUserId = x.ParentUserId
-                }).ToListAsync();
+                datas = await _Context.Database.SqlQueryRaw<UserReferralModel>(querystrnig).ToListAsync();
+                //datas = await _Context.Users.FromSql($"EXECUTE dbo.spGetUserReferalList @Username={user}").Select(x => new UserModel()
+                //datas = await _Context.Users.FromSqlRaw(querystrnig).IgnoreQueryFilters().Select(x => new UserReferralModel()
+                //{
+                //    id = x.UserId,
+                //    username = x.Username,
+                //    EmployeeLevel = x.EmployeeLevel,
+                //    fname = x.Fname,
+                //    lname = x.Lname,
+                //    ispaid = x.ispaied,
+                //    IsActive = x.IsActive,
+                //    UserTypeId = x.UserTypeId,
+                //    ParentUserId = x.ParentUserId
+                //}).ToListAsync();
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
             }
