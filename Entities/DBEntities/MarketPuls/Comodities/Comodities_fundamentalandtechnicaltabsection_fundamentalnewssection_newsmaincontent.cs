@@ -18,12 +18,12 @@ namespace Entities.DBEntities
         public virtual Comodity? comodity { get; set; }
         public virtual Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection? comodities_fundamentalandtechnicaltabsection_fundamentalnewssection { get; set; }
 
-        public string? fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontent_title { get; set; }
-        public string? fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontent_description { get; set; }
-        public string? fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontent_link { get; set; }
-        public string? fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontent_filename { get; set; }
-        public string? fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontent_filepath { get; set; }
-        public string? fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontent_filecontenttype { get; set; }
+        public string? title { get; set; }
+        public string? description { get; set; }
+        public string? link { get; set; }
+        public string? filename { get; set; }
+        public string? filepath { get; set; }
+        public string? filecontenttype { get; set; }
 
     }
 }

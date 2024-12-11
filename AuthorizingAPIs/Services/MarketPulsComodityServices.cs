@@ -67,9 +67,9 @@ namespace NextTradeAPIs.Services
 
                 List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSection> PDFSectionlist = new List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSection>();
                 List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection> UrlSectionlist = new List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection>();
-                if (model.fundamentalandtechnicaltabsection.comoditiespdfsectionlist != null && model.fundamentalandtechnicaltabsection.comoditiespdfsectionlist.Count > 0)
+                if (model.fundamentalandtechnicaltabsection.pdfsectionlist != null && model.fundamentalandtechnicaltabsection.pdfsectionlist.Count > 0)
                 {
-                    foreach (Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSectionDto pdf in model.fundamentalandtechnicaltabsection.comoditiespdfsectionlist)
+                    foreach (Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSectionDto pdf in model.fundamentalandtechnicaltabsection.pdfsectionlist)
                     {
                         PDFSectionlist.Add(new Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSection()
                         {
@@ -84,9 +84,9 @@ namespace NextTradeAPIs.Services
                     if (PDFSectionlist.Count > 0)
                         await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections.AddRangeAsync(PDFSectionlist);
                 }
-                if (model.fundamentalandtechnicaltabsection.comoditiesurlsectionlist != null && model.fundamentalandtechnicaltabsection.comoditiesurlsectionlist.Count > 0)
+                if (model.fundamentalandtechnicaltabsection.urlsectionlist != null && model.fundamentalandtechnicaltabsection.urlsectionlist.Count > 0)
                 {
-                    foreach (Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionDto pdf in model.fundamentalandtechnicaltabsection.comoditiesurlsectionlist)
+                    foreach (Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionDto pdf in model.fundamentalandtechnicaltabsection.urlsectionlist)
                     {
                         UrlSectionlist.Add(new Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection()
                         {
@@ -99,6 +99,85 @@ namespace NextTradeAPIs.Services
                     if (UrlSectionlist.Count > 0)
                         await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSections.AddRangeAsync(UrlSectionlist);
                 }
+                if (model.fundamentalandtechnicaltabsection.fundamentalnewssections != null && model.fundamentalandtechnicaltabsection.fundamentalnewssections.Count > 0)
+                {
+                    List<Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection> newssectionlist = new List<Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection>();
+                    List<Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontent> newsmaincontentlist = new List<Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontent>();
+
+                    foreach (Comodities_fundamentalandtechnicaltabsection_fundamentalnewssectionDto nitem in model.fundamentalandtechnicaltabsection.fundamentalnewssections)
+                    {
+                        Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection news = new Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection()
+                        {
+                            id = Guid.NewGuid(),
+                            comodityid = data.id,
+                            maintitle = nitem.maintitle,
+                            script = nitem.script
+                        };
+                        if (nitem.newsmaincontentlist != null && nitem.newsmaincontentlist.Count > 0)
+                        {
+                            foreach (Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontentDto item in nitem.newsmaincontentlist)
+                                newsmaincontentlist.Add(new Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontent()
+                                {
+                                    id = Guid.NewGuid(),
+                                    comodityid = data.id,
+                                    comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_id = news.id,
+                                    description = item.description,
+                                    title = item.title,
+                                    link = item.link,
+                                    filecontenttype = item.filecontenttype,
+                                    filename = item.filename,
+                                    filepath = item.filepath
+                                });
+                        }
+                        newssectionlist.Add(news);
+
+                    }
+                    if (newssectionlist.Count > 0)
+                        await _Context.Comodities_fundamentalandtechnicaltabsection_fundamentalnewssections.AddRangeAsync(newssectionlist);
+                    if (newsmaincontentlist.Count > 0)
+                        await _Context.Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontents.AddRangeAsync(newsmaincontentlist);
+                }
+                if (model.fundamentalandtechnicaltabsection.technicaltabs != null && model.fundamentalandtechnicaltabsection.technicaltabs.Count > 0)
+                {
+                    List<Comodities_Fundamentalandtechnicaltabsection_TechnicalTabs> technicaltablist = new List<Comodities_Fundamentalandtechnicaltabsection_TechnicalTabs>();
+                    List<Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNews> technicalbreakingnewslist = new List<Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNews>();
+                    foreach (Comodities_Fundamentalandtechnicaltabsection_TechnicalTabsDto tab in model.fundamentalandtechnicaltabsection.technicaltabs)
+                    {
+                        Comodities_Fundamentalandtechnicaltabsection_TechnicalTabs newtab = new Comodities_Fundamentalandtechnicaltabsection_TechnicalTabs()
+                        {
+                            id =Guid.NewGuid(),
+                            comodityid = data.id,
+                            script =tab.script,
+                            tabtitle =tab.tabtitle
+                        };
+
+                        if (tab.technicalbreakingnewslist != null && tab.technicalbreakingnewslist.Count > 0)
+                        {
+                            foreach (Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewsDto breakingnews in  tab.technicalbreakingnewslist)
+                            {
+                                technicalbreakingnewslist.Add(new Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNews() {
+                                    id = Guid.NewGuid(),
+                                    comodityid = data.id,
+                                    comoditiesfundamentalandtechnicaltabsectiontechnicaltabsid = newtab.id,
+                                    description = breakingnews.description,
+                                    filecontenttype = breakingnews.filecontenttype,
+                                    filename = breakingnews.filename,
+                                    filepath = breakingnews.filepath,
+                                    link = breakingnews.link,
+                                    title = breakingnews.title
+                                });
+                            }
+                        }
+                        technicaltablist.Add(newtab);
+                    }
+
+                    if (technicaltablist.Count > 0)
+                        await _Context.Comodities_Fundamentalandtechnicaltabsection_TechnicalTabses.AddRangeAsync(technicaltablist);
+                    if (technicalbreakingnewslist.Count > 0)
+                        await _Context.Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewses.AddRangeAsync(technicalbreakingnewslist);
+                }
+
+
                 List<Comodities_FlexibleBlock> flexibleBlocklist = new List<Comodities_FlexibleBlock>();
                 List<ComoditiesCountriesData> countriesDatalist = new List<ComoditiesCountriesData>();
                 List<ComoditiesFirstCountryDataCountriesData> firstcountriesDatalist = new List<ComoditiesFirstCountryDataCountriesData>();
@@ -501,7 +580,7 @@ namespace NextTradeAPIs.Services
 
                 foreach (ComodityModel data in datas)
                 {
-                    data.fundamentalandtechnicaltabsection.comoditiesurlsectionlist = await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSections.Where(x => x.comodityid == data.id).Select(x => new Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionDto()
+                    data.fundamentalandtechnicaltabsection.urlsectionlist = await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSections.Where(x => x.comodityid == data.id).Select(x => new Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionDto()
                     {
                         id = x.id,
                         comodityid = x.comodityid,
@@ -509,7 +588,7 @@ namespace NextTradeAPIs.Services
                         urltitle = x.urltitle
                     }).ToListAsync();
 
-                    data.fundamentalandtechnicaltabsection.comoditiespdfsectionlist = await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections.Where(x => x.comodityid == data.id).Select(x => new Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSectionDto()
+                    data.fundamentalandtechnicaltabsection.pdfsectionlist = await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections.Where(x => x.comodityid == data.id).Select(x => new Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSectionDto()
                     {
                         id = x.id,
                         comodityid = x.comodityid,
@@ -518,6 +597,56 @@ namespace NextTradeAPIs.Services
                         pdftitle = x.pdftitle,
                         shortdescription = x.shortdescription
                     }).ToListAsync();
+
+                    data.fundamentalandtechnicaltabsection.technicaltabs = await _Context.Comodities_Fundamentalandtechnicaltabsection_TechnicalTabses.Where(x => x.comodityid == data.id).Select(x => new Comodities_Fundamentalandtechnicaltabsection_TechnicalTabsDto()
+                    {
+                        id = x.id,
+                        comodityid = x.comodityid,
+                        script = x.script,
+                        tabtitle = x.tabtitle
+                    }).ToListAsync();
+
+                    foreach (Comodities_Fundamentalandtechnicaltabsection_TechnicalTabsDto tab in data.fundamentalandtechnicaltabsection.technicaltabs)
+                    {
+                        tab.technicalbreakingnewslist = await _Context.Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewses.Where(x => x.comodityid == data.id && x.comoditiesfundamentalandtechnicaltabsectiontechnicaltabsid == tab.id).Select(x => new Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewsDto()
+                        {
+                            id = x.id,
+                            comodityid = x.comodityid,
+                            comoditiesfundamentalandtechnicaltabsectiontechnicaltabsid = x.comoditiesfundamentalandtechnicaltabsectiontechnicaltabsid,
+                            description = x.description,
+                            link = x.link,
+                            title = x.title,
+                            filecontenttype = x.filecontenttype,
+                            filename = x.filename,
+                            filepath = x.filepath
+                        }).ToListAsync();
+                    }
+
+                    data.fundamentalandtechnicaltabsection.fundamentalnewssections = await _Context.Comodities_fundamentalandtechnicaltabsection_fundamentalnewssections.Where(x => x.comodityid == data.id).Select(x => new Comodities_fundamentalandtechnicaltabsection_fundamentalnewssectionDto()
+                    {
+                        id = x.id,
+                        comodityid = x.comodityid,
+                        script = x.script,
+                        maintitle = x.maintitle
+                    }).ToListAsync();
+
+                    foreach (Comodities_fundamentalandtechnicaltabsection_fundamentalnewssectionDto news in data.fundamentalandtechnicaltabsection.fundamentalnewssections)
+                    {
+                        news.newsmaincontentlist = await _Context.Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontents.Where(x => x.comodityid == data.id && x.comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_id == news.id).Select(x => new Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontentDto()
+                        {
+                            id = x.id,
+                            comodityid = x.comodityid,
+                            comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_id = x.comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_id,
+                            description = x.description,
+                            link = x.link,
+                            title = x.title,
+                            filecontenttype = x.filecontenttype,
+                            filename = x.filename,
+                            filepath = x.filepath
+                        }).ToListAsync();
+                    }
+
+
 
                     data.comodities = await _Context.ComoditiyFlexibleBlocks.Where(x => x.comodityid == data.id).Select(x => new Comodities_FlexibleBlockDto()
                     {
@@ -720,12 +849,12 @@ namespace NextTradeAPIs.Services
 
                 List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSection> PDFSectionlist = new List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSection>();
                 List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection> UrlSectionlist = new List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection>();
-                if (model.fundamentalandtechnicaltabsection.comoditiespdfsectionlist != null && model.fundamentalandtechnicaltabsection.comoditiespdfsectionlist.Count > 0)
+                if (model.fundamentalandtechnicaltabsection.pdfsectionlist != null && model.fundamentalandtechnicaltabsection.pdfsectionlist.Count > 0)
                 {
-                     PDFSectionlist = await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections.Where(x => x.comodityid == data.id).ToListAsync();
+                    PDFSectionlist = await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections.Where(x => x.comodityid == data.id).ToListAsync();
                     _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections.RemoveRange(PDFSectionlist);
 
-                    foreach (Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSectionDto pdf in model.fundamentalandtechnicaltabsection.comoditiespdfsectionlist)
+                    foreach (Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSectionDto pdf in model.fundamentalandtechnicaltabsection.pdfsectionlist)
                     {
                         PDFSectionlist.Add(new Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSection()
                         {
@@ -740,12 +869,12 @@ namespace NextTradeAPIs.Services
                     if (PDFSectionlist.Count > 0)
                         await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections.AddRangeAsync(PDFSectionlist);
                 }
-                if (model.fundamentalandtechnicaltabsection.comoditiesurlsectionlist != null && model.fundamentalandtechnicaltabsection.comoditiesurlsectionlist.Count > 0)
+                if (model.fundamentalandtechnicaltabsection.urlsectionlist != null && model.fundamentalandtechnicaltabsection.urlsectionlist.Count > 0)
                 {
                     List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection> _Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionsawait = await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSections.Where(x => x.comodityid == data.id).ToListAsync();
                     _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSections.RemoveRange(_Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionsawait);
 
-                    foreach (Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionDto pdf in model.fundamentalandtechnicaltabsection.comoditiesurlsectionlist)
+                    foreach (Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionDto pdf in model.fundamentalandtechnicaltabsection.urlsectionlist)
                     {
                         UrlSectionlist.Add(new Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection()
                         {
@@ -758,7 +887,100 @@ namespace NextTradeAPIs.Services
                     if (UrlSectionlist.Count > 0)
                         await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSections.AddRangeAsync(UrlSectionlist);
                 }
-             
+
+
+                if (model.fundamentalandtechnicaltabsection.fundamentalnewssections != null && model.fundamentalandtechnicaltabsection.fundamentalnewssections.Count > 0)
+                {
+                    List<Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection> _Comodities_fundamentalandtechnicaltabsection_fundamentalnewssections = await _Context.Comodities_fundamentalandtechnicaltabsection_fundamentalnewssections.Where(x => x.comodityid == data.id).ToListAsync();
+                    _Context.Comodities_fundamentalandtechnicaltabsection_fundamentalnewssections.RemoveRange(_Comodities_fundamentalandtechnicaltabsection_fundamentalnewssections);
+
+                    List<Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontent> _Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontents = await _Context.Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontents.Where(x => x.comodityid == data.id).ToListAsync();
+                    _Context.Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontents.RemoveRange(_Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontents);
+
+                    List<Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection> newssectionlist = new List<Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection>();
+                    List<Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontent> newsmaincontentlist = new List<Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontent>();
+
+                    foreach (Comodities_fundamentalandtechnicaltabsection_fundamentalnewssectionDto nitem in model.fundamentalandtechnicaltabsection.fundamentalnewssections)
+                    {
+                        Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection news = new Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection()
+                        {
+                            id = Guid.NewGuid(),
+                            comodityid = data.id,
+                            maintitle = nitem.maintitle,
+                            script = nitem.script
+                        };
+                        if (nitem.newsmaincontentlist != null && nitem.newsmaincontentlist.Count > 0)
+                        {
+                            foreach (Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontentDto item in nitem.newsmaincontentlist)
+                                newsmaincontentlist.Add(new Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontent()
+                                {
+                                    id = Guid.NewGuid(),
+                                    comodityid = data.id,
+                                    comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_id = news.id,
+                                    description = item.description,
+                                    title = item.title,
+                                    link = item.link,
+                                    filecontenttype = item.filecontenttype,
+                                    filename = item.filename,
+                                    filepath = item.filepath
+                                });
+                        }
+                        newssectionlist.Add(news);
+
+                    }
+                    if (newssectionlist.Count > 0)
+                        await _Context.Comodities_fundamentalandtechnicaltabsection_fundamentalnewssections.AddRangeAsync(newssectionlist);
+                    if (newsmaincontentlist.Count > 0)
+                        await _Context.Comodities_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontents.AddRangeAsync(newsmaincontentlist);
+                }
+                if (model.fundamentalandtechnicaltabsection.technicaltabs != null && model.fundamentalandtechnicaltabsection.technicaltabs.Count > 0)
+                {
+                    List<Comodities_Fundamentalandtechnicaltabsection_TechnicalTabs> _Comodities_Fundamentalandtechnicaltabsection_TechnicalTabses = await _Context.Comodities_Fundamentalandtechnicaltabsection_TechnicalTabses.Where(x => x.comodityid == data.id).ToListAsync();
+                    _Context.Comodities_Fundamentalandtechnicaltabsection_TechnicalTabses.RemoveRange(_Comodities_Fundamentalandtechnicaltabsection_TechnicalTabses);
+
+                    List<Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNews> _Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewses = await _Context.Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewses.Where(x => x.comodityid == data.id).ToListAsync();
+                    _Context.Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewses.RemoveRange(_Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewses);
+
+                    List<Comodities_Fundamentalandtechnicaltabsection_TechnicalTabs> technicaltablist = new List<Comodities_Fundamentalandtechnicaltabsection_TechnicalTabs>();
+                    List<Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNews> technicalbreakingnewslist = new List<Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNews>();
+                    foreach (Comodities_Fundamentalandtechnicaltabsection_TechnicalTabsDto tab in model.fundamentalandtechnicaltabsection.technicaltabs)
+                    {
+                        Comodities_Fundamentalandtechnicaltabsection_TechnicalTabs newtab = new Comodities_Fundamentalandtechnicaltabsection_TechnicalTabs()
+                        {
+                            id = Guid.NewGuid(),
+                            comodityid = data.id,
+                            script = tab.script,
+                            tabtitle = tab.tabtitle
+                        };
+
+                        if (tab.technicalbreakingnewslist != null && tab.technicalbreakingnewslist.Count > 0)
+                        {
+                            foreach (Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewsDto breakingnews in tab.technicalbreakingnewslist)
+                            {
+                                technicalbreakingnewslist.Add(new Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNews()
+                                {
+                                    id = Guid.NewGuid(),
+                                    comodityid = data.id,
+                                    comoditiesfundamentalandtechnicaltabsectiontechnicaltabsid = newtab.id,
+                                    description = breakingnews.description,
+                                    filecontenttype = breakingnews.filecontenttype,
+                                    filename = breakingnews.filename,
+                                    filepath = breakingnews.filepath,
+                                    link = breakingnews.link,
+                                    title = breakingnews.title
+                                });
+                            }
+                        }
+                        technicaltablist.Add(newtab);
+                    }
+
+                    if (technicaltablist.Count > 0)
+                        await _Context.Comodities_Fundamentalandtechnicaltabsection_TechnicalTabses.AddRangeAsync(technicaltablist);
+                    if (technicalbreakingnewslist.Count > 0)
+                        await _Context.Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewses.AddRangeAsync(technicalbreakingnewslist);
+                }
+
+
                 List<Comodities_FlexibleBlock> flexibleBlocklist = new List<Comodities_FlexibleBlock>();
                 List<ComoditiesCountriesData> countriesDatalist = new List<ComoditiesCountriesData>();
                 List<ComoditiesFirstCountryDataCountriesData> firstcountriesDatalist = new List<ComoditiesFirstCountryDataCountriesData>();

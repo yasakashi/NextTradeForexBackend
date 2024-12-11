@@ -39,8 +39,11 @@ namespace Entities.Dtos
         public string? marketsessionscript { get; set; }
         public string? relatedresorces { get; set; }
         public string? privatenotes { get; set; }
-        public List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSectionDto>? comoditiespdfsectionlist { get; set; }
-        public List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionDto>? comoditiesurlsectionlist { get; set; }
+        public List<Comodities_fundamentalandtechnicaltabsection_fundamentalnewssectionDto> fundamentalnewssections { get; set; }
+        public List<Comodities_Fundamentalandtechnicaltabsection_TechnicalTabsDto> technicaltabs { get; set; }
+        public List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSectionDto>? pdfsectionlist { get; set; }
+        public List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionDto>? urlsectionlist { get; set; }
+
     }
     public class ComodityDto
     {

@@ -13,6 +13,6 @@ namespace Entities.Dtos
         public string? tabtitle { get; set; }
         public string? script { get; set; }
 
-        List<Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewsDto> fundamentalandtechnicaltabsection_technicaltabs_technicalbreakingnewslist { get;set;}
+       public  List<Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewsDto>? technicalbreakingnewslist { get;set;}
     }
 }
