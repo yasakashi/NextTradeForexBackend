@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Entities.Dtos
 {
-    public class Stock_ManagementTeamDto
+    public class StockManagementTeamDto
     {
         public Guid? id { get; set; }
         public Guid? stockid { get; set; }

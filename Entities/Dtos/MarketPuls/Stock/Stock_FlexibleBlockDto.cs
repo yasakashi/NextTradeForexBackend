@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Entities.Dtos
 {
-    public class Stock_FlexibleBlockDto
+    public class StockFlexibleBlockDto
     {
         public Guid? id { get; set; }
         public Guid? stockid { get; set; }

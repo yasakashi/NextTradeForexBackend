@@ -22,26 +22,27 @@ public class StockSectionDto
     public string? servicesoffered { get; set; }
     public string? marketfocus { get; set; }
     public string? briefdescriptionofcompany { get; set; }
-    public List<Stock_ManagementTeamDto>? managementteam { get; set; }
+    public List<StockManagementTeamDto>? managementteam { get; set; }
     public string? importantresearchnotes { get; set; }
     public string? chart { get; set; }
-    public FinancialDataDto? financialdata_estturnoverus { get; set; }
-    public FinancialDataDto? financialdata_estgrossprofit { get; set; }
-    public FinancialDataDto? financialdata_estnetprofit { get; set; }
-    public CurrentFinancialYearDto? currentfinancial_estturnoverus { get; set; }
-    public CurrentFinancialYearDto? currentfinancial_estgrossprofit { get; set; }
-    public CurrentFinancialYearDto? currentfinancial_estnetprofit { get; set; }
-    public FinancialRatiosDto? workingcapotalratio { get; set; }
-    public FinancialRatiosDto? quickratio { get; set; }
-    public FinancialRatiosDto? earningpershareratio { get; set; }
-    public FinancialRatiosDto? priceearninsratio { get; set; }
-    public FinancialRatiosDto? earningpersdebttoequityratio { get; set; }
-    public FinancialRatiosDto? returnonequityratio { get; set; }
+    public StockFinancialDataDto? financialdata_estturnoverus { get; set; }
+    public StockFinancialDataDto? financialdata_estgrossprofit { get; set; }
+    public StockFinancialDataDto? financialdata_estnetprofit { get; set; }
+    public StockCurrentFinancialYearDto? currentfinancial_estturnoverus { get; set; }
+    public StockCurrentFinancialYearDto? currentfinancial_estgrossprofit { get; set; }
+    public StockCurrentFinancialYearDto? currentfinancial_estnetprofit { get; set; }
+    public StockFinancialRatiosDto? workingcapotalratio { get; set; }
+    public StockFinancialRatiosDto? quickratio { get; set; }
+    public StockFinancialRatiosDto? earningpershareratio { get; set; }
+    public StockFinancialRatiosDto? priceearninsratio { get; set; }
+    public StockFinancialRatiosDto? earningpersdebttoequityratio { get; set; }
+    public StockFinancialRatiosDto? returnonequityratio { get; set; }
     public string? briefdescriptionofratio { get; set; }
-    public List<ProductAndServiceDto>? productsservices { get; set; }
+    public List<StockProductAndServiceDto>? productsservices { get; set; }
+    public List<StockInductryFocusDto>? industryfocuslist { get; set; }
 }
 
-public class FinancialDataDto
+public class StockFinancialDataDto
 {
     public string? year1 { get; set; }
     public string? year2 { get; set; }
@@ -49,14 +50,14 @@ public class FinancialDataDto
     public string? year4 { get; set; }
     public string? year5 { get; set; }
 }
-public class CurrentFinancialYearDto
+public class StockCurrentFinancialYearDto
 {
     public string? Q1 { get; set; }
     public string? Q2 { get; set; }
     public string? Q3 { get; set; }
     public string? Q4 { get; set; }
 }
-public class FinancialRatiosDto
+public class StockFinancialRatiosDto
 {
     public string? ratio { get; set; }
     public bool? analysis_isgood { get; set; }

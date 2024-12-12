@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace Entities.Dtos
 {
-    public class StockProductAndServiceDto
+    public class StockPDFSectionDto
     {
         public Guid? id { get; set; }
         public Guid? stockid { get; set; }
-        public string? productserviceratio { get; set; }
-        public string? revenueetimate { get; set; }
+        public string? pdftitle { get; set; }
+        public string? pdfshortcodeid { get; set; }
+        public string? author { get; set; }
+        public string? shortdescription { get; set; }
     }
 }
