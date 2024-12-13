@@ -52,10 +52,10 @@ public class StockFinancialDataDto
 }
 public class StockCurrentFinancialYearDto
 {
-    public string? Q1 { get; set; }
-    public string? Q2 { get; set; }
-    public string? Q3 { get; set; }
-    public string? Q4 { get; set; }
+    public string? q1 { get; set; }
+    public string? q2 { get; set; }
+    public string? q3 { get; set; }
+    public string? q4 { get; set; }
 }
 public class StockFinancialRatiosDto
 {

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Entities.DBEntities
 {
     [Table("tblMarketPuls_Stocks_FundamitalNewsSections")]
-    public class StockFundamitalNewsSection
+    public class StockFundametalNewsSection
     {
         [Key]
         public Guid id { get; set; }

@@ -9,7 +9,7 @@ namespace Entities.Dtos
     public class StockTechnicalTabsDto
     {
         public Guid? id { get; set; }
-        public Guid? cryptoid { get; set; }
+        public Guid? stockid { get; set; }
         public string? tabtitle { get; set; }
         public string? script { get; set; }
         public List<StockTechnicalBreakingNewsDto>? newsmaincontentlist { get; set; }
@@ -18,7 +18,7 @@ namespace Entities.Dtos
     public class StockTechnicalBreakingNewsDto
     {
         public Guid? id { get; set; }
-        public Guid? cryptoid { get; set; }
+        public Guid? stockid { get; set; }
         public Guid? technicaltabid { get; set; }
         public string? title { get; set; }
         public string? description { get; set; }

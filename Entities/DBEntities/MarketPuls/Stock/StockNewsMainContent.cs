@@ -24,6 +24,6 @@ namespace Entities.DBEntities
         public string? link { get; set; }
 
         public virtual Stock stock { get; set; }
-        public virtual StockFundamitalNewsSection fundamentalandnewssection { get; set; }
+        public virtual StockFundametalNewsSection fundamentalandnewssection { get; set; }
     }
 }

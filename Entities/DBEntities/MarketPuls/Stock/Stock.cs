@@ -81,17 +81,19 @@ namespace Entities.DBEntities
         public string? currentfinancial_estnetprofit_q3 { get; set; }
         public string? currentfinancial_estnetprofit_q4 { get; set; }
         public string? workingcapotalratio_ratio { get; set; }
-        public string? workingcapotalratio_analysisisgood { get; set; }
+        public bool? workingcapotalratio_analysisisgood { get; set; }
         public string? quickratio_ratio { get; set; }
-        public string? quickratio_analysisisgood { get; set; }
+        public bool? quickratio_analysisisgood { get; set; }
         public string? earningpershareratio_ratio { get; set; }
-        public string? earningpershareratio_analysisisgood { get; set; }
+        public bool? earningpershareratio_analysisisgood { get; set; }
         public string? priceearninsratio_ratio { get; set; }
-        public string? priceearninsratio_analysisisgood { get; set; }
+        public bool? priceearninsratio_analysisisgood { get; set; }
         public string? earningpersdebttoequityratio_ratio { get; set; }
-        public string? earningpersdebttoequityratio_analysisisgood { get; set; }
+        public bool? earningpersdebttoequityratio_analysisisgood { get; set; }
         public string? returnonequityratio_ratio { get; set; }
-        public string? returnonequityratio_analysisisgood { get; set; }
+        public bool? returnonequityratio_analysisisgood { get; set; }
 
     }
+
+
 }

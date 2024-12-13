@@ -243,7 +243,7 @@ namespace DataLayers
         public DbSet<StockTechnicalTab> StockTechnicalTabs { get; set; }
         public DbSet<StockNewsMainContent> StockNewsMainContents { get; set; }
         public DbSet<StockTechnicalBreakingNews> StockTechnicalBreakingNewss { get; set; }
-        public DbSet<StockFundamitalNewsSection> StockFundamitalNewsSections { get; set; }
+        public DbSet<StockFundametalNewsSection> StockFundametalNewsSections { get; set; }
         #endregion [ Market Puls Stock ]
 
         #region OnModelCreating

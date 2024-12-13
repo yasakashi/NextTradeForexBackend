@@ -18,7 +18,7 @@ namespace Entities.Dtos
         public string? relatedresorces { get; set; }
         public string? privatenotes { get; set; }
 
-        public List<StockFundamitalNewsSectionDto>? fndamentalnewssectionlist { get; set; }
+        public List<StockFundametalNewsSectionDto>? fndamentalnewssectionlist { get; set; }
         public List<StockTechnicalTabsDto>? technicaltablist { get; set; }
         public List<StockPDFSectionDto>? pdfsectionlist { get; set; }
         public List<StockURLSectionDto>? urlsectionlist { get; set; }
