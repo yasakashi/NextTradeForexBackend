@@ -229,6 +229,23 @@ namespace DataLayers
         public DbSet<Crypto_FundamentalandNewsSection_RelatedReSorces_URLSection> CryptoFundamentalandNewsSection_RelatedReSorces_URLSections { get; set; }
         #endregion [ Market Puls Crypto ]
 
+        #region [ Market Puls Stock ]
+        public DbSet<Stock> Stocks { get; set; }
+        public DbSet<StockSecondCountryData> StockSecondCountryDatas { get; set; }
+        public DbSet<StockFirstCountryData> StockFirstCountryDatas { get; set; }
+        public DbSet<StockCountriesData> StockCountriesDatas { get; set; }
+        public DbSet<StockFlexibleBlock> StockFlexibleBlocks { get; set; }
+        public DbSet<StockManagementTeam> StockManagementTeams { get; set; }
+        public DbSet<StockInductryFocus> StockInductryFocuss { get; set; }
+        public DbSet<StockProductAndService> StockProductAndServices { get; set; }
+        public DbSet<StockURLSection> StockURLSections { get; set; }
+        public DbSet<StockPDFSection> StockPDFSections { get; set; }
+        public DbSet<StockTechnicalTab> StockTechnicalTabs { get; set; }
+        public DbSet<StockNewsMainContent> StockNewsMainContents { get; set; }
+        public DbSet<StockTechnicalBreakingNews> StockTechnicalBreakingNewss { get; set; }
+        public DbSet<StockFundamitalNewsSection> StockFundamitalNewsSections { get; set; }
+        #endregion [ Market Puls Stock ]
+
         #region OnModelCreating
         protected override void OnModelCreating(ModelBuilder builder)
         {

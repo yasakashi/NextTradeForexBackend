@@ -9,7 +9,7 @@ namespace Entities.Dtos
     public class StockFundamitalNewsSectionDto
     {
         public Guid? id { get; set; }
-        public Guid? cryptoid { get; set; }
+        public Guid? stockid { get; set; }
         public string? maintitle { get; set; }
         public string? script { get; set; }
         public List<StockNewsMainContentDto>? newsmaincontentlist { get; set; }
@@ -17,7 +17,7 @@ namespace Entities.Dtos
     public class StockNewsMainContentDto
     {
         public Guid? id { get; set; }
-        public Guid? cryptoid { get; set; }
+        public Guid? stockid { get; set; }
         public Guid? fundamentalandnewssectionid { get; set; }
         public string? title { get; set; }
         public string? description { get; set; }

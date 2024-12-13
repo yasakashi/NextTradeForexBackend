@@ -22,9 +22,9 @@ public class StockSectionDto
     public string? servicesoffered { get; set; }
     public string? marketfocus { get; set; }
     public string? briefdescriptionofcompany { get; set; }
-    public List<StockManagementTeamDto>? managementteam { get; set; }
     public string? importantresearchnotes { get; set; }
     public string? chart { get; set; }
+    public string? briefdescriptionofratio { get; set; }
     public StockFinancialDataDto? financialdata_estturnoverus { get; set; }
     public StockFinancialDataDto? financialdata_estgrossprofit { get; set; }
     public StockFinancialDataDto? financialdata_estnetprofit { get; set; }
@@ -37,9 +37,9 @@ public class StockSectionDto
     public StockFinancialRatiosDto? priceearninsratio { get; set; }
     public StockFinancialRatiosDto? earningpersdebttoequityratio { get; set; }
     public StockFinancialRatiosDto? returnonequityratio { get; set; }
-    public string? briefdescriptionofratio { get; set; }
     public List<StockProductAndServiceDto>? productsservices { get; set; }
     public List<StockInductryFocusDto>? industryfocuslist { get; set; }
+    public List<StockManagementTeamDto>? managementteam { get; set; }
 }
 
 public class StockFinancialDataDto

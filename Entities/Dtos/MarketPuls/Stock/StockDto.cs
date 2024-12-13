@@ -23,7 +23,7 @@ namespace Entities.Dtos
         public DateTime? changestatusdate { get; set; }
 
         public StockFundamentalAndTechnicalTabSectionDto fundamentalandtechnicaltabsection { get; set; }
-        public StockSectionDto stack { get; set; }
+        public StockSectionDto stock { get; set; }
         public List<StockFlexibleBlockDto>? stacks_old { get; set; }
 
     }

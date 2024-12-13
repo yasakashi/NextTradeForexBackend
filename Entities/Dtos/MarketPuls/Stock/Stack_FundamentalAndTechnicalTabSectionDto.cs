@@ -16,6 +16,7 @@ namespace Entities.Dtos
         public string? marketsentimentstitle { get; set; }
         public string? marketsentimentsscript { get; set; }
         public string? relatedresorces { get; set; }
+        public string? privatenotes { get; set; }
 
         public List<StockFundamitalNewsSectionDto>? fndamentalnewssectionlist { get; set; }
         public List<StockTechnicalTabsDto>? technicaltablist { get; set; }
