@@ -389,6 +389,7 @@ namespace NextTradeAPIs.Services
                 await _Context.StockFlexibleBlocks.AddRangeAsync(flexibleBlocklist);
 
                 await _Context.SaveChangesAsync();
+                model.id = data.id;
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
             }
@@ -624,11 +625,11 @@ namespace NextTradeAPIs.Services
 
                     foreach (StockTechnicalTabsDto tab in data.fundamentalandtechnicaltabsection.technicaltablist)
                     {
-                        tab.newsmaincontentlist = await _Context.StockNewsMainContents.Where(x => x.stockid == data.id && x.fundamentalandnewssectionid == tab.id).Select(x => new StockTechnicalBreakingNewsDto()
+                        tab.newsmaincontentlist = await _Context.StockTechnicalBreakingNewss.Where(x => x.stockid == data.id && x.technicaltabid == tab.id).Select(x => new StockTechnicalBreakingNewsDto()
                         {
                             id = x.id,
                             stockid = x.stockid,
-                            technicaltabid = x.fundamentalandnewssectionid,
+                            technicaltabid = x.technicaltabid,
                             description = x.description,
                             descriptionfilecontenttype = x.descriptionfilecontenttype,
                             descriptionfilename = x.descriptionfilename,
@@ -926,8 +927,6 @@ namespace NextTradeAPIs.Services
                 data.returnonequityratio_analysisisgood = model.stock.returnonequityratio.analysis_isgood;
 
                 _Context.Stocks.Update(data);
-
-
                 if (model.stacks_old != null && model.stacks_old.Count > 0)
                 {
                     List<StockFlexibleBlock> flexibleBlocklist = new List<StockFlexibleBlock>();
@@ -980,13 +979,281 @@ namespace NextTradeAPIs.Services
                         FlexibleBlock.singlepagechartimage = flex.singlepagechartimage;
 
                         flexibleBlocklist.Add(FlexibleBlock);
+
+                        if (flex.countriesdatalist != null && flex.countriesdatalist.Count > 0)
+                        {
+                            List<StockCountriesData> _StockCountriesDatas = await _Context.StockCountriesDatas.Where(x => x.stockid == data.id).ToListAsync();
+                            _Context.StockCountriesDatas.RemoveRange(_StockCountriesDatas);
+
+                            foreach (StockCountriesDataDto contrydata in flex.countriesdatalist)
+                            {
+                                countriesDatalist.Add(new StockCountriesData()
+                                {
+                                    id = Guid.NewGuid(),
+                                    stockid = data.id,
+                                    stockflexibleblockid = FlexibleBlock.id,
+                                    countries = contrydata.countries,
+                                    pairthatcorrelate = contrydata.pairthatcorrelate,
+                                    highsandlows = contrydata.highsandlows,
+                                    pairtype = contrydata.pairtype,
+                                    dailyaveragmovementinpips = contrydata.dailyaveragmovementinpips
+                                });
+                            }
+                            await _Context.StockCountriesDatas.AddRangeAsync(countriesDatalist);
+                        }
+
+                        if (flex.firstcountrydatalist != null && flex.firstcountrydatalist.Count > 0)
+                        {
+                            List<StockFirstCountryData> _StockFirstCountryDataCountriesDatas = await _Context.StockFirstCountryDatas.Where(x => x.stockid == data.id).ToListAsync();
+                            _Context.StockFirstCountryDatas.RemoveRange(_StockFirstCountryDataCountriesDatas);
+                            foreach (StockFirstCountryDataDto contrydata in flex.firstcountrydatalist)
+                            {
+                                firstCountryDatalist.Add(new StockFirstCountryData()
+                                {
+                                    id = Guid.NewGuid(),
+                                    stockid = data.id,
+                                    stockflexibleblockid = FlexibleBlock.id,
+                                    centeralbank = contrydata.centeralbank,
+                                    contry = contrydata.contry,
+                                    nickname = contrydata.nickname,
+                                    ofaveragedailyturnover = contrydata.ofaveragedailyturnover
+                                });
+                            }
+                            await _Context.StockFirstCountryDatas.AddRangeAsync(firstCountryDatalist);
+                        }
+
+                        if (flex.secondcountrydatalist != null && flex.secondcountrydatalist.Count > 0)
+                        {
+                            List<StockSecondCountryData> _StockSecondCountryDataCountriesDatas = await _Context.StockSecondCountryDatas.Where(x => x.stockid == data.id).ToListAsync();
+                            _Context.StockSecondCountryDatas.RemoveRange(_StockSecondCountryDataCountriesDatas);
+                            foreach (StockSecondCountryDataDto contrydata in flex.secondcountrydatalist)
+                            {
+                                secondCountryDatalist.Add(new StockSecondCountryData()
+                                {
+                                    id = Guid.NewGuid(),
+                                    stockid = data.id,
+                                    stockflexibleblockid = FlexibleBlock.id,
+                                    centeralbank = contrydata.centeralbank,
+                                    contry = contrydata.contry,
+                                    nickname = contrydata.nickname,
+                                    ofaveragedailyturnover = contrydata.ofaveragedailyturnover
+                                });
+                            }
+                            await _Context.StockSecondCountryDatas.AddRangeAsync(secondCountryDatalist);
+                        }
                     }
                     await _Context.StockFlexibleBlocks.AddRangeAsync(flexibleBlocklist);
                 }
+
+
+                if (model.fundamentalandtechnicaltabsection != null)
+                {
+                    if (model.fundamentalandtechnicaltabsection.fndamentalnewssectionlist != null && model.fundamentalandtechnicaltabsection.fndamentalnewssectionlist.Count > 0)
+                    {
+                        List<StockFundametalNewsSection> NewsSectioList = new List<StockFundametalNewsSection>();
+                        List<StockNewsMainContent> NewsMainContetList = new List<StockNewsMainContent>();
+
+                        List<StockFundametalNewsSection> _Stock_fundamentalandtechnicaltabsection_fundamentalnewssections = await _Context.StockFundametalNewsSections.Where(x => x.stockid == data.id).ToListAsync();
+                        _Context.StockFundametalNewsSections.RemoveRange(_Stock_fundamentalandtechnicaltabsection_fundamentalnewssections);
+
+                        List<StockNewsMainContent> _Stock_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontents = await _Context.StockNewsMainContents.Where(x => x.stockid == data.id).ToListAsync();
+                        _Context.StockNewsMainContents.RemoveRange(_Stock_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontents);
+
+
+                        foreach (StockFundametalNewsSectionDto news in model.fundamentalandtechnicaltabsection.fndamentalnewssectionlist)
+                        {
+                            StockFundametalNewsSection newssection = new StockFundametalNewsSection()
+                            {
+                                id = Guid.NewGuid(),
+                                stockid = data.id,
+                                maintitle = news.maintitle,
+                                script = news.script
+                            };
+
+                            foreach (StockNewsMainContentDto newsmaincontent in news.newsmaincontentlist)
+                            {
+                                NewsMainContetList.Add(new StockNewsMainContent()
+                                {
+                                    id = Guid.NewGuid(),
+                                    stockid = data.id,
+                                    fundamentalandnewssectionid = newssection.id,
+                                    description = newsmaincontent.description,
+                                    descriptionfilecontenttype = newsmaincontent.descriptionfilecontenttype,
+                                    descriptionfilename = newsmaincontent.descriptionfilename,
+                                    descriptionfilepath = newsmaincontent.descriptionfilepath,
+                                    descriptionfileurl = newsmaincontent.descriptionfileurl,
+                                    link = newsmaincontent.link,
+                                    title = newsmaincontent.title
+                                });
+                            }
+                            NewsSectioList.Add(newssection);
+                        }
+
+                        await _Context.StockFundametalNewsSections.AddRangeAsync(NewsSectioList);
+                        await _Context.StockNewsMainContents.AddRangeAsync(NewsMainContetList);
+                    }
+
+                    if (model.fundamentalandtechnicaltabsection.technicaltablist != null && model.fundamentalandtechnicaltabsection.technicaltablist.Count > 0)
+                    {
+                        List<StockTechnicalTab> _Stock_Fundamentalandtechnicaltabsection_TechnicalTabses = await _Context.StockTechnicalTabs.Where(x => x.stockid == data.id).ToListAsync();
+                        _Context.StockTechnicalTabs.RemoveRange(_Stock_Fundamentalandtechnicaltabsection_TechnicalTabses);
+
+                        List<StockTechnicalBreakingNews> _Stock_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewses = await _Context.StockTechnicalBreakingNewss.Where(x => x.stockid == data.id).ToListAsync();
+                        _Context.StockTechnicalBreakingNewss.RemoveRange(_Stock_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewses);
+
+
+                        List<StockTechnicalTab> technicaltabList = new List<StockTechnicalTab>();
+                        List<StockTechnicalBreakingNews> technicalbreakList = new List<StockTechnicalBreakingNews>();
+                        foreach (StockTechnicalTabsDto tab in model.fundamentalandtechnicaltabsection.technicaltablist)
+                        {
+                            StockTechnicalTab newtab = new StockTechnicalTab()
+                            {
+                                id = Guid.NewGuid(),
+                                stockid = data.id,
+                                tabtitle = tab.tabtitle,
+                                script = tab.script
+                            };
+
+                            foreach (StockTechnicalBreakingNewsDto newsmaincontent in tab.newsmaincontentlist)
+                            {
+                                technicalbreakList.Add(new StockTechnicalBreakingNews()
+                                {
+                                    id = Guid.NewGuid(),
+                                    stockid = data.id,
+                                    technicaltabid = (Guid)newtab.id,
+                                    description = newsmaincontent.description,
+                                    descriptionfilecontenttype = newsmaincontent.descriptionfilecontenttype,
+                                    descriptionfilename = newsmaincontent.descriptionfilename,
+                                    descriptionfilepath = newsmaincontent.descriptionfilepath,
+                                    descriptionfileurl = newsmaincontent.descriptionfileurl,
+                                    link = newsmaincontent.link,
+                                    title = newsmaincontent.title
+                                });
+                            }
+                            technicaltabList.Add(newtab);
+                        }
+
+                        await _Context.StockTechnicalTabs.AddRangeAsync(technicaltabList);
+                        await _Context.StockTechnicalBreakingNewss.AddRangeAsync(technicalbreakList);
+                    }
+
+
+                    if (model.fundamentalandtechnicaltabsection.pdfsectionlist != null && model.fundamentalandtechnicaltabsection.pdfsectionlist.Count > 0)
+                    {
+                        List<StockPDFSection> _Stock_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections = await _Context.StockPDFSections.Where(x => x.stockid == data.id).ToListAsync();
+                        _Context.StockPDFSections.RemoveRange(_Stock_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections);
+
+                        List<StockPDFSection> PDFSectionlist = new List<StockPDFSection>();
+                        foreach (StockPDFSectionDto pdf in model.fundamentalandtechnicaltabsection.pdfsectionlist)
+                        {
+                            PDFSectionlist.Add(new StockPDFSection()
+                            {
+                                id = Guid.NewGuid(),
+                                stockid = data.id,
+                                author = pdf.author,
+                                pdfshortcodeid = pdf.pdfshortcodeid,
+                                pdftitle = pdf.pdftitle,
+                                shortdescription = pdf.shortdescription
+                            });
+                        }
+                        if (PDFSectionlist.Count > 0)
+                            await _Context.StockPDFSections.AddRangeAsync(PDFSectionlist);
+                    }
+
+                    if (model.fundamentalandtechnicaltabsection.urlsectionlist != null && model.fundamentalandtechnicaltabsection.urlsectionlist.Count > 0)
+                    {
+                        List<StockURLSection> _Stock_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionsawait = await _Context.StockURLSections.Where(x => x.stockid == data.id).ToListAsync();
+                        _Context.StockURLSections.RemoveRange(_Stock_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionsawait);
+
+
+                        List<StockURLSection> UrlSectionlist = new List<StockURLSection>();
+                        foreach (StockURLSectionDto pdf in model.fundamentalandtechnicaltabsection.urlsectionlist)
+                        {
+                            UrlSectionlist.Add(new StockURLSection()
+                            {
+                                id = Guid.NewGuid(),
+                                stockid = data.id,
+                                url = pdf.url,
+                                urltitle = pdf.urltitle
+                            });
+                        }
+                        if (UrlSectionlist.Count > 0)
+                            await _Context.StockURLSections.AddRangeAsync(UrlSectionlist);
+                    }
+
+                }
+
+                if (model.stock != null)
+                {
+                    if (model.stock.productsservices != null && model.stock.productsservices.Count > 0)
+                    {
+                        List<StockProductAndService> StockProductAndServiceslist = await _Context.StockProductAndServices.Where(x => x.stockid == data.id).ToListAsync();
+                        _Context.StockProductAndServices.RemoveRange(StockProductAndServiceslist);
+
+                        List<StockProductAndService> StockProductAndServiceList = new List<StockProductAndService>();
+                        foreach (StockProductAndServiceDto item in model.stock.productsservices)
+                        {
+                            StockProductAndServiceList.Add(new StockProductAndService()
+                            {
+                                id = Guid.NewGuid(),
+                                stockid = data.id,
+                                productserviceratio = item.productserviceratio,
+                                revenueetimate = item.revenueetimate
+                            });
+                        }
+                        if (StockProductAndServiceList.Count > 0)
+                            await _Context.StockProductAndServices.AddRangeAsync(StockProductAndServiceList);
+                    }
+
+
+                    if (model.stock.industryfocuslist != null && model.stock.industryfocuslist.Count > 0)
+                    {
+                        List<StockInductryFocus> StockInductryFocusslist = await _Context.StockInductryFocuss.Where(x => x.stockid == data.id).ToListAsync();
+                        _Context.StockInductryFocuss.RemoveRange(StockInductryFocusslist);
+
+
+                        List<StockInductryFocus> StockInductryFocusList = new List<StockInductryFocus>();
+                        foreach (StockInductryFocusDto item in model.stock.industryfocuslist)
+                        {
+                            StockInductryFocusList.Add(new StockInductryFocus()
+                            {
+                                id = Guid.NewGuid(),
+                                stockid = data.id,
+                                clientnameifapplicable = item.clientnameifapplicable,
+                                industryfocus = item.industryfocus,
+                                revenueshare = item.revenueshare
+                            });
+                        }
+                        if (StockInductryFocusList.Count > 0)
+                            await _Context.StockInductryFocuss.AddRangeAsync(StockInductryFocusList);
+                    }
+
+                    if (model.stock.managementteam != null && model.stock.managementteam.Count > 0)
+                    {
+                        List<StockManagementTeam> StockManagementTeamslist = await _Context.StockManagementTeams.Where(x => x.stockid == data.id).ToListAsync();
+                        _Context.StockManagementTeams.RemoveRange(StockManagementTeamslist);
+
+                        List<StockManagementTeam> StockManagementTeamList = new List<StockManagementTeam>();
+                        foreach (StockManagementTeamDto item in model.stock.managementteam)
+                        {
+                            StockManagementTeamList.Add(new StockManagementTeam()
+                            {
+                                id = Guid.NewGuid(),
+                                stockid = data.id,
+                                designation = item.designation,
+                                name = item.name
+                            });
+                        }
+                        if (StockManagementTeamList.Count > 0)
+                            await _Context.StockManagementTeams.AddRangeAsync(StockManagementTeamList);
+                    }
+                }
+
+
                 await _Context.SaveChangesAsync();
 
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
-            }
+                    message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
+                }
             catch (Exception ex)
             {
                 message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };

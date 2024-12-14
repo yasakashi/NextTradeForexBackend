@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Entities.DBEntities
 {
-    [Table("tblMarketPuls_Stocks_StockNewsMainContents")]
+    [Table("tblMarketPuls_Stocks_NewsMainContents")]
     public class StockNewsMainContent
     {
         [Key]
