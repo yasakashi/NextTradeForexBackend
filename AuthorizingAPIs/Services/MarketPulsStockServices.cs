@@ -339,10 +339,11 @@ namespace NextTradeAPIs.Services
                                 id = Guid.NewGuid(),
                                 stockid = data.id,
                                 stockflexibleblockid = FlexibleBlock.id,
-                                contry = contrydata.contry,
-                                centeralbank = contrydata.centeralbank,
-                                nickname = contrydata.nickname,
-                                ofaveragedailyturnover = contrydata.ofaveragedailyturnover
+                                countries = contrydata.countries,
+                                pairthatcorrelate = contrydata.pairthatcorrelate,
+                                highsandlows = contrydata.highsandlows,
+                                pairtype = contrydata.pairtype,
+                                dailyaveragmovementinpips = contrydata.dailyaveragmovementinpips
                             });
                         }
                         await _Context.StockCountriesDatas.AddRangeAsync(countriesDatalist);
@@ -710,10 +711,11 @@ namespace NextTradeAPIs.Services
                             id = x.id,
                             stockflexibleblockid = x.stockflexibleblockid,
                             stockid = x.stockid,
-                            contry = x.contry,
-                            centeralbank = x.centeralbank,
-                            nickname = x.nickname,
-                            ofaveragedailyturnover = x.ofaveragedailyturnover
+                            pairthatcorrelate = x.pairthatcorrelate,
+                            countries = x.countries,
+                            highsandlows = x.highsandlows,
+                            pairtype = x.pairtype,
+                            dailyaveragmovementinpips = x.dailyaveragmovementinpips
                         }).ToListAsync();
 
                         FlexibleBlockitem.firstcountrydatalist = await _Context.StockFirstCountryDatas.Where(x => x.stockid == data.id && x.stockflexibleblockid == FlexibleBlockitem.id).Select(x => new StockFirstCountryDataDto()

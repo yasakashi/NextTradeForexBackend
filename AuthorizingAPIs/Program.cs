@@ -168,11 +168,12 @@ builder.Services.AddTransient<CommunityGroupsMessageServices, CommunityGroupsMes
 builder.Services.AddTransient<MarketPulsForexServices, MarketPulsForexServices>();
 builder.Services.AddTransient<MarketPulsComodityServices, MarketPulsComodityServices>();
 builder.Services.AddTransient<MarketPulsCryptoServices, MarketPulsCryptoServices>();
+builder.Services.AddTransient<MarketPulsIndiceServices, MarketPulsIndiceServices>();
+builder.Services.AddTransient<MarketPulsStockServices, MarketPulsStockServices>();
 
 builder.Services.AddTransient<CourseBuilderServices, CourseBuilderServices>();
 builder.Services.AddTransient<CourseBuilderUserServices, CourseBuilderUserServices>();
 
-builder.Services.AddTransient<MarketPulsIndiceServices, MarketPulsIndiceServices>();
 
 builder.Services.AddTransient<WebinarServices, WebinarServices>();
 builder.Services.AddTransient<PodcastServices, PodcastServices>();

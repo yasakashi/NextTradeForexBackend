@@ -15,10 +15,11 @@ namespace Entities.DBEntities
         public Guid id { get; set; }
         public Guid stockid { get; set; }
         public Guid stockflexibleblockid { get; set; }
-        public string? contry { get; set; }
-        public string? centeralbank { get; set; }
-        public string? nickname { get; set; }
-        public string? ofaveragedailyturnover { get; set; }
+        public string? countries { get; set; }
+        public string? pairthatcorrelate { get; set; }
+        public string? highsandlows { get; set; }
+        public string? pairtype { get; set; }
+        public string? dailyaveragmovementinpips { get; set; }
 
         public virtual Stock stock { get; set; }
         public virtual StockFlexibleBlock stockflexibleblock { get; set; }
