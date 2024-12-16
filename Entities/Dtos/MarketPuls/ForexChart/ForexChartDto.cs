@@ -28,4 +28,12 @@ namespace Entities.Dtos
         public List<ForexChartFlexibleBlockDto> forexflexibleblocks { get; set; }
         public ForexChartFundamentalAndTechnicalTabSectionDto fundamentalandtechnicaltabsection { get; set; }
     }
+
+    public class ForexChartFilterDto:BaseFilterDto
+    {
+        public Guid? id { get; set; }
+        public long? categoryid { get; set; }
+        public string? title { get; set; }
+        public string? tags { get; set; }
+    }
 }

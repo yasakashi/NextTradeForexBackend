@@ -905,4 +905,19 @@ public class CategoriesServices
         }
         return message;
     }
+
+    internal async Task<SystemMessageModel> GetTopCategory4MarketPulsForexChart(ForexChartFilterDto model, object value, string processId, string clientip, string hosturl, bool v)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal async Task<SystemMessageModel> GetCategory4MarketPulsForexChart(ForexChartFilterDto model, object value, string processId, string clientip, string hosturl, bool v)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal async Task<SystemMessageModel> GetCategoryCurrency4MarketPulsForexChart(ForexChartFilterDto model, object value, string processId, string clientip, string hosturl, bool v)
+    {
+        throw new NotImplementedException();
+    }
 }

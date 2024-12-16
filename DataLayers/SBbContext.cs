@@ -246,6 +246,20 @@ namespace DataLayers
         public DbSet<StockFundametalNewsSection> StockFundametalNewsSections { get; set; }
         #endregion [ Market Puls Stock ]
 
+        #region [ Market Puls Forex Chart ]
+        public DbSet<ForexChartURLSection> ForexChartURLSections { get; set; }
+        public DbSet<ForexChartPDFSection> ForexChartPDFSections { get; set; }
+        public DbSet<ForexChartTechnicalBreakingNews> ForexChartTechnicalBreakingNewss { get; set; }
+        public DbSet<ForexChartTechnicalTab> ForexChartTechnicalTabs { get; set; }
+        public DbSet<ForexChartNewsMainContent> ForexChartNewsMainContents { get; set; }
+        public DbSet<ForexChartFundamentalNewsSection> ForexChartFundamentalNewsSections { get; set; }
+        public DbSet<ForexChartSecondCountryData> ForexChartSecondCountryDatas { get; set; }
+        public DbSet<ForexChartFirstCountryData> ForexChartFirstCountryDatas { get; set; }
+        public DbSet<ForexChartFlexibleBlock> ForexChartFlexibleBlocks { get; set; }
+        public DbSet<ForexChart> ForexCharts { get; set; }
+
+        #endregion [ Market Puls Forex Chart ]
+
         #region OnModelCreating
         protected override void OnModelCreating(ModelBuilder builder)
         {
