@@ -18,7 +18,7 @@ namespace Entities.Dtos
     {
         public Guid? id { get; set; }
         public Guid? forexchartid { get; set; }
-        public Guid? fundamentalandnewssectionid { get; set; }
+        public Guid? fundamentalnewssectionid { get; set; }
         public string? title { get; set; }
         public string? description { get; set; }
         public string? descriptionfilename { get; set; }
