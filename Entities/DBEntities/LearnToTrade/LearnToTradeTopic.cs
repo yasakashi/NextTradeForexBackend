@@ -21,10 +21,11 @@ namespace Entities.DBEntities
         public string? topicfileurl { get; set; }
         public int? typeId { get; set; }
         public int? statusId { get; set; }
-        public int? forumId { get; set; }
+        public Guid? forumId { get; set; }
         public string? topicTags { get; set; }
 
         public virtual TopicType type { get; set; }
         public virtual TopicStatus status { get; set; }
+        //public virtual TopicStatus status { get; set; }
     }
 }

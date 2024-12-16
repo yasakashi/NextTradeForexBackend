@@ -215,6 +215,7 @@ namespace NextTradeAPIs.Services
                     FlexibleBlock.oneyeardescriptionfileurl = flex.oneyeardescriptionfileurl;
                     FlexibleBlock.secoundcontrydescription = flex.secoundcontrydescription;
                     FlexibleBlock.maintitle = flex.maintitle;
+                    FlexibleBlock.secondcountryheading = flex.secondcountryheading;
                     FlexibleBlock.secoundcontrydescriptionfilecontenttype = flex.secoundcontrydescriptionfilecontenttype;
                     FlexibleBlock.secoundcontrydescriptionfilename = flex.secoundcontrydescriptionfilename;
                     FlexibleBlock.secoundcontrydescriptionfilepath = flex.secoundcontrydescriptionfilepath;
@@ -676,6 +677,7 @@ namespace NextTradeAPIs.Services
                         oneyeardescriptionfilecontenttype = x.oneyeardescriptionfilecontenttype,
                         oneyeardescriptionfilepath = x.oneyeardescriptionfilepath,
                         oneyeardescriptionfileurl = x.oneyeardescriptionfileurl,
+                        secondcountryheading = x.secondcountryheading,
                         secoundcontrydescription = x.secoundcontrydescription,
                         secoundcontrydescriptionfilecontenttype = x.secoundcontrydescriptionfilecontenttype,
                         secoundcontrydescriptionfilename = x.secoundcontrydescriptionfilename,
@@ -842,14 +844,17 @@ namespace NextTradeAPIs.Services
 
                 _Context.Comodities.Update(data);
 
+                await _Context.SaveChangesAsync();
 
-
+                List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSection> PDFSectionlist2 = new List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSection>();
                 List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSection> PDFSectionlist = new List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSection>();
+                List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection> UrlSectionlist2 = new List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection>();
                 List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection> UrlSectionlist = new List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection>();
                 if (model.fundamentalandtechnicaltabsection.pdfsectionlist != null && model.fundamentalandtechnicaltabsection.pdfsectionlist.Count > 0)
                 {
-                    PDFSectionlist = await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections.Where(x => x.comodityid == data.id).ToListAsync();
-                    _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections.RemoveRange(PDFSectionlist);
+                    PDFSectionlist2 = await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections.Where(x => x.comodityid == data.id).ToListAsync();
+                    _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections.RemoveRange(PDFSectionlist2);
+                    await _Context.SaveChangesAsync();
 
                     foreach (Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSectionDto pdf in model.fundamentalandtechnicaltabsection.pdfsectionlist)
                     {
@@ -866,10 +871,12 @@ namespace NextTradeAPIs.Services
                     if (PDFSectionlist.Count > 0)
                         await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections.AddRangeAsync(PDFSectionlist);
                 }
+                await _Context.SaveChangesAsync();
                 if (model.fundamentalandtechnicaltabsection.urlsectionlist != null && model.fundamentalandtechnicaltabsection.urlsectionlist.Count > 0)
                 {
                     List<Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSection> _Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionsawait = await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSections.Where(x => x.comodityid == data.id).ToListAsync();
                     _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSections.RemoveRange(_Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionsawait);
+                    await _Context.SaveChangesAsync();
 
                     foreach (Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionDto pdf in model.fundamentalandtechnicaltabsection.urlsectionlist)
                     {
@@ -883,8 +890,10 @@ namespace NextTradeAPIs.Services
                     }
                     if (UrlSectionlist.Count > 0)
                         await _Context.Comodities_FundamentalandTechnicalTabSection_RelatedResorces_URLSections.AddRangeAsync(UrlSectionlist);
+                    await _Context.SaveChangesAsync();
                 }
 
+                
 
                 if (model.fundamentalandtechnicaltabsection.fundamentalnewssections != null && model.fundamentalandtechnicaltabsection.fundamentalnewssections.Count > 0)
                 {
@@ -977,6 +986,7 @@ namespace NextTradeAPIs.Services
                         await _Context.Comodities_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewses.AddRangeAsync(technicalbreakingnewslist);
                 }
 
+                await _Context.SaveChangesAsync();
 
                 List<Comodities_FlexibleBlock> flexibleBlocklist = new List<Comodities_FlexibleBlock>();
                 List<ComoditiesCountriesData> countriesDatalist = new List<ComoditiesCountriesData>();
@@ -1022,6 +1032,7 @@ namespace NextTradeAPIs.Services
                         FlexibleBlock.oneyeardescriptionfileurl = flex.oneyeardescriptionfileurl;
                         FlexibleBlock.secoundcontrydescription = flex.secoundcontrydescription;
                         FlexibleBlock.maintitle = flex.maintitle;
+                        FlexibleBlock.secondcountryheading = flex.secondcountryheading;
                         FlexibleBlock.secoundcontrydescriptionfilecontenttype = flex.secoundcontrydescriptionfilecontenttype;
                         FlexibleBlock.secoundcontrydescriptionfilename = flex.secoundcontrydescriptionfilename;
                         FlexibleBlock.secoundcontrydescriptionfilepath = flex.secoundcontrydescriptionfilepath;

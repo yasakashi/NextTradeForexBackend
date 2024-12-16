@@ -139,7 +139,7 @@ namespace DataLayers
 
         public DbSet<NewBookCategory> NewBookCategories { get; set; }
         public DbSet<NewBookPageImage> NewBookPageImages { get; set; }
-
+        public DbSet<ForumFormat> ForumFormats { get; set; }
         public DbSet<PageSize> PageSizes { get; set; }
         public DbSet<EnableAutoplayAutomatically> EnableAutoplayAutomaticallies{ get; set; }
         public DbSet<EnableAutoplay> EnableAutoplayes { get; set; }

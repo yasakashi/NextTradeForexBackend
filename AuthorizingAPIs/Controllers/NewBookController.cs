@@ -119,6 +119,7 @@ namespace NextTradeAPIs.Controllers
 
                     FileActionDto _fileinfo = message.MessageData as FileActionDto;
                     model.featuredimagepath = _fileinfo.filepath;
+                    model.featuredimageurl = _fileinfo.fileurl;
 
                     if (message.MessageCode < 0)
                         return BadRequest(message);
@@ -145,6 +146,7 @@ namespace NextTradeAPIs.Controllers
 
                     FileActionDto _fileinfo = message.MessageData as FileActionDto;
                     model.bgimagepath = _fileinfo.filepath;
+                    model.bgimageurl = _fileinfo.fileurl;
 
                     if (message.MessageCode < 0)
                         return BadRequest(message);
@@ -171,6 +173,7 @@ namespace NextTradeAPIs.Controllers
 
                     FileActionDto _fileinfo = message.MessageData as FileActionDto;
                     model.pdfthumbnailimagepath = _fileinfo.filepath;
+                    model.pdfthumbnailimageurl = _fileinfo.fileurl;
 
                     if (message.MessageCode < 0)
                         return BadRequest(message);
@@ -197,6 +200,7 @@ namespace NextTradeAPIs.Controllers
 
                     FileActionDto _fileinfo = message.MessageData as FileActionDto;
                     model.pdffilepath = _fileinfo.filepath;
+                    model.pdffileurl = _fileinfo.fileurl;
 
                     if (message.MessageCode < 0)
                         return BadRequest(message);
@@ -223,6 +227,7 @@ namespace NextTradeAPIs.Controllers
                             {
                                 FileActionDto _fileinfo = message.MessageData as FileActionDto;
                                 NewBookPageImage.pageimagepath = _fileinfo.filepath;
+                                NewBookPageImage.pageimageurl = _fileinfo.fileurl;
                             }
                             NewBookPageImageList.Add(NewBookPageImage);
                         }
@@ -457,6 +462,7 @@ namespace NextTradeAPIs.Controllers
 
                     FileActionDto _fileinfo = message.MessageData as FileActionDto;
                     model.featuredimagepath = _fileinfo.filepath;
+                    model.featuredimageurl = _fileinfo.fileurl;
 
                     if (message.MessageCode < 0)
                         return BadRequest(message);
@@ -483,6 +489,7 @@ namespace NextTradeAPIs.Controllers
 
                     FileActionDto _fileinfo = message.MessageData as FileActionDto;
                     model.bgimagepath = _fileinfo.filepath;
+                    model.bgimageurl = _fileinfo.fileurl;
 
                     if (message.MessageCode < 0)
                         return BadRequest(message);
@@ -509,6 +516,7 @@ namespace NextTradeAPIs.Controllers
 
                     FileActionDto _fileinfo = message.MessageData as FileActionDto;
                     model.pdfthumbnailimagepath = _fileinfo.filepath;
+                    model.pdfthumbnailimageurl = _fileinfo.fileurl;
 
                     if (message.MessageCode < 0)
                         return BadRequest(message);
@@ -535,9 +543,39 @@ namespace NextTradeAPIs.Controllers
 
                     FileActionDto _fileinfo = message.MessageData as FileActionDto;
                     model.pdffilepath = _fileinfo.filepath;
+                    model.pdffileurl = _fileinfo.fileurl;
 
                     if (message.MessageCode < 0)
                         return BadRequest(message);
+                }
+
+                if (model.pageimages != null)
+                {
+                    List<NewBookPageImage> NewBookPageImageList = new List<NewBookPageImage>();
+                    NewBookPageImage NewBookPageImage = null;
+                    foreach (IFormFile pageimage in model.pageimages)
+                    {
+                        if (pageimage.FileName != null && pageimage.FileName.Length > 0)
+                        {
+                            NewBookPageImage = new NewBookPageImage() { id = Guid.NewGuid() };
+                            using (var ms = new MemoryStream())
+                            {
+                                NewBookPageImage.pageimagecontenttype = pageimage.ContentType;
+                                NewBookPageImage.pageimagename = pageimage.FileName;
+
+                                pageimage.CopyTo(ms);
+                                message = await _thisService.SaveFile(ms.ToArray(), model, userlogin.userid, pageimage.FileName, sitePath, hosturl);
+                            }
+                            if (message.MessageCode > 0)
+                            {
+                                FileActionDto _fileinfo = message.MessageData as FileActionDto;
+                                NewBookPageImage.pageimagepath = _fileinfo.filepath;
+                                NewBookPageImage.pageimageurl = _fileinfo.fileurl;
+                            }
+                            NewBookPageImageList.Add(NewBookPageImage);
+                        }
+                    }
+                    message = await _thisService.GetNewBookPageImages(NewBookPageImageList, userlogin, processId, clientip, hosturl);
                 }
 
 

@@ -26,7 +26,7 @@ namespace Entities.Dtos
         public IFormFile? videoFile { get; set; }
         public IFormFile? featuredImage { get; set; }
         public List<long>? categoryids { get; set; }
-        public List<CategoryBaseDto> categories { get; set; }
+        public List<CategoryBaseDto>? categories { get; set; }
     }
     public class WebinarSearchDto:BaseFilterDto
     {

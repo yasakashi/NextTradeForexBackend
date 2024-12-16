@@ -56,6 +56,13 @@ namespace NextTradeAPIs.Services
                 int pageIndex = (model.pageindex == null || model.pageindex == 0) ? 1 : (int)model.pageindex;
                 int PageRowCount = (model.rowcount == null || model.rowcount == 0) ? 50 : (int)model.rowcount;
 
+                int totaldata = query.Count();
+                if (totaldata <= 0) totaldata = 1;
+                decimal pagecountd = ((decimal)totaldata / (decimal)PageRowCount);
+                int pagecount = (totaldata / PageRowCount);
+                pagecount = (pagecount <= 0) ? 1 : pagecount;
+                if (Math.Floor(pagecountd) > 0)
+                    pagecount++;
 
                 List<WebinarDto> data = await query.Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount)
                                                   .Select(x => new WebinarDto()
@@ -81,7 +88,7 @@ namespace NextTradeAPIs.Services
                     item.categories = await _Context.WebinarCategories.Where(x => x.webinarid == item.id).Include(x => x.category).Select(x => new CategoryBaseDto() { Id = x.categoryid, name = x.category.name, categorytypeid = x.category.categorytypeid, parentId = x.category.parentId }).ToListAsync();
                 }
 
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data, Meta = new { pagecount = pagecount, totalitem = totaldata } };
             }
             catch (Exception ex)
             {

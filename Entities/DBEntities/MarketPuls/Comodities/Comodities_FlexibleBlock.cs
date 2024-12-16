@@ -31,6 +31,7 @@ namespace Entities.DBEntities
         public string? firstcontrydescriptionfilecontentype { get; set; }
         public string? firstcontrydescriptionfilepath { get; set; }
         public string? firstcontrydescriptionfileurl { get; set; }
+        public string? secondcountryheading { get; set; }
         public string? secoundcontrydescription { get; set; }
         public string? secoundcontrydescriptionfilename { get; set; }
         public string? secoundcontrydescriptionfilecontenttype { get; set; }

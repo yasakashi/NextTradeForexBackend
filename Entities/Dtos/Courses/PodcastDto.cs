@@ -25,7 +25,7 @@ namespace Entities.Dtos
         public IFormFile? featuredImage { get; set; }
 
         public List<long>? categoryids { get; set; }
-        public List<CategoryBaseDto> categories { get; set; }
+        public List<CategoryBaseDto>? categories { get; set; }
     }
 
     public class PodcastSearchDto : BaseFilterDto

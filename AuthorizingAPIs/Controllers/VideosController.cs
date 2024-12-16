@@ -119,6 +119,7 @@ namespace NextTradeAPIs.Controllers
 
                     FileActionDto _fileinfo = message.MessageData as FileActionDto;
                     model.videofilepath = _fileinfo.filepath;
+                    model.videofileurl = _fileinfo.fileurl;
 
                     if (message.MessageCode < 0)
                         return BadRequest(message);
@@ -144,6 +145,7 @@ namespace NextTradeAPIs.Controllers
 
                     FileActionDto _fileinfo = message.MessageData as FileActionDto;
                     model.featuredimagepath = _fileinfo.filepath;
+                    model.featuredimageurl = _fileinfo.fileurl;
 
                     if (message.MessageCode < 0)
                         return BadRequest(message);
@@ -377,6 +379,7 @@ namespace NextTradeAPIs.Controllers
 
                     FileActionDto _fileinfo = message.MessageData as FileActionDto;
                     model.videofilepath = _fileinfo.filepath;
+                    model.videofileurl = _fileinfo.fileurl;
 
                     if (message.MessageCode < 0)
                         return BadRequest(message);
@@ -402,6 +405,7 @@ namespace NextTradeAPIs.Controllers
 
                     FileActionDto _fileinfo = message.MessageData as FileActionDto;
                     model.featuredimagepath = _fileinfo.filepath;
+                    model.featuredimageurl = _fileinfo.fileurl;
 
                     if (message.MessageCode < 0)
                         return BadRequest(message);
@@ -498,6 +502,7 @@ namespace NextTradeAPIs.Controllers
 
                     FileActionDto _fileinfo = message.MessageData as FileActionDto;
                     model.subtitlefilepath = _fileinfo.filepath;
+                    model.subtitlefileurl = _fileinfo.fileurl;
 
                     if (message.MessageCode < 0)
                         return BadRequest(message);

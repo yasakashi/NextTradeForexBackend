@@ -20,7 +20,7 @@ namespace Entities.Dtos
         public string? topicfileurl { get; set; }
         public int? typeId { get; set; }
         public int? statusId { get; set; }
-        public int? forumId { get; set; }
+        public Guid? forumId { get; set; }
         public string? topicTags { get; set; }
         public string? typename { get; set; }
         public string? statusname { get; set; }
@@ -31,6 +31,6 @@ namespace Entities.Dtos
         public string? title { get; set; }
         public int? typeId { get; set; }
         public int? statusId { get; set; }
-        public int? forumId { get; set; }
+        public Guid? forumId { get; set; }
     }
 }

@@ -119,6 +119,7 @@ namespace NextTradeAPIs.Controllers
 
                     FileActionDto _fileinfo = message.MessageData as FileActionDto;
                     model.topicfilepath = _fileinfo.filepath;
+                    model.topicfileurl = _fileinfo.fileurl;
 
                     if (message.MessageCode < 0)
                         return BadRequest(message);
@@ -351,6 +352,7 @@ namespace NextTradeAPIs.Controllers
 
                     FileActionDto _fileinfo = message.MessageData as FileActionDto;
                     model.topicfilepath = _fileinfo.filepath;
+                    model.topicfileurl = _fileinfo.fileurl;
 
                     if (message.MessageCode < 0)
                         return BadRequest(message);
