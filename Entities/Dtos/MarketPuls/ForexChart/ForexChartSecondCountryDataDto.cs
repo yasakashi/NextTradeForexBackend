@@ -9,6 +9,7 @@ namespace Entities.Dtos
     public class ForexChartSecondCountryDataDto
     {
         public Guid? id { get; set; }
+        public Guid? forexchartid { get; set; }
         public Guid? forexchartflexibleblockid { get; set; }
         public string? forexrcontriy { get; set; }
         public string? forexrcentralbank { get; set; }

@@ -255,6 +255,7 @@ namespace DataLayers
         public DbSet<ForexChartFundamentalNewsSection> ForexChartFundamentalNewsSections { get; set; }
         public DbSet<ForexChartSecondCountryData> ForexChartSecondCountryDatas { get; set; }
         public DbSet<ForexChartFirstCountryData> ForexChartFirstCountryDatas { get; set; }
+        public DbSet<ForexChartCountriesData> ForexChartCountriesDatas { get; set; }        
         public DbSet<ForexChartFlexibleBlock> ForexChartFlexibleBlocks { get; set; }
         public DbSet<ForexChart> ForexCharts { get; set; }
 
