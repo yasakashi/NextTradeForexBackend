@@ -186,6 +186,7 @@ namespace NextTradeAPIs.Controllers
 
         [HttpPost]
         [Route("/api/marketpuls/getforexchartitems")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetForexChartItems(ForexChartFilterDto model)
         {
             StackTrace stackTrace = new StackTrace();
@@ -253,6 +254,7 @@ namespace NextTradeAPIs.Controllers
         [HttpPost]
         [HttpDelete]
         [Route("/api/marketpuls/deleteforexchartitem")]
+        [AllowAnonymous]
         public async Task<IActionResult> DeleteForexChartItems(ForexChartFilterDto model)
         {
             StackTrace stackTrace = new StackTrace();
@@ -319,6 +321,7 @@ namespace NextTradeAPIs.Controllers
         [HttpPost]
         [HttpGet]
         [Route("/api/marketpuls/forexchart/gettopcategories")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetTopCategories(ForexChartFilterDto model)
         {
             StackTrace stackTrace = new StackTrace();
@@ -365,7 +368,7 @@ namespace NextTradeAPIs.Controllers
 
                 //UserModel userlogin = message.MessageData as UserModel;
 
-                model.categoryid = 1780;
+                model.categoryid = 1884;
                 message = await _baseInformationService.GetTopCategory4MarketPulsForexChart(model, null, processId, clientip, hosturl, true);
 
                 if (message.MessageCode < 0)
@@ -386,6 +389,7 @@ namespace NextTradeAPIs.Controllers
         [HttpPost]
         [HttpGet]
         [Route("/api/marketpuls/forexchart/getcategories")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetCategories(ForexChartFilterDto model)
         {
             StackTrace stackTrace = new StackTrace();
@@ -453,6 +457,7 @@ namespace NextTradeAPIs.Controllers
         [HttpPost]
         [HttpGet]
         [Route("/api/marketpuls/forexchart/getcurrencies")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetforexchartCurrencies(ForexChartFilterDto model)
         {
             StackTrace stackTrace = new StackTrace();
@@ -518,7 +523,8 @@ namespace NextTradeAPIs.Controllers
 
 
         [HttpPost]
-        [Route("/api/marketpuls/getforexchartforummessages")]
+        [Route("/api/marketpuls/forexchart/getforummessages")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetForumMessages(ForexFilterDto model)
         {
             StackTrace stackTrace = new StackTrace();
@@ -581,7 +587,5 @@ namespace NextTradeAPIs.Controllers
                 //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
             }
         }
-
-
     }
 }
