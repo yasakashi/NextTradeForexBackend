@@ -1245,6 +1245,60 @@ namespace NextTradeAPIs.Services
             return message;
         }
 
+        public async Task<SystemMessageModel> GetParentUserLevelList(UserSearchModel filter, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            List<UserReferralModel> datas = null;
+            long SerrvieCode = 120000;
+
+            string username = string.Empty;
+            try
+            {
+                //if (!string.IsNullOrEmpty(filter.username))
+                //{
+                //    User parentuser = await _Context.Users.Where(x => x.Username == filter.username).SingleOrDefaultAsync();
+                //    if (parentuser != null)
+                //        query = query.Where(x => x.ParentUserId == parentuser.UserId);
+                //}
+                //else
+                //    query = query.Where(x => x.ParentUserId == userlogin.userid);
+
+                if (string.IsNullOrEmpty(filter.username))
+                {
+                    filter.username = userlogin.username;
+                }
+
+                string querystrnig = $"EXECUTE dbo.spGetUserParentReferalList @Username='?'".Replace("?", filter.username);
+                var user = new SqlParameter("username", filter.username);
+                datas = await _Context.Database.SqlQueryRaw<UserReferralModel>(querystrnig).ToListAsync();
+                //datas = await _Context.Users.FromSql($"EXECUTE dbo.spGetUserReferalList @Username={user}").Select(x => new UserModel()
+                //datas = await _Context.Users.FromSqlRaw(querystrnig).IgnoreQueryFilters().Select(x => new UserReferralModel()
+                //{
+                //    id = x.UserId,
+                //    username = x.Username,
+                //    EmployeeLevel = x.EmployeeLevel,
+                //    fname = x.Fname,
+                //    lname = x.Lname,
+                //    ispaid = x.ispaied,
+                //    IsActive = x.IsActive,
+                //    UserTypeId = x.UserTypeId,
+                //    ParentUserId = x.ParentUserId
+                //}).ToListAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+
         public async Task<SystemMessageModel> ChangeUserAccountAtivationStatus(string username, bool accountstatus, string processId, string clientip = "")
         {
             StackTrace stackTrace = new StackTrace();

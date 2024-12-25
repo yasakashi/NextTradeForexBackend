@@ -10,14 +10,14 @@
         "projectUniqueName": "J:\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj",
         "projectName": "Base.Common",
         "projectPath": "J:\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj",
-        "packagesPath": "C:\\Users\\kourosh\\.nuget\\packages\\",
+        "packagesPath": "C:\\Users\\Sam\\.nuget\\packages\\",
         "outputPath": "J:\\NextTradeForexBackend\\Base.Common\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\kourosh\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Sam\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -116,11 +116,6 @@
             }
           },
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
-        }
-      },
-      "runtimes": {
-        "win-x64": {
-          "#import": []
         }
       }
     }

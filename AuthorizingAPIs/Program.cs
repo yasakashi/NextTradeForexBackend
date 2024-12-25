@@ -171,6 +171,7 @@ builder.Services.AddTransient<MarketPulsCryptoServices, MarketPulsCryptoServices
 builder.Services.AddTransient<MarketPulsIndiceServices, MarketPulsIndiceServices>();
 builder.Services.AddTransient<MarketPulsStockServices, MarketPulsStockServices>();
 builder.Services.AddTransient<MarketPulsForexChartServices, MarketPulsForexChartServices>();
+builder.Services.AddTransient<MarketPulsStrategyServices, MarketPulsStrategyServices>();
 
 builder.Services.AddTransient<CourseBuilderServices, CourseBuilderServices>();
 builder.Services.AddTransient<CourseBuilderUserServices, CourseBuilderUserServices>();
