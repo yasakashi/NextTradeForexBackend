@@ -2,6 +2,7 @@
 using Base.Common.Enums;
 using DataLayers;
 using Entities.Dtos;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using NextTradeAPIs.Dtos;
 
@@ -21,7 +22,7 @@ namespace NextTradeAPIs.Services
             _systemLogServices = systemLogServices;
         }
 
-        public async Task<SystemMessageModel> CalculateUserRefralPrecent(List<UserReferralModel> models,decimal totalamount, UserModel? userlogin, string processId, string clientip, string hosturl)
+        public async Task<SystemMessageModel> CalculateUserRefralPrecent(List<UserReferralModel> models, decimal totalamount, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
 
             SystemMessageModel message;
@@ -31,12 +32,13 @@ namespace NextTradeAPIs.Services
             List<UserReferralaAmountDto> UserMoney = new List<UserReferralaAmountDto>();
             try
             {
-                
+
                 foreach (UserReferralModel model in models)
                 {
-                    UserMoney.Add(new UserReferralaAmountDto() { 
+                    UserMoney.Add(new UserReferralaAmountDto()
+                    {
                         userid = (long)model.id,
-                       amount = totalamount *  ReferralPercents.GetLevelPercent(model.EmployeeLevel??0)
+                        amount = totalamount * ReferralPercents.GetLevelPercent(model.EmployeeLevel ?? 0)
                     });
                 }
 
@@ -50,5 +52,85 @@ namespace NextTradeAPIs.Services
             }
             return message;
         }
+
+        public async Task<SystemMessageModel> CalculateRoyalityIncome(List<UserReferralModel> models, decimal totalamount, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+            List<UserReferralaAmountDto> UserMoney = new List<UserReferralaAmountDto>();
+            try
+            {
+
+                foreach (UserReferralModel model in models)
+                {
+                    UserMoney.Add(new UserReferralaAmountDto()
+                    {
+                        userid = (long)model.id,
+                        amount = totalamount * ReferralPercents.GetLevelPercent(model.EmployeeLevel ?? 0)
+                    });
+                }
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = UserMoney };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        /// <summary>
+        /*  شرایط تقسیم 5 درصد نهاییاین 5 درصد به طورت مساوی بین اعضای کلاپ تقسیم می شود که شاریط عضورست در این 
+        کلاب عضو هستند بهصورت زیر است
+افرادی که حداقل 5 دایرت مستقیم داشته باشند 
+50 
+ تاLEVEL5 آدم داشته باشد 
+ 50نفر باید حتمت پرداخت داشته باشند
+ اره نه اینکه همه 50 نفر فعال باشند
+حداقل
+2.5 نفر لول 1 فعال باشند و پرداخت داشته شده باشند و   50%
+25نفر در لول ها بقیه پرداخت داشته باشند  50%
+  */
+        /// </summary>
+        /// <param name="userid"></param>
+        /// <param name="processId"></param>
+        /// <param name="clientip"></param>
+        /// <returns></returns>
+        public async Task<SystemMessageModel> CheckUserHasRoyality(long userid, string processId, string clientip)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+            List<UserReferralaAmountDto> UserMoney = new List<UserReferralaAmountDto>();
+            List<UserReferralModel> datas = null;
+            try
+            {
+                bool IsUserReyality = false;
+
+                string querystrnig = $"EXECUTE dbo.spGetRoyalityUserList ";
+
+                datas = await _Context.Database.SqlQueryRaw<UserReferralModel>(querystrnig).ToListAsync();
+
+                // datas.Count() / 
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = UserMoney };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
     }
 }
+
+
+
+
+

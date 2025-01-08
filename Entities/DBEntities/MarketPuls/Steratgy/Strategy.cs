@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Entities.DBEntities;
 
-namespace Entities.Dtos
+namespace Entities.DBEntities
 {
-    public class SterategyDto
+    [Table("tblMarketPuls_Steratgys")]
+    public class Strategy
     {
+        [Key]
         public Guid? id { get; set; }
         public long? categoryid { get; set; }
         public string? title { get; set; }
@@ -23,15 +26,8 @@ namespace Entities.Dtos
         public DateTime? createdatetime { get; set; }
         public DateTime? changestatusdate { get; set; }
         public string? privatenotes { get; set; }
-        public List<StrategyMainLessonContentDto> mainlessoncontent { get; set; }
 
-    }
+        public virtual Category category { get; set; }
 
-    public class SterategyFilterDto : BaseFilterDto
-    {
-        public Guid? id { get; set; }
-        public long? categoryid { get; set; }
-        public string? title { get; set; }
-        public string? tags { get; set; }
     }
 }

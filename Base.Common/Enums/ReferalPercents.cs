@@ -31,5 +31,16 @@ namespace Base.Common.Enums
             };
             return LevelPercent;
         }
+
+        public static decimal GetIndicatorPercent()
+        {
+            decimal LevelPercent =(decimal) 0.65;
+            return LevelPercent;
+        }
+        public static decimal GetSitePercent()
+        {
+            decimal LevelPercent = (decimal)0.1;
+            return LevelPercent;
+        }
     }
 }

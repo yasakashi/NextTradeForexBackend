@@ -17947,7 +17947,7 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\kourosh\\.nuget\\packages\\": {},
+    "C:\\Users\\Sam\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
@@ -17956,14 +17956,14 @@
       "projectUniqueName": "J:\\NextTradeForexBackend\\AuthorizingAPIs\\NextTradeAPIs.csproj",
       "projectName": "NextTradeAPIs",
       "projectPath": "J:\\NextTradeForexBackend\\AuthorizingAPIs\\NextTradeAPIs.csproj",
-      "packagesPath": "C:\\Users\\kourosh\\.nuget\\packages\\",
+      "packagesPath": "C:\\Users\\Sam\\.nuget\\packages\\",
       "outputPath": "J:\\NextTradeForexBackend\\AuthorizingAPIs\\obj\\publish\\win-x64\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\kourosh\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Sam\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],

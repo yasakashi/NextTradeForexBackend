@@ -41,7 +41,7 @@ public class CategoriesServices
             IQueryable<Category> query = _Context.Categories;
 
             if (filter.Id != null)
-                query = query.Where(x=>x.Id == filter.Id);
+                query = query.Where(x => x.Id == filter.Id);
 
             if (filter.parentId != null)
                 query = query.Where(x => x.parentId == filter.parentId);
@@ -52,7 +52,7 @@ public class CategoriesServices
             if (filter.categorytypeid != null)
                 query = query.Where(x => x.categorytypeid == filter.categorytypeid);
 
-            if (filter.isvisible!= null)
+            if (filter.isvisible != null)
                 query = query.Where(x => x.IsVisible == filter.isvisible);
 
             List<CategoryBaseDto> datas = await query
@@ -85,9 +85,9 @@ public class CategoriesServices
 
         try
         {
-            IQueryable<Category> query =  _Context.Categories;
+            IQueryable<Category> query = _Context.Categories;
             if (filter.categorytypeid != null)
-                query = query.Where(x=>x.categorytypeid == filter.categorytypeid);
+                query = query.Where(x => x.categorytypeid == filter.categorytypeid);
 
             if (filter.parentId != null)
                 query = query.Where(x => x.parentId == filter.parentId);
@@ -116,14 +116,14 @@ public class CategoriesServices
                                                          IsVisible = x.IsVisible ?? false,
                                                          categorytypeid_old = x.categorytypeid_old,
                                                          categoryimagefilepath = x.categoryimagefilepath,
-                                                         categoryimagefileurl = x.categoryimagefileurl, 
+                                                         categoryimagefileurl = x.categoryimagefileurl,
                                                          customfilecontenttype = x.customfilecontenttype,
                                                          customfilename = x.customfilename,
                                                          customfileurl = x.customfileurl,
                                                          customfilepath = x.customfilepath
                                                      }).ToListAsync();
 
-            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas, Meta=new { totaldata = totaldata } };
+            message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas, Meta = new { totaldata = totaldata } };
         }
         catch (Exception ex)
         {
@@ -354,14 +354,17 @@ public class CategoriesServices
                 //                                         categorytypeid = x.categorytypeid,
                 //                                         categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
                 //                                     }).ToListAsync();
-                datas = await _Context.Categories.Where(x => x.Id == 896).Select(x => new CategoryBaseDto()
-                {
-                    Id = x.Id,
-                    parentId = x.parentId,
-                    name = x.name,
-                    categorytypeid = x.categorytypeid,
-                    categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
-                }).ToListAsync();
+                datas = await _Context.Categories
+                    .Where(x => x.Id == 896)
+                    .Where(x => x.categorytypeid == 23 || x.categorytypeid == 14)
+                    .Select(x => new CategoryBaseDto()
+                    {
+                        Id = x.Id,
+                        parentId = x.parentId,
+                        name = x.name,
+                        categorytypeid = x.categorytypeid,
+                        categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
+                    }).ToListAsync();
 
             }
             else
@@ -406,14 +409,17 @@ public class CategoriesServices
         try
         {
 
-            datas = await _Context.Categories.Where(x => x.parentId == model.categoryid).Select(x => new CategoryBaseDto()
-            {
-                Id = x.Id,
-                parentId = x.parentId,
-                name = x.name,
-                categorytypeid = x.categorytypeid,
-                categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
-            }).ToListAsync();
+            datas = await _Context.Categories
+                    .Where(x => x.parentId == model.categoryid)
+                    .Where(x => x.categorytypeid == 23 || x.categorytypeid == 14)
+                    .Select(x => new CategoryBaseDto()
+                    {
+                        Id = x.Id,
+                        parentId = x.parentId,
+                        name = x.name,
+                        categorytypeid = x.categorytypeid,
+                        categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
+                    }).ToListAsync();
 
 
             message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
@@ -527,14 +533,17 @@ public class CategoriesServices
         try
         {
 
-            datas = await _Context.Categories.Where(x => x.parentId == model.categoryid).Select(x => new CategoryBaseDto()
-            {
-                Id = x.Id,
-                parentId = x.parentId,
-                name = x.name,
-                categorytypeid = x.categorytypeid,
-                categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
-            }).ToListAsync();
+            datas = await _Context.Categories
+                    .Where(x => x.parentId == model.categoryid)
+                    .Where(x => x.categorytypeid == 23 || x.categorytypeid == 14)
+                    .Select(x => new CategoryBaseDto()
+                    {
+                        Id = x.Id,
+                        parentId = x.parentId,
+                        name = x.name,
+                        categorytypeid = x.categorytypeid,
+                        categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
+                    }).ToListAsync();
 
 
             message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
@@ -558,14 +567,17 @@ public class CategoriesServices
         try
         {
 
-            datas = await _Context.Categories.Where(x => x.parentId == model.categoryid).Select(x => new CategoryBaseDto()
-            {
-                Id = x.Id,
-                parentId = x.parentId,
-                name = x.name,
-                categorytypeid = x.categorytypeid,
-                categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
-            }).ToListAsync();
+            datas = await _Context.Categories
+                            .Where(x => x.parentId == model.categoryid)
+                            .Where(x => x.categorytypeid == 23 || x.categorytypeid == 14)
+                            .Select(x => new CategoryBaseDto()
+                            {
+                                Id = x.Id,
+                                parentId = x.parentId,
+                                name = x.name,
+                                categorytypeid = x.categorytypeid,
+                                categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
+                            }).ToListAsync();
 
 
             message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
@@ -590,14 +602,17 @@ public class CategoriesServices
         try
         {
 
-            datas = await _Context.Categories.Where(x => x.parentId == model.categoryid).Select(x => new CategoryBaseDto()
-            {
-                Id = x.Id,
-                parentId = x.parentId,
-                name = x.name,
-                categorytypeid = x.categorytypeid,
-                categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
-            }).ToListAsync();
+            datas = await _Context.Categories
+                    .Where(x => x.parentId == model.categoryid)
+                    .Where(x => x.categorytypeid == 23 || x.categorytypeid == 14)
+                    .Select(x => new CategoryBaseDto()
+                    {
+                        Id = x.Id,
+                        parentId = x.parentId,
+                        name = x.name,
+                        categorytypeid = x.categorytypeid,
+                        categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
+                    }).ToListAsync();
 
 
             message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
@@ -621,14 +636,17 @@ public class CategoriesServices
         try
         {
 
-            datas = await _Context.Categories.Where(x => x.parentId == model.categoryid).Select(x => new CategoryBaseDto()
-            {
-                Id = x.Id,
-                parentId = x.parentId,
-                name = x.name,
-                categorytypeid = x.categorytypeid,
-                categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
-            }).ToListAsync();
+            datas = await _Context.Categories
+                        .Where(x => x.parentId == model.categoryid)
+                        .Where(x => x.categorytypeid == 23 || x.categorytypeid == 14)
+                        .Select(x => new CategoryBaseDto()
+                        {
+                            Id = x.Id,
+                            parentId = x.parentId,
+                            name = x.name,
+                            categorytypeid = x.categorytypeid,
+                            categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
+                        }).ToListAsync();
 
 
             message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
@@ -642,7 +660,6 @@ public class CategoriesServices
         return message;
     }
 
-
     public async Task<SystemMessageModel> GetCategory4MarketPulsIndices(IndiceFilterDto model, object value, string processId, string clientip, string hosturl, bool v)
     {
         SystemMessageModel message;
@@ -654,14 +671,17 @@ public class CategoriesServices
         {
             List<long> categoryids = await _Context.Forexs.Select(x => x.categoryid).ToListAsync();
 
-            datas = await _Context.Categories.Where(x => x.parentId == model.categoryid).Select(x => new CategoryBaseDto()
-            {
-                Id = x.Id,
-                parentId = x.parentId,
-                name = x.name,
-                categorytypeid = x.categorytypeid,
-                categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
-            }).ToListAsync();
+            datas = await _Context.Categories
+                            .Where(x => x.parentId == model.categoryid)
+                            .Where(x => x.categorytypeid == 23 || x.categorytypeid == 14)
+                            .Select(x => new CategoryBaseDto()
+                            {
+                                Id = x.Id,
+                                parentId = x.parentId,
+                                name = x.name,
+                                categorytypeid = x.categorytypeid,
+                                categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
+                            }).ToListAsync();
             message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
         }
         catch (Exception ex)
@@ -716,22 +736,23 @@ public class CategoriesServices
         StackTrace stackTrace = new StackTrace();
         string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
         long SerrvieCode = 130010;
-        
+
         List<CategoryBaseDto> datas = null;
-        List<long> MenuIds = new List<long>(){ 1601,1582,1704,1746,1631};
+        List<long> MenuIds = new List<long>() { 1601, 1582, 1704, 1746, 1631 };
         try
         {
-            
+
             datas = await _Context.Categories.Where(x => x.parentId == model.categoryid)
-                .Where(x=> MenuIds.Contains(x.Id))
+                .Where(x => MenuIds.Contains(x.Id))
+                .Where(x => x.categorytypeid == 23 || x.categorytypeid == 14)
                 .Select(x => new CategoryBaseDto()
-            {
-                Id = x.Id,
-                parentId = x.parentId,
-                name = x.name,
-                categorytypeid = x.categorytypeid,
-                categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
-            }).ToListAsync();
+                {
+                    Id = x.Id,
+                    parentId = x.parentId,
+                    name = x.name,
+                    categorytypeid = x.categorytypeid,
+                    categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
+                }).ToListAsync();
 
 
             message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
@@ -756,7 +777,9 @@ public class CategoriesServices
         try
         {
 
-            datas = await _Context.Categories.Where(x => x.parentId == model.categoryid)
+            datas = await _Context.Categories
+                .Where(x => x.parentId == model.categoryid)
+                .Where(x => x.categorytypeid == 23 || x.categorytypeid == 14)
                 .Select(x => new CategoryBaseDto()
                 {
                     Id = x.Id,
@@ -788,14 +811,17 @@ public class CategoriesServices
         try
         {
 
-            datas = await _Context.Categories.Where(x => x.parentId == model.categoryid).Select(x => new CategoryBaseDto()
-            {
-                Id = x.Id,
-                parentId = x.parentId,
-                name = x.name,
-                categorytypeid = x.categorytypeid,
-                categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
-            }).ToListAsync();
+            datas = await _Context.Categories
+                .Where(x => x.parentId == model.categoryid)
+                .Where(x => x.categorytypeid == 23 || x.categorytypeid == 14)
+                .Select(x => new CategoryBaseDto()
+                {
+                    Id = x.Id,
+                    parentId = x.parentId,
+                    name = x.name,
+                    categorytypeid = x.categorytypeid,
+                    categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
+                }).ToListAsync();
 
 
             message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
@@ -819,14 +845,17 @@ public class CategoriesServices
         try
         {
 
-            datas = await _Context.Categories.Where(x => x.parentId == model.categoryid).Select(x => new CategoryBaseDto()
-            {
-                Id = x.Id,
-                parentId = x.parentId,
-                name = x.name,
-                categorytypeid = x.categorytypeid,
-                categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
-            }).ToListAsync();
+            datas = await _Context.Categories
+                    .Where(x => x.parentId == model.categoryid)
+                    .Where(x => x.categorytypeid == 23 || x.categorytypeid == 14)
+                    .Select(x => new CategoryBaseDto()
+                    {
+                        Id = x.Id,
+                        parentId = x.parentId,
+                        name = x.name,
+                        categorytypeid = x.categorytypeid,
+                        categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
+                    }).ToListAsync();
 
 
             message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
@@ -851,15 +880,17 @@ public class CategoriesServices
         try
         {
 
-            datas = await _Context.Categories.Where(x => x.parentId == model.categoryid)
-                .Select(x => new CategoryBaseDto()
-                {
-                    Id = x.Id,
-                    parentId = x.parentId,
-                    name = x.name,
-                    categorytypeid = x.categorytypeid,
-                    categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
-                }).ToListAsync();
+            datas = await _Context.Categories
+                    .Where(x => x.parentId == model.categoryid)
+                    .Where(x => x.categorytypeid == 23 || x.categorytypeid == 14)
+                    .Select(x => new CategoryBaseDto()
+                    {
+                        Id = x.Id,
+                        parentId = x.parentId,
+                        name = x.name,
+                        categorytypeid = x.categorytypeid,
+                        categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
+                    }).ToListAsync();
 
 
             message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
@@ -884,15 +915,17 @@ public class CategoriesServices
         try
         {
 
-            datas = await _Context.Categories.Where(x => x.parentId == model.categoryid)
-                .Select(x => new CategoryBaseDto()
-                {
-                    Id = x.Id,
-                    parentId = x.parentId,
-                    name = x.name,
-                    categorytypeid = x.categorytypeid,
-                    categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
-                }).ToListAsync();
+            datas = await _Context.Categories
+                        .Where(x => x.parentId == model.categoryid)
+                        .Where(x => x.categorytypeid == 23 || x.categorytypeid == 14)
+                        .Select(x => new CategoryBaseDto()
+                        {
+                            Id = x.Id,
+                            parentId = x.parentId,
+                            name = x.name,
+                            categorytypeid = x.categorytypeid,
+                            categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
+                        }).ToListAsync();
 
 
             message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
@@ -917,15 +950,17 @@ public class CategoriesServices
         try
         {
 
-            datas = await _Context.Categories.Where(x => x.parentId == model.categoryid)
-                .Select(x => new CategoryBaseDto()
-                {
-                    Id = x.Id,
-                    parentId = x.parentId,
-                    name = x.name,
-                    categorytypeid = x.categorytypeid,
-                    categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
-                }).ToListAsync();
+            datas = await _Context.Categories
+                    .Where(x => x.parentId == model.categoryid)
+                    .Where(x => x.categorytypeid == 23 || x.categorytypeid == 14)
+                    .Select(x => new CategoryBaseDto()
+                    {
+                        Id = x.Id,
+                        parentId = x.parentId,
+                        name = x.name,
+                        categorytypeid = x.categorytypeid,
+                        categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
+                    }).ToListAsync();
 
 
             message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
@@ -950,15 +985,17 @@ public class CategoriesServices
         try
         {
 
-            datas = await _Context.Categories.Where(x => x.parentId == model.categoryid)
-                .Select(x => new CategoryBaseDto()
-                {
-                    Id = x.Id,
-                    parentId = x.parentId,
-                    name = x.name,
-                    categorytypeid = x.categorytypeid,
-                    categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
-                }).ToListAsync();
+            datas = await _Context.Categories
+                    .Where(x => x.parentId == model.categoryid)
+                    .Where(x => x.categorytypeid == 23 || x.categorytypeid == 14)
+                    .Select(x => new CategoryBaseDto()
+                    {
+                        Id = x.Id,
+                        parentId = x.parentId,
+                        name = x.name,
+                        categorytypeid = x.categorytypeid,
+                        categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
+                    }).ToListAsync();
 
 
             message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
@@ -982,14 +1019,17 @@ public class CategoriesServices
         try
         {
 
-            datas = await _Context.Categories.Where(x => x.parentId == model.categoryid).Select(x => new CategoryBaseDto()
-            {
-                Id = x.Id,
-                parentId = x.parentId,
-                name = x.name,
-                categorytypeid = x.categorytypeid,
-                categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
-            }).ToListAsync();
+            datas = await _Context.Categories
+                    .Where(x => x.parentId == model.categoryid)
+                    .Where(x => x.categorytypeid == 23 || x.categorytypeid == 14)
+                    .Select(x => new CategoryBaseDto()
+                    {
+                        Id = x.Id,
+                        parentId = x.parentId,
+                        name = x.name,
+                        categorytypeid = x.categorytypeid,
+                        categorytypename = (x.categorytype != null) ? x.categorytype.name : ""
+                    }).ToListAsync();
 
 
             message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };

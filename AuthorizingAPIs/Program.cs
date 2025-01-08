@@ -143,6 +143,7 @@ builder.Services.AddTransient<AuthorizationService, AuthorizationService>();
 builder.Services.AddScoped<IJwtHandler, JwtHandler>();
 
 builder.Services.AddTransient<BaseInformationServices, BaseInformationServices>();
+builder.Services.AddTransient<SiteMediaFileServices, SiteMediaFileServices>();
 
 builder.Services.AddTransient<UserServices, UserServices>();
 builder.Services.AddTransient<SystemLogServices, SystemLogServices>();

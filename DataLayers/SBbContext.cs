@@ -21,13 +21,16 @@ namespace DataLayers
         }
         public DbSet<SystemMessage> SystemMessages { get; set; }
         public DbSet<LogType> LogTypes { get; set; }
+        public DbSet<SystemPart> SystemParts { get; set; }
+        
         public DbSet<Country> Countries { get; set; }
+        public DbSet<FileType> FileTypes { get; set; }
         public DbSet<State> States { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<CourseStatus> CourseStatuses { get; set; }
         public DbSet<PartnerType> PartnerTypes { get; set; }
 
-        //public DbSet<SystemLog> SystemLogs { get; set; }
+        public DbSet<SiteMediaFile> SiteMediaFiles { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<UserFinancialInstrument> UserFinancialInstruments { get; set; }
         public DbSet<UserTrainingmethod> UserTrainingmethods { get; set; }
@@ -260,6 +263,14 @@ namespace DataLayers
         public DbSet<ForexChart> ForexCharts { get; set; }
 
         #endregion [ Market Puls Forex Chart ]
+
+        #region [ Market Puls Strategy ]
+        public DbSet<StrategyContentType> StrategyContentTypes { get; set; }
+        public DbSet<StrategyMainLessonContent> StrategyMainLessonContents { get; set; }
+        public DbSet<Strategy> Strategys { get; set; }
+
+        #endregion [ Market Puls Strategy ]
+
 
         #region OnModelCreating
         protected override void OnModelCreating(ModelBuilder builder)

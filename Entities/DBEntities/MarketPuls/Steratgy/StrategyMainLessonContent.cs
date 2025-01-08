@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Entities.Dtos
+namespace Entities.DBEntities
 {
-    public class StrategyMainLessonContentDto
+    [Table("tblMarketPuls_Steratgys_StrategyMainLessonContents")]
+    public class StrategyMainLessonContent
     {
+        [Key]
         public Guid? id { get; set; }
-        public Guid? strategid { get; set; }
+        public Guid? strategyid { get; set; }
         public int? strategycontenttypeid { get; set; }
         public string? descritption { get; set; }
         public string? descritptionfilename { get; set; }
@@ -45,7 +49,10 @@ namespace Entities.Dtos
         public string? galleryimagefilepath { get; set; }
         public string? galleryimagefileurl { get; set; }
         public string? galleryimagefilecontenttype { get; set; }
+
+        public virtual Strategy strategy { get; set; }
+
+        public virtual StrategyContentType strategycontenttype { get; set; }
+
     }
-
-
 }
