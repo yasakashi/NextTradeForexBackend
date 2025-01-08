@@ -7,7 +7,7 @@ using Entities.DBEntities;
 
 namespace Entities.Dtos
 {
-    public class SterategyDto
+    public class StrategyDto
     {
         public Guid? id { get; set; }
         public long? categoryid { get; set; }
@@ -23,11 +23,11 @@ namespace Entities.Dtos
         public DateTime? createdatetime { get; set; }
         public DateTime? changestatusdate { get; set; }
         public string? privatenotes { get; set; }
-        public List<StrategyMainLessonContentDto> mainlessoncontent { get; set; }
+        public List<StrategyMainLessonContentDto>? mainlessoncontentlist { get; set; }
 
     }
 
-    public class SterategyFilterDto : BaseFilterDto
+    public class StrategyFilterDto : BaseFilterDto
     {
         public Guid? id { get; set; }
         public long? categoryid { get; set; }

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using NextTradeAPIs.Dtos;
 using System.Diagnostics;
+using System.Security.AccessControl;
 
 namespace NextTradeAPIs.Services
 {
@@ -23,7 +24,7 @@ namespace NextTradeAPIs.Services
             _systemLogServices = systemLogServices;
         }
 
-        public async Task<SystemMessageModel> SaveForexChartItem(ForexChartDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        public async Task<SystemMessageModel> SaveStrategyItem(StrategyDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
             SystemMessageModel message;
             StackTrace stackTrace = new StackTrace();
@@ -32,12 +33,12 @@ namespace NextTradeAPIs.Services
 
             try
             {
-                if (await _Context.ForexCharts.Where(x => x.categoryid == model.categoryid).AnyAsync())
+                if (await _Context.Strategys.Where(x => x.categoryid == model.categoryid).AnyAsync())
                 {
                     return new SystemMessageModel() { MessageCode = -103, MessageDescription = "For this category save before use update service", MessageData = model };
                 }
 
-                ForexChart data = new ForexChart()
+                Strategy data = new Strategy()
                 {
                     id = Guid.NewGuid(),
                     categoryid = (long)model.categoryid,
@@ -52,235 +53,58 @@ namespace NextTradeAPIs.Services
                     changestatusdate = DateTime.Now,
                     coursestatusid = (int)CourseStatusList.Draft,
                     tags = model.tags,
-                    fundamentalandtechnicaltabsection_privatenotes = model.fundamentalandtechnicaltabsection.privatenotes,
-                    fundamentalandtechnicaltabsection_instrumentname = model.fundamentalandtechnicaltabsection.instrumentname,
-                    fundamentalandtechnicaltabsection_fundamentalheading = model.fundamentalandtechnicaltabsection.fundamentalheading,
-                    fundamentalandtechnicaltabsection_technicalheading = model.fundamentalandtechnicaltabsection.technicalheading,
-                    fundamentalandtechnicaltabsection_marketsentimentstitle = model.fundamentalandtechnicaltabsection.marketsentimentstitle,
-                    fundamentalandtechnicaltabsection_marketsentimentsscript = model.fundamentalandtechnicaltabsection.marketsentimentsscript,
-                    fundamentalandtechnicaltabsection_relatedresorces = model.fundamentalandtechnicaltabsection.relatedresorces,
-                    discussion_allowcomments = model.discussion_allowcomments,
-                    sendtrackbacks = model.sendtrackbacks,
-                    discussion_allowtrackbacksandpingbacks = model.discussion_allowtrackbacksandpingbacks,
-                    fundamentalandtechnicaltabsection_marketsessionscript = model.fundamentalandtechnicaltabsection.marketsentimentsscript,
-                    fundamentalandtechnicaltabsection_marketsessiontitle = model.fundamentalandtechnicaltabsection.marketsentimentstitle
+                    privatenotes = model.privatenotes,
                 };
-                await _Context.ForexCharts.AddAsync(data);
+                await _Context.Strategys.AddAsync(data);
 
-                if (model.fundamentalandtechnicaltabsection != null)
+                if (model.mainlessoncontentlist != null)
                 {
-                    List<ForexChartFundamentalNewsSection> NewsSectioList = new List<ForexChartFundamentalNewsSection>();
-                    List<ForexChartNewsMainContent> NewsMainContetList = new List<ForexChartNewsMainContent>();
-                    foreach (ForexChartFundamentalNewsSectionDto news in model.fundamentalandtechnicaltabsection.fundamentalnewssectionlist)
+                    List<StrategyMainLessonContent> mainlessoncontents = new List<StrategyMainLessonContent>();
+                    foreach (StrategyMainLessonContentDto mainlessoncontent in model.mainlessoncontentlist)
                     {
-                        ForexChartFundamentalNewsSection newssection = new ForexChartFundamentalNewsSection()
+                        StrategyMainLessonContent item = new StrategyMainLessonContent()
                         {
                             id = Guid.NewGuid(),
-                            forexchartid = data.id,
-                            maintitle = news.maintitle,
-                            script = news.script
+                            strategyid = data.id,
+                            strategycontenttypeid = mainlessoncontent.strategycontenttypeid,
+                            descritption = mainlessoncontent.descritption,
+                            descritptionfilename = mainlessoncontent.descritptionfilename,
+                            descritptionfilepath = mainlessoncontent.descritptionfilepath,
+                            descritptionfileurl = mainlessoncontent.descritptionfileurl,
+                            descritptionfilecontenttype = mainlessoncontent.descritptionfilecontenttype,
+                            imagefilename = mainlessoncontent.imagefilename,
+                            imagefilepath = mainlessoncontent.imagefilepath,
+                            imagefileurl = mainlessoncontent.imagefileurl,
+                            imagefilecontenttype = mainlessoncontent.imagefilecontenttype,
+                            galleryvideofilename = mainlessoncontent.galleryvideofilename,
+                            galleryvideofilepath = mainlessoncontent.galleryvideofilepath,
+                            galleryvideofileurl = mainlessoncontent.galleryvideofileurl,
+                            galleryvideofilecontenttype = mainlessoncontent.galleryvideofilecontenttype,
+                            youtubevideo = mainlessoncontent.youtubevideo,
+                            videofromanyothersource = mainlessoncontent.videofromanyothersource,
+                            pdftitle = mainlessoncontent.pdftitle,
+                            pdfshortcodeid = mainlessoncontent.pdfshortcodeid,
+                            pdfauther = mainlessoncontent.pdfauther,
+                            pdfshortdescription = mainlessoncontent.pdfshortdescription,
+                            tabletitle = mainlessoncontent.tabletitle,
+                            tableshortcodeid = mainlessoncontent.tableshortcodeid,
+                            widgetscript = mainlessoncontent.widgetscript,
+                            audiobookfilename = mainlessoncontent.audiobookfilename,
+                            audiobookfilepath = mainlessoncontent.audiobookfilepath,
+                            audiobookfileurl = mainlessoncontent.audiobookfileurl,
+                            audiobookfilecontenttype = mainlessoncontent.audiobookfilecontenttype,
+                            galleryimagefilename = mainlessoncontent.galleryimagefilename,
+                            galleryimagefilepath = mainlessoncontent.galleryimagefilepath,
+                            galleryimagefileurl = mainlessoncontent.galleryimagefileurl,
+                            galleryimagefilecontenttype = mainlessoncontent.galleryimagefilecontenttype
                         };
 
-                        foreach (ForexChartNewsMainContentDto newsmaincontent in news.newsmaincontentlist)
-                        {
-                            NewsMainContetList.Add(new ForexChartNewsMainContent()
-                            {
-                                id = Guid.NewGuid(),
-                                forexchartid = data.id,
-                                fundamentalnewssectionid = newssection.id,
-                                forexchartflexibleblockid = newssection.id,
-                                description = newsmaincontent.description,
-                                descriptionfilecontenttype = newsmaincontent.descriptionfilecontenttype,
-                                descriptionfilename = newsmaincontent.descriptionfilename,
-                                descriptionfilepath = newsmaincontent.descriptionfilepath,
-                                descriptionfileurl = newsmaincontent.descriptionfileurl,
-                                link = newsmaincontent.link,
-                                title = newsmaincontent.title
-                            });
-                        }
-                        NewsSectioList.Add(newssection);
+
+                        mainlessoncontents.Add(item);
                     }
 
-                    await _Context.ForexChartFundamentalNewsSections.AddRangeAsync(NewsSectioList);
-                    await _Context.ForexChartNewsMainContents.AddRangeAsync(NewsMainContetList);
+                    await _Context.StrategyMainLessonContents.AddRangeAsync(mainlessoncontents);
 
-                    List<ForexChartTechnicalTab> technicaltabList = new List<ForexChartTechnicalTab>();
-                    List<ForexChartTechnicalBreakingNews> technicalbreakList = new List<ForexChartTechnicalBreakingNews>();
-                    foreach (ForexChartTechnicalTabDto tab in model.fundamentalandtechnicaltabsection.technicaltablist)
-                    {
-                        ForexChartTechnicalTab newtab = new ForexChartTechnicalTab()
-                        {
-                            id = Guid.NewGuid(),
-                            forexchartid = data.id,
-                            tabtitle = tab.tabtitle,
-                            script = tab.script
-                        };
-
-                        foreach (ForexChartTechnicalBreakingNewsDto newsmaincontent in tab.newsmaincontentlist)
-                        {
-                            technicalbreakList.Add(new ForexChartTechnicalBreakingNews()
-                            {
-                                id = Guid.NewGuid(),
-                                forexchartid = data.id,
-                                technicaltabid = (Guid)newtab.id,
-                                description = newsmaincontent.description,
-                                descriptionfilecontenttype = newsmaincontent.descriptionfilecontenttype,
-                                descriptionfilename = newsmaincontent.descriptionfilename,
-                                descriptionfilepath = newsmaincontent.descriptionfilepath,
-                                descriptionfileurl = newsmaincontent.descriptionfileurl,
-                                link = newsmaincontent.link,
-                                title = newsmaincontent.title
-                            });
-                        }
-                        technicaltabList.Add(newtab);
-                    }
-
-                    await _Context.ForexChartTechnicalTabs.AddRangeAsync(technicaltabList);
-                    await _Context.ForexChartTechnicalBreakingNewss.AddRangeAsync(technicalbreakList);
-
-                    List<ForexChartPDFSection> PDFSectionlist = new List<ForexChartPDFSection>();
-                    if (model.fundamentalandtechnicaltabsection.pdfsectionlist != null && model.fundamentalandtechnicaltabsection.pdfsectionlist.Count > 0)
-                    {
-                        foreach (ForexChartPDFSectionDto pdf in model.fundamentalandtechnicaltabsection.pdfsectionlist)
-                        {
-                            PDFSectionlist.Add(new ForexChartPDFSection()
-                            {
-                                id = Guid.NewGuid(),
-                                forexchartid = data.id,
-                                author = pdf.author,
-                                pdfshortcodeid = pdf.pdfshortcodeid,
-                                pdftitle = pdf.pdftitle,
-                                shortdescription = pdf.shortdescription
-                            });
-                        }
-                        if (PDFSectionlist.Count > 0)
-                            await _Context.ForexChartPDFSections.AddRangeAsync(PDFSectionlist);
-                    }
-                    List<ForexChartURLSection> UrlSectionlist = new List<ForexChartURLSection>();
-                    if (model.fundamentalandtechnicaltabsection.urlsectionlist != null && model.fundamentalandtechnicaltabsection.urlsectionlist.Count > 0)
-                    {
-                        foreach (ForexChartURLSectionDto pdf in model.fundamentalandtechnicaltabsection.urlsectionlist)
-                        {
-                            UrlSectionlist.Add(new ForexChartURLSection()
-                            {
-                                id = Guid.NewGuid(),
-                                forexchartid = data.id,
-                                url = pdf.url,
-                                urltitle = pdf.urltitle
-                            });
-                        }
-                        if (UrlSectionlist.Count > 0)
-                            await _Context.ForexChartURLSections.AddRangeAsync(UrlSectionlist);
-                    }
-
-                }
-
-                if (model.forexflexibleblocks != null && model.forexflexibleblocks.Count > 0)
-                {
-
-                    List<ForexChartFlexibleBlock> flexibleBlocklist = new List<ForexChartFlexibleBlock>();
-                    List<ForexChartCountriesData> countriesDatalist = new List<ForexChartCountriesData>();
-                    List<ForexChartFirstCountryData> firstCountryDatalist = new List<ForexChartFirstCountryData>();
-                    List<ForexChartSecondCountryData> secondCountryDatalist = new List<ForexChartSecondCountryData>();
-
-                    foreach (ForexChartFlexibleBlockDto flex in model.forexflexibleblocks)
-                    {
-                        ForexChartFlexibleBlock FlexibleBlock = new ForexChartFlexibleBlock();
-                        FlexibleBlock.id = Guid.NewGuid();
-                        FlexibleBlock.forexchartid = data.id;
-                        FlexibleBlock.maintitle = flex.maintitle;
-                        FlexibleBlock.forexoneyeardescription = flex.forexoneyeardescription;
-                        FlexibleBlock.forexoneyeardescriptionfilename = flex.forexoneyeardescriptionfilename;
-                        FlexibleBlock.forexoneyeardescriptionfilepath = flex.forexoneyeardescriptionfilepath;
-                        FlexibleBlock.forexoneyeardescriptionfileurl = flex.forexoneyeardescriptionfileurl;
-                        FlexibleBlock.forexoneyeardescriptionfilecontenttype = flex.forexoneyeardescriptionfilecontenttype;
-                        FlexibleBlock.forexchartdescription = flex.forexchartdescription;
-                        FlexibleBlock.forexchartdescriptionfilename = flex.forexchartdescriptionfilename;
-                        FlexibleBlock.forexchartdescriptionfilepath = flex.forexchartdescriptionfilepath;
-                        FlexibleBlock.forexchartdescriptionfileurl = flex.forexchartdescriptionfileurl;
-                        FlexibleBlock.forexchartdescriptionfilecontenttype = flex.forexchartdescriptionfilecontenttype;
-                        FlexibleBlock.forexfirstcountryheading = flex.forexfirstcountryheading;
-                        FlexibleBlock.forexfirstcountrydescription = flex.forexfirstcountrydescription;
-                        FlexibleBlock.forexfirstcountrydescriptionfilename = flex.forexfirstcountrydescriptionfilename;
-                        FlexibleBlock.forexfirstcountrydescriptionfilepath = flex.forexfirstcountrydescriptionfilepath;
-                        FlexibleBlock.forexfirstcountrydescriptionfileurl = flex.forexfirstcountrydescriptionfileurl;
-                        FlexibleBlock.forexfirstcountrydescriptionfilecontenttype = flex.forexfirstcountrydescriptionfilecontenttype;
-                        FlexibleBlock.forexsecondcountryheading = flex.forexsecondcountryheading;
-                        FlexibleBlock.forexsecondcountrydescription = flex.forexsecondcountrydescription;
-                        FlexibleBlock.forexsecondcountrydescriptionfilename = flex.forexsecondcountrydescriptionfilename;
-                        FlexibleBlock.forexsecondcountrydescriptionfilepath = flex.forexsecondcountrydescriptionfilepath;
-                        FlexibleBlock.forexsecondcountrydescriptionfileurl = flex.forexsecondcountrydescriptionfileurl;
-                        FlexibleBlock.forexsecondcountrydescriptionfilecontenttype = flex.forexsecondcountrydescriptionfilecontenttype;
-                        FlexibleBlock.forexbottomdescription = flex.forexbottomdescription;
-                        //FlexibleBlock.forexbottomdescriptionfilename = flex.forexbottomdescriptionfilename;
-                        //FlexibleBlock.forexbottomdescriptionfilepath = flex.forexbottomdescriptionfilepath;
-                        //FlexibleBlock.forexbottomdescriptionfileurl = flex.forexbottomdescriptionfileurl;
-                        //FlexibleBlock.forexbottomdescriptionfilecontenttype = flex.forexbottomdescriptionfilecontenttype;
-                        FlexibleBlock.forexmaindescription = flex.forexmaindescription;
-                        FlexibleBlock.forexmaindescriptionfilename = flex.forexmaindescriptionfilename;
-                        FlexibleBlock.forexmaindescriptionfilepath = flex.forexmaindescriptionfilepath;
-                        FlexibleBlock.forexmaindescriptionfileurl = flex.forexmaindescriptionfileurl;
-                        FlexibleBlock.forexmaindescriptionfilecontenttype = flex.forexmaindescriptionfilecontenttype;
-                        FlexibleBlock.forexsinglepagechartimage = flex.forexsinglepagechartimage;
-
-                        flexibleBlocklist.Add(FlexibleBlock);
-
-                        if (flex.countriesdatalist != null && flex.countriesdatalist.Count > 0)
-                        {
-                            foreach (ForexChartCountriesDataDto contrydata in flex.countriesdatalist)
-                            {
-                                countriesDatalist.Add(new ForexChartCountriesData()
-                                {
-                                    id = Guid.NewGuid(),
-                                    forexchartid = data.id,
-                                    forexchartflexibleblockid = FlexibleBlock.id,
-                                    forexcontries = contrydata.forexcontries,
-                                    forexpairsthatcorrelate = contrydata.forexpairsthatcorrelate,
-                                    highsandlows = contrydata.highsandlows,
-                                    forexpairtype = contrydata.forexpairtype,
-                                    forexdailyaveragemovementinpair = contrydata.forexdailyaveragemovementinpair
-                                });
-                            }
-                            await _Context.ForexChartCountriesDatas.AddRangeAsync(countriesDatalist);
-                        }
-
-                        if (flex.forexfirstcountrydatalist != null && flex.forexfirstcountrydatalist.Count > 0)
-                        {
-                            foreach (ForexChartFirstCountryDataDto contrydata in flex.forexfirstcountrydatalist)
-                            {
-                                firstCountryDatalist.Add(new ForexChartFirstCountryData()
-                                {
-                                    id = Guid.NewGuid(),
-                                    forexchartid = data.id,
-                                    forexchartflexibleblockid = FlexibleBlock.id,
-                                    forexlcentralbank = contrydata.forexlcentralbank,
-                                    forexlcontriy = contrydata.forexlcontriy,
-                                    forexlnickname = contrydata.forexlnickname,
-                                    forexlofaeragedailyturnover = contrydata.forexlofaeragedailyturnover
-                                });
-                            }
-                            await _Context.ForexChartFirstCountryDatas.AddRangeAsync(firstCountryDatalist);
-                        }
-
-                        if (flex.forexsecondcountrydatalist != null && flex.forexsecondcountrydatalist.Count > 0)
-                        {
-                            foreach (ForexChartSecondCountryDataDto contrydata in flex.forexsecondcountrydatalist)
-                            {
-                                secondCountryDatalist.Add(new ForexChartSecondCountryData()
-                                {
-                                    id = Guid.NewGuid(),
-                                    forexchartid = data.id,
-                                    forexchartflexibleblockid = FlexibleBlock.id,
-                                    forexrcontriy = contrydata.forexrcontriy,
-                                    forexrcentralbank = contrydata.forexrcentralbank,
-                                    forexrnickname = contrydata.forexrnickname,
-                                    forexrofaeragedailyturnover = contrydata.forexrofaeragedailyturnover
-                                });
-                            }
-                            await _Context.ForexChartSecondCountryDatas.AddRangeAsync(secondCountryDatalist);
-                        }
-                    }
-                    await _Context.ForexChartFlexibleBlocks.AddRangeAsync(flexibleBlocklist);
                 }
 
                 await _Context.SaveChangesAsync();
@@ -297,7 +121,7 @@ namespace NextTradeAPIs.Services
             return message;
         }
 
-        public async Task<SystemMessageModel> GetForexChartItems(ForexChartFilterDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        public async Task<SystemMessageModel> SaveStrategyItem(StrategyMainLessonContentDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
             SystemMessageModel message;
             StackTrace stackTrace = new StackTrace();
@@ -306,8 +130,72 @@ namespace NextTradeAPIs.Services
 
             try
             {
-                List<ForexChartDto> datas;
-                IQueryable<ForexChart> query = _Context.ForexCharts;
+
+                StrategyMainLessonContent item = new StrategyMainLessonContent()
+                {
+                    id = Guid.NewGuid(),
+                    strategyid = model.strategyid,
+                    strategycontenttypeid = model.strategycontenttypeid,
+                    descritption = model.descritption,
+                    descritptionfilename = model.descritptionfilename,
+                    descritptionfilepath = model.descritptionfilepath,
+                    descritptionfileurl = model.descritptionfileurl,
+                    descritptionfilecontenttype = model.descritptionfilecontenttype,
+                    imagefilename = model.imagefilename,
+                    imagefilepath = model.imagefilepath,
+                    imagefileurl = model.imagefileurl,
+                    imagefilecontenttype = model.imagefilecontenttype,
+                    galleryvideofilename = model.galleryvideofilename,
+                    galleryvideofilepath = model.galleryvideofilepath,
+                    galleryvideofileurl = model.galleryvideofileurl,
+                    galleryvideofilecontenttype = model.galleryvideofilecontenttype,
+                    youtubevideo = model.youtubevideo,
+                    videofromanyothersource = model.videofromanyothersource,
+                    pdftitle = model.pdftitle,
+                    pdfshortcodeid = model.pdfshortcodeid,
+                    pdfauther = model.pdfauther,
+                    pdfshortdescription = model.pdfshortdescription,
+                    tabletitle = model.tabletitle,
+                    tableshortcodeid = model.tableshortcodeid,
+                    widgetscript = model.widgetscript,
+                    audiobookfilename = model.audiobookfilename,
+                    audiobookfilepath = model.audiobookfilepath,
+                    audiobookfileurl = model.audiobookfileurl,
+                    audiobookfilecontenttype = model.audiobookfilecontenttype,
+                    galleryimagefilename = model.galleryimagefilename,
+                    galleryimagefilepath = model.galleryimagefilepath,
+                    galleryimagefileurl = model.galleryimagefileurl,
+                    galleryimagefilecontenttype = model.galleryimagefilecontenttype
+                };
+
+
+                await _Context.StrategyMainLessonContents.AddAsync(item);
+
+
+                await _Context.SaveChangesAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<SystemMessageModel> GetStrategyItems(StrategyFilterDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                List<StrategyDto> datas;
+                IQueryable<Strategy> query = _Context.Strategys;
 
                 if (model.id != null)
                     query = query.Where(x => x.id == model.id);
@@ -352,7 +240,7 @@ namespace NextTradeAPIs.Services
                     pagecount++;
 
                 datas = await query.Skip((pageIndex - 1) * PageRowCount)
-                                .Take(PageRowCount).Select(x => new ForexChartDto()
+                                .Take(PageRowCount).Select(x => new StrategyDto()
                                 {
                                     id = x.id,
                                     categoryid = x.categoryid,
@@ -367,153 +255,49 @@ namespace NextTradeAPIs.Services
                                     changestatusdate = x.changestatusdate,
                                     coursestatusid = x.coursestatusid,
                                     tags = x.tags,
-                                    discussion_allowcomments = x.discussion_allowcomments,
-                                    discussion_allowtrackbacksandpingbacks = x.discussion_allowtrackbacksandpingbacks,
-                                    sendtrackbacks = x.sendtrackbacks,
-                                    fundamentalandtechnicaltabsection = new ForexChartFundamentalAndTechnicalTabSectionDto()
-                                    {
-                                        privatenotes = x.fundamentalandtechnicaltabsection_privatenotes,
-                                        instrumentname = x.fundamentalandtechnicaltabsection_instrumentname,
-                                        fundamentalheading = x.fundamentalandtechnicaltabsection_fundamentalheading,
-                                        technicalheading = x.fundamentalandtechnicaltabsection_technicalheading,
-                                        marketsentimentstitle = x.fundamentalandtechnicaltabsection_marketsentimentstitle,
-                                        marketsentimentsscript = x.fundamentalandtechnicaltabsection_marketsentimentsscript,
-                                        relatedresorces = x.fundamentalandtechnicaltabsection_relatedresorces,
-                                        marketsessionscript = x.fundamentalandtechnicaltabsection_marketsessionscript,
-                                        marketsessiontitle = x.fundamentalandtechnicaltabsection_marketsessiontitle,
-                                    }
+                                    privatenotes = x.privatenotes
                                 }).ToListAsync();
 
-                foreach (ForexChartDto data in datas)
+                foreach (StrategyDto data in datas)
                 {
-                    data.fundamentalandtechnicaltabsection.urlsectionlist = await _Context.ForexChartURLSections.Where(x => x.forexchartid == data.id).Select(x => new ForexChartURLSectionDto()
+                    data.mainlessoncontentlist = await _Context.StrategyMainLessonContents.Where(x => x.strategyid == data.id).Select(x => new StrategyMainLessonContentDto()
                     {
                         id = x.id,
-                        forexchartid = x.forexchartid,
-                        url = x.url,
-                        urltitle = x.urltitle
-                    }).ToListAsync();
-
-                    data.fundamentalandtechnicaltabsection.pdfsectionlist = await _Context.ForexChartPDFSections.Where(x => x.forexchartid == data.id).Select(x => new ForexChartPDFSectionDto()
-                    {
-                        id = x.id,
-                        forexchartid = x.forexchartid,
-                        author = x.author,
-                        pdfshortcodeid = x.pdfshortcodeid,
+                        strategyid = x.strategyid,
+                        strategycontenttypeid = x.strategycontenttypeid,
+                        descritption = x.descritption,
+                        descritptionfilename = x.descritptionfilename,
+                        descritptionfilepath = string.Empty,
+                        descritptionfileurl = x.descritptionfileurl,
+                        descritptionfilecontenttype = x.descritptionfilecontenttype,
+                        imagefilename = x.imagefilename,
+                        imagefilepath = string.Empty,
+                        imagefileurl = x.imagefileurl,
+                        imagefilecontenttype = x.imagefilecontenttype,
+                        galleryvideofilename = x.galleryvideofilename,
+                        galleryvideofilepath = string.Empty,
+                        galleryvideofileurl = x.galleryvideofileurl,
+                        galleryvideofilecontenttype = x.galleryvideofilecontenttype,
+                        youtubevideo = x.youtubevideo,
+                        videofromanyothersource = x.videofromanyothersource,
                         pdftitle = x.pdftitle,
-                        shortdescription = x.shortdescription
+                        pdfshortcodeid = x.pdfshortcodeid,
+                        pdfauther = x.pdfauther,
+                        pdfshortdescription = x.pdfshortdescription,
+                        tabletitle = x.tabletitle,
+                        tableshortcodeid = x.tableshortcodeid,
+                        widgetscript = x.widgetscript,
+                        audiobookfilename = x.audiobookfilename,
+                        audiobookfilepath = string.Empty,
+                        audiobookfileurl = x.audiobookfileurl,
+                        audiobookfilecontenttype = x.audiobookfilecontenttype,
+                        galleryimagefilename = x.galleryimagefilename,
+                        galleryimagefilepath = string.Empty,
+                        galleryimagefileurl = x.galleryimagefileurl,
+                        galleryimagefilecontenttype = x.galleryimagefilecontenttype
                     }).ToListAsync();
 
 
-                    data.fundamentalandtechnicaltabsection.fundamentalnewssectionlist = await _Context.ForexChartFundamentalNewsSections.Where(x => x.forexchartid == data.id).Select(x => new ForexChartFundamentalNewsSectionDto() { id = x.id, forexchartid = x.forexchartid, maintitle = x.maintitle, script = x.script }).ToListAsync();
-
-                    foreach (ForexChartFundamentalNewsSectionDto news in data.fundamentalandtechnicaltabsection.fundamentalnewssectionlist)
-                    {
-                        news.newsmaincontentlist = await _Context.ForexChartNewsMainContents.Where(x => x.forexchartid == data.id && x.fundamentalnewssectionid == news.id).Select(x => new ForexChartNewsMainContentDto()
-                        {
-                            id = x.id,
-                            forexchartid = x.forexchartid,
-                            fundamentalnewssectionid = x.fundamentalnewssectionid,
-                            description = x.description,
-                            descriptionfilecontenttype = x.descriptionfilecontenttype,
-                            descriptionfilename = x.descriptionfilename,
-                            descriptionfilepath = x.descriptionfilepath,
-                            descriptionfileurl = x.descriptionfileurl,
-                            link = x.link,
-                            title = x.title
-                        }).ToListAsync();
-                    }
-
-                    data.fundamentalandtechnicaltabsection.technicaltablist = await _Context.ForexChartTechnicalTabs.Where(x => x.forexchartid == data.id).Select(x => new ForexChartTechnicalTabDto() { id = x.id, forexchartid = x.forexchartid, tabtitle = x.tabtitle, script = x.script }).ToListAsync();
-
-                    foreach (ForexChartTechnicalTabDto tab in data.fundamentalandtechnicaltabsection.technicaltablist)
-                    {
-                        tab.newsmaincontentlist = await _Context.ForexChartTechnicalBreakingNewss.Where(x => x.forexchartid == data.id && x.technicaltabid == tab.id).Select(x => new ForexChartTechnicalBreakingNewsDto()
-                        {
-                            id = x.id,
-                            forexchartid = x.forexchartid,
-                            technicaltabid = x.technicaltabid,
-                            description = x.description,
-                            descriptionfilecontenttype = x.descriptionfilecontenttype,
-                            descriptionfilename = x.descriptionfilename,
-                            descriptionfilepath = x.descriptionfilepath,
-                            descriptionfileurl = x.descriptionfileurl,
-                            link = x.link,
-                            title = x.title
-                        }).ToListAsync();
-                    }
-
-
-                    data.forexflexibleblocks = await _Context.ForexChartFlexibleBlocks.Where(x => x.forexchartid == data.id).Select(x => new ForexChartFlexibleBlockDto()
-                    {
-                        id = x.id,
-                        forexchartid = x.forexchartid,
-                        maintitle = x.maintitle,
-                        forexoneyeardescription = x.forexoneyeardescription,
-                        forexoneyeardescriptionfilename = x.forexoneyeardescriptionfilename,
-                        forexoneyeardescriptionfilepath = x.forexoneyeardescriptionfilepath,
-                        forexoneyeardescriptionfileurl = x.forexoneyeardescriptionfileurl,
-                        forexoneyeardescriptionfilecontenttype = x.forexoneyeardescriptionfilecontenttype,
-                        forexchartdescription = x.forexchartdescription,
-                        forexchartdescriptionfilename = x.forexchartdescriptionfilename,
-                        forexchartdescriptionfilepath = x.forexchartdescriptionfilepath,
-                        forexchartdescriptionfileurl = x.forexchartdescriptionfileurl,
-                        forexchartdescriptionfilecontenttype = x.forexchartdescriptionfilecontenttype,
-                        forexfirstcountryheading = x.forexfirstcountryheading,
-                        forexfirstcountrydescription = x.forexfirstcountrydescription,
-                        forexfirstcountrydescriptionfilename = x.forexfirstcountrydescriptionfilename,
-                        forexfirstcountrydescriptionfilepath = x.forexfirstcountrydescriptionfilepath,
-                        forexfirstcountrydescriptionfileurl = x.forexfirstcountrydescriptionfileurl,
-                        forexfirstcountrydescriptionfilecontenttype = x.forexfirstcountrydescriptionfilecontenttype,
-                        forexsecondcountryheading = x.forexsecondcountryheading,
-                        forexsecondcountrydescription = x.forexsecondcountrydescription,
-                        forexsecondcountrydescriptionfilename = x.forexsecondcountrydescriptionfilename,
-                        forexsecondcountrydescriptionfilepath = x.forexsecondcountrydescriptionfilepath,
-                        forexsecondcountrydescriptionfileurl = x.forexsecondcountrydescriptionfileurl,
-                        forexsecondcountrydescriptionfilecontenttype = x.forexsecondcountrydescriptionfilecontenttype,
-                        forexbottomdescription = x.forexbottomdescription,
-                        forexmaindescription = x.forexmaindescription,
-                        forexmaindescriptionfilename = x.forexmaindescriptionfilename,
-                        forexmaindescriptionfilepath = x.forexmaindescriptionfilepath,
-                        forexmaindescriptionfileurl = x.forexmaindescriptionfileurl,
-                        forexmaindescriptionfilecontenttype = x.forexmaindescriptionfilecontenttype,
-                        forexsinglepagechartimage = x.forexsinglepagechartimage
-                    }).ToListAsync();
-
-                    foreach (ForexChartFlexibleBlockDto item in data.forexflexibleblocks)
-                    {
-                        item.forexsecondcountrydatalist = await _Context.ForexChartSecondCountryDatas.Where(x => x.forexchartid == data.id && x.forexchartflexibleblockid == item.id).Select(x => new ForexChartSecondCountryDataDto()
-                        {
-                            id = x.id,
-                            forexchartflexibleblockid = x.forexchartflexibleblockid,
-                            forexchartid = x.forexchartid,
-                            forexrcentralbank = x.forexrcentralbank,
-                            forexrcontriy = x.forexrcontriy,
-                            forexrnickname = x.forexrnickname,
-                            forexrofaeragedailyturnover = x.forexrofaeragedailyturnover
-                        }).ToListAsync();
-                        item.forexfirstcountrydatalist = await _Context.ForexChartFirstCountryDatas.Where(x => x.forexchartid == data.id && x.forexchartflexibleblockid == item.id).Select(x => new ForexChartFirstCountryDataDto()
-                        {
-                            id = x.id,
-                            forexchartflexibleblockid = x.forexchartflexibleblockid,
-                            forexchartid = x.forexchartid,
-                            forexlcentralbank = x.forexlcentralbank,
-                            forexlcontriy = x.forexlcontriy,
-                            forexlnickname = x.forexlnickname,
-                            forexlofaeragedailyturnover = x.forexlofaeragedailyturnover
-                        }).ToListAsync();
-                        item.countriesdatalist = await _Context.ForexChartCountriesDatas.Where(x => x.forexchartid == data.id && x.forexchartflexibleblockid == item.id).Select(x => new ForexChartCountriesDataDto()
-                        {
-                            id = x.id,
-                            forexchartflexibleblockid = x.forexchartflexibleblockid,
-                            forexchartid = x.forexchartid,
-                            forexcontries = x.forexcontries,
-                            forexdailyaveragemovementinpair = x.forexdailyaveragemovementinpair,
-                            forexpairsthatcorrelate = x.forexpairsthatcorrelate,
-                            forexpairtype = x.forexpairtype,
-                            highsandlows = x.highsandlows
-                        }).ToListAsync();
-                    }
                 }
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas, Meta = new { totaldata = datas.Count, pagecount = pagecount } };
@@ -527,7 +311,7 @@ namespace NextTradeAPIs.Services
             return message;
         }
 
-        public async Task<SystemMessageModel> DeleteForexChartItem(ForexChartFilterDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        public async Task<SystemMessageModel> DeleteStrategyItem(StrategyFilterDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
             SystemMessageModel message;
             StackTrace stackTrace = new StackTrace();
@@ -536,8 +320,8 @@ namespace NextTradeAPIs.Services
 
             try
             {
-                ForexChart data;
-                IQueryable<ForexChart> query = _Context.ForexCharts;
+                Strategy data;
+                IQueryable<Strategy> query = _Context.Strategys;
 
                 if (model.id != null)
                     query = query.Where(x => x.id == model.id);
@@ -547,39 +331,11 @@ namespace NextTradeAPIs.Services
 
                 data = await query.FirstOrDefaultAsync();
 
-                _Context.ForexCharts.Remove(data);
+                _Context.Strategys.Remove(data);
 
 
-                List<ForexChartFlexibleBlock> _ForexChartFlexibleBlocks = await _Context.ForexChartFlexibleBlocks.Where(x => x.forexchartid == data.id).ToListAsync();
-                _Context.ForexChartFlexibleBlocks.RemoveRange(_ForexChartFlexibleBlocks);
-
-                List<ForexChartCountriesData> _ForexChartCountriesDatas = await _Context.ForexChartCountriesDatas.Where(x => x.forexchartid == data.id).ToListAsync();
-                _Context.ForexChartCountriesDatas.RemoveRange(_ForexChartCountriesDatas);
-
-                List<ForexChartFirstCountryData> _ForexChartFirstCountryDataCountriesDatas = await _Context.ForexChartFirstCountryDatas.Where(x => x.forexchartid == data.id).ToListAsync();
-                _Context.ForexChartFirstCountryDatas.RemoveRange(_ForexChartFirstCountryDataCountriesDatas);
-
-                List<ForexChartSecondCountryData> _ForexChartSecondCountryDataCountriesDatas = await _Context.ForexChartSecondCountryDatas.Where(x => x.forexchartid == data.id).ToListAsync();
-                _Context.ForexChartSecondCountryDatas.RemoveRange(_ForexChartSecondCountryDataCountriesDatas);
-
-                List<ForexChartFundamentalNewsSection> _ForexChart_fundamentalandtechnicaltabsection_fundamentalnewssections = await _Context.ForexChartFundamentalNewsSections.Where(x => x.forexchartid == data.id).ToListAsync();
-                _Context.ForexChartFundamentalNewsSections.RemoveRange(_ForexChart_fundamentalandtechnicaltabsection_fundamentalnewssections);
-
-                List<ForexChartNewsMainContent> _ForexChart_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontents = await _Context.ForexChartNewsMainContents.Where(x => x.forexchartid == data.id).ToListAsync();
-                _Context.ForexChartNewsMainContents.RemoveRange(_ForexChart_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontents);
-
-                List<ForexChartTechnicalTab> _ForexChart_Fundamentalandtechnicaltabsection_TechnicalTabses = await _Context.ForexChartTechnicalTabs.Where(x => x.forexchartid == data.id).ToListAsync();
-                _Context.ForexChartTechnicalTabs.RemoveRange(_ForexChart_Fundamentalandtechnicaltabsection_TechnicalTabses);
-
-                List<ForexChartTechnicalBreakingNews> _ForexChart_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewses = await _Context.ForexChartTechnicalBreakingNewss.Where(x => x.forexchartid == data.id).ToListAsync();
-                _Context.ForexChartTechnicalBreakingNewss.RemoveRange(_ForexChart_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewses);
-
-                List<ForexChartPDFSection> _ForexChart_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections = await _Context.ForexChartPDFSections.Where(x => x.forexchartid == data.id).ToListAsync();
-                _Context.ForexChartPDFSections.RemoveRange(_ForexChart_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections);
-
-                List<ForexChartURLSection> _ForexChart_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionsawait = await _Context.ForexChartURLSections.Where(x => x.forexchartid == data.id).ToListAsync();
-                _Context.ForexChartURLSections.RemoveRange(_ForexChart_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionsawait);
-
+                List<StrategyMainLessonContent> _StrategyFlexibleBlocks = await _Context.StrategyMainLessonContents.Where(x => x.strategyid == data.id).ToListAsync();
+                _Context.StrategyMainLessonContents.RemoveRange(_StrategyFlexibleBlocks);
 
                 await _Context.SaveChangesAsync();
 
@@ -594,8 +350,7 @@ namespace NextTradeAPIs.Services
             return message;
         }
 
-
-        public async Task<SystemMessageModel> UpdateForexChartItem(ForexChartDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        public async Task<SystemMessageModel> UpdateStrategyItem(StrategyDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
             SystemMessageModel message;
             StackTrace stackTrace = new StackTrace();
@@ -607,11 +362,11 @@ namespace NextTradeAPIs.Services
                 if (model.id == null)
                     return new SystemMessageModel() { MessageCode = -102, MessageDescription = "Id is Wrong" };
 
-                ForexChart data = await _Context.ForexCharts.FindAsync(model.id);
+                Strategy data = await _Context.Strategys.FindAsync(model.id);
                 if (data == null)
                     return new SystemMessageModel() { MessageCode = -103, MessageDescription = "data not find" };
 
-                if (data.categoryid != model.categoryid && await _Context.ForexCharts.AnyAsync(x => x.categoryid == model.categoryid))
+                if (data.categoryid != model.categoryid && await _Context.Strategys.AnyAsync(x => x.categoryid == model.categoryid))
                     return new SystemMessageModel() { MessageCode = -104, MessageDescription = "this category is exist" };
 
                 data.categoryid = (long)model.categoryid;
@@ -628,271 +383,55 @@ namespace NextTradeAPIs.Services
                 data.creatoruserid = model.creatoruserid;
                 data.createdatetime = model.createdatetime;
                 data.changestatusdate = model.changestatusdate;
-                data.sendtrackbacks = model.sendtrackbacks;
-                data.discussion_allowcomments = model.discussion_allowcomments;
-                data.discussion_allowtrackbacksandpingbacks = model.discussion_allowtrackbacksandpingbacks;
-                data.fundamentalandtechnicaltabsection_instrumentname = model.fundamentalandtechnicaltabsection.instrumentname;
-                data.fundamentalandtechnicaltabsection_fundamentalheading = model.fundamentalandtechnicaltabsection.fundamentalheading;
-                data.fundamentalandtechnicaltabsection_technicalheading = model.fundamentalandtechnicaltabsection.technicalheading;
-                data.fundamentalandtechnicaltabsection_marketsessiontitle = model.fundamentalandtechnicaltabsection.marketsessiontitle;
-                data.fundamentalandtechnicaltabsection_marketsessionscript = model.fundamentalandtechnicaltabsection.marketsessionscript;
-                data.fundamentalandtechnicaltabsection_marketsentimentstitle = model.fundamentalandtechnicaltabsection.marketsentimentstitle;
-                data.fundamentalandtechnicaltabsection_marketsentimentsscript = model.fundamentalandtechnicaltabsection.marketsentimentsscript;
-                data.fundamentalandtechnicaltabsection_relatedresorces = model.fundamentalandtechnicaltabsection.relatedresorces;
-                data.fundamentalandtechnicaltabsection_privatenotes = model.fundamentalandtechnicaltabsection.privatenotes;
+                data.privatenotes = model.privatenotes;
 
-                _Context.ForexCharts.Update(data);
+                _Context.Strategys.Update(data);
 
-                if (model.forexflexibleblocks != null && model.forexflexibleblocks.Count > 0)
+                if (model.mainlessoncontentlist != null && model.mainlessoncontentlist.Count > 0)
                 {
-                    List<ForexChartFlexibleBlock> flexibleBlocklist = new List<ForexChartFlexibleBlock>();
-                    List<ForexChartCountriesData> countriesDatalist = new List<ForexChartCountriesData>();
-                    List<ForexChartFirstCountryData> firstCountryDatalist = new List<ForexChartFirstCountryData>();
-                    List<ForexChartSecondCountryData> secondCountryDatalist = new List<ForexChartSecondCountryData>();
-
-
-                    List<ForexChartFlexibleBlock> _ForexChartFlexibleBlocks = await _Context.ForexChartFlexibleBlocks.Where(x => x.forexchartid == data.id).ToListAsync();
-                    _Context.ForexChartFlexibleBlocks.RemoveRange(_ForexChartFlexibleBlocks);
-
-                    foreach (ForexChartFlexibleBlockDto flex in model.forexflexibleblocks)
+                    List<StrategyMainLessonContent> mainlessoncontents = new List<StrategyMainLessonContent>();
+                    foreach (StrategyMainLessonContentDto mainlessoncontent in model.mainlessoncontentlist)
                     {
-                        ForexChartFlexibleBlock FlexibleBlock = new ForexChartFlexibleBlock();
-                        FlexibleBlock.id = Guid.NewGuid();
-                        FlexibleBlock.forexchartid = data.id;
-                        FlexibleBlock.maintitle = flex.maintitle;
-                        FlexibleBlock.forexoneyeardescription = flex.forexoneyeardescription;
-                        FlexibleBlock.forexoneyeardescriptionfilename = flex.forexoneyeardescriptionfilename;
-                        FlexibleBlock.forexoneyeardescriptionfilepath = flex.forexoneyeardescriptionfilepath;
-                        FlexibleBlock.forexoneyeardescriptionfileurl = flex.forexoneyeardescriptionfileurl;
-                        FlexibleBlock.forexoneyeardescriptionfilecontenttype = flex.forexoneyeardescriptionfilecontenttype;
-                        FlexibleBlock.forexchartdescription = flex.forexchartdescription;
-                        FlexibleBlock.forexchartdescriptionfilename = flex.forexchartdescriptionfilename;
-                        FlexibleBlock.forexchartdescriptionfilepath = flex.forexchartdescriptionfilepath;
-                        FlexibleBlock.forexchartdescriptionfileurl = flex.forexchartdescriptionfileurl;
-                        FlexibleBlock.forexchartdescriptionfilecontenttype = flex.forexchartdescriptionfilecontenttype;
-                        FlexibleBlock.forexfirstcountryheading = flex.forexfirstcountryheading;
-                        FlexibleBlock.forexfirstcountrydescription = flex.forexfirstcountrydescription;
-                        FlexibleBlock.forexfirstcountrydescriptionfilename = flex.forexfirstcountrydescriptionfilename;
-                        FlexibleBlock.forexfirstcountrydescriptionfilepath = flex.forexfirstcountrydescriptionfilepath;
-                        FlexibleBlock.forexfirstcountrydescriptionfileurl = flex.forexfirstcountrydescriptionfileurl;
-                        FlexibleBlock.forexfirstcountrydescriptionfilecontenttype = flex.forexfirstcountrydescriptionfilecontenttype;
-                        FlexibleBlock.forexsecondcountryheading = flex.forexsecondcountryheading;
-                        FlexibleBlock.forexsecondcountrydescription = flex.forexsecondcountrydescription;
-                        FlexibleBlock.forexsecondcountrydescriptionfilename = flex.forexsecondcountrydescriptionfilename;
-                        FlexibleBlock.forexsecondcountrydescriptionfilepath = flex.forexsecondcountrydescriptionfilepath;
-                        FlexibleBlock.forexsecondcountrydescriptionfileurl = flex.forexsecondcountrydescriptionfileurl;
-                        FlexibleBlock.forexsecondcountrydescriptionfilecontenttype = flex.forexsecondcountrydescriptionfilecontenttype;
-                        FlexibleBlock.forexbottomdescription = flex.forexbottomdescription;
-                        FlexibleBlock.forexmaindescription = flex.forexmaindescription;
-                        FlexibleBlock.forexmaindescriptionfilename = flex.forexmaindescriptionfilename;
-                        FlexibleBlock.forexmaindescriptionfilepath = flex.forexmaindescriptionfilepath;
-                        FlexibleBlock.forexmaindescriptionfileurl = flex.forexmaindescriptionfileurl;
-                        FlexibleBlock.forexmaindescriptionfilecontenttype = flex.forexmaindescriptionfilecontenttype;
-                        FlexibleBlock.forexsinglepagechartimage = flex.forexsinglepagechartimage;
-
-                        flexibleBlocklist.Add(FlexibleBlock);
-
-                        if (flex.countriesdatalist != null && flex.countriesdatalist.Count > 0)
+                        StrategyMainLessonContent item = new StrategyMainLessonContent()
                         {
-                            List<ForexChartCountriesData> _ForexChartCountriesDatas = await _Context.ForexChartCountriesDatas.Where(x => x.forexchartid == data.id).ToListAsync();
-                            _Context.ForexChartCountriesDatas.RemoveRange(_ForexChartCountriesDatas);
+                            id = Guid.NewGuid(),
+                            strategyid = data.id,
+                            strategycontenttypeid = mainlessoncontent.strategycontenttypeid,
+                            descritption = mainlessoncontent.descritption,
+                            descritptionfilename = mainlessoncontent.descritptionfilename,
+                            descritptionfilepath = mainlessoncontent.descritptionfilepath,
+                            descritptionfileurl = mainlessoncontent.descritptionfileurl,
+                            descritptionfilecontenttype = mainlessoncontent.descritptionfilecontenttype,
+                            imagefilename = mainlessoncontent.imagefilename,
+                            imagefilepath = mainlessoncontent.imagefilepath,
+                            imagefileurl = mainlessoncontent.imagefileurl,
+                            imagefilecontenttype = mainlessoncontent.imagefilecontenttype,
+                            galleryvideofilename = mainlessoncontent.galleryvideofilename,
+                            galleryvideofileurl = mainlessoncontent.galleryvideofileurl,
+                            galleryvideofilecontenttype = mainlessoncontent.galleryvideofilecontenttype,
+                            youtubevideo = mainlessoncontent.youtubevideo,
+                            videofromanyothersource = mainlessoncontent.videofromanyothersource,
+                            pdftitle = mainlessoncontent.pdftitle,
+                            pdfshortcodeid = mainlessoncontent.pdfshortcodeid,
+                            pdfauther = mainlessoncontent.pdfauther,
+                            pdfshortdescription = mainlessoncontent.pdfshortdescription,
+                            tabletitle = mainlessoncontent.tabletitle,
+                            tableshortcodeid = mainlessoncontent.tableshortcodeid,
+                            widgetscript = mainlessoncontent.widgetscript,
+                            audiobookfilename = mainlessoncontent.audiobookfilename,
+                            audiobookfilepath = mainlessoncontent.audiobookfilepath,
+                            audiobookfileurl = mainlessoncontent.audiobookfileurl,
+                            audiobookfilecontenttype = mainlessoncontent.audiobookfilecontenttype,
+                            galleryimagefilename = mainlessoncontent.galleryimagefilename,
+                            galleryimagefilepath = mainlessoncontent.galleryimagefilepath,
+                            galleryimagefileurl = mainlessoncontent.galleryimagefileurl,
+                            galleryimagefilecontenttype = mainlessoncontent.galleryimagefilecontenttype
+                        };
 
-                            foreach (ForexChartCountriesDataDto contrydata in flex.countriesdatalist)
-                            {
-                                countriesDatalist.Add(new ForexChartCountriesData()
-                                {
-                                    id = Guid.NewGuid(),
-                                    forexchartid = data.id,
-                                    forexchartflexibleblockid = FlexibleBlock.id,
-                                    forexcontries = contrydata.forexcontries,
-                                    forexpairsthatcorrelate = contrydata.forexpairsthatcorrelate,
-                                    highsandlows = contrydata.highsandlows,
-                                    forexpairtype = contrydata.forexpairtype,
-                                    forexdailyaveragemovementinpair = contrydata.forexdailyaveragemovementinpair
-                                });
-                            }
-                            await _Context.ForexChartCountriesDatas.AddRangeAsync(countriesDatalist);
-                        }
 
-                        if (flex.forexfirstcountrydatalist != null && flex.forexfirstcountrydatalist.Count > 0)
-                        {
-                            List<ForexChartFirstCountryData> _ForexChartFirstCountryDataCountriesDatas = await _Context.ForexChartFirstCountryDatas.Where(x => x.forexchartid == data.id).ToListAsync();
-                            _Context.ForexChartFirstCountryDatas.RemoveRange(_ForexChartFirstCountryDataCountriesDatas);
-                            foreach (ForexChartFirstCountryDataDto contrydata in flex.forexfirstcountrydatalist)
-                            {
-                                firstCountryDatalist.Add(new ForexChartFirstCountryData()
-                                {
-                                    id = Guid.NewGuid(),
-                                    forexchartid = data.id,
-                                    forexchartflexibleblockid = FlexibleBlock.id,
-                                    forexlcentralbank = contrydata.forexlcentralbank,
-                                    forexlcontriy = contrydata.forexlcontriy,
-                                    forexlnickname = contrydata.forexlnickname,
-                                    forexlofaeragedailyturnover = contrydata.forexlofaeragedailyturnover
-                                });
-                            }
-                            await _Context.ForexChartFirstCountryDatas.AddRangeAsync(firstCountryDatalist);
-                        }
-
-                        if (flex.forexsecondcountrydatalist != null && flex.forexsecondcountrydatalist.Count > 0)
-                        {
-                            List<ForexChartSecondCountryData> _ForexChartSecondCountryDataCountriesDatas = await _Context.ForexChartSecondCountryDatas.Where(x => x.forexchartid == data.id).ToListAsync();
-                            _Context.ForexChartSecondCountryDatas.RemoveRange(_ForexChartSecondCountryDataCountriesDatas);
-                            foreach (ForexChartSecondCountryDataDto contrydata in flex.forexsecondcountrydatalist)
-                            {
-                                secondCountryDatalist.Add(new ForexChartSecondCountryData()
-                                {
-                                    id = Guid.NewGuid(),
-                                    forexchartid = data.id,
-                                    forexchartflexibleblockid = FlexibleBlock.id,
-                                    forexrcontriy = contrydata.forexrcontriy,
-                                    forexrcentralbank = contrydata.forexrcentralbank,
-                                    forexrnickname = contrydata.forexrnickname,
-                                    forexrofaeragedailyturnover = contrydata.forexrofaeragedailyturnover
-                                });
-                            }
-                            await _Context.ForexChartSecondCountryDatas.AddRangeAsync(secondCountryDatalist);
-                        }
+                        mainlessoncontents.Add(item);
                     }
-                    await _Context.ForexChartFlexibleBlocks.AddRangeAsync(flexibleBlocklist);
-                }
-
-
-                if (model.fundamentalandtechnicaltabsection != null)
-                {
-                    if (model.fundamentalandtechnicaltabsection.fundamentalnewssectionlist != null && model.fundamentalandtechnicaltabsection.fundamentalnewssectionlist.Count > 0)
-                    {
-                        List<ForexChartFundamentalNewsSection> NewsSectioList = new List<ForexChartFundamentalNewsSection>();
-                        List<ForexChartNewsMainContent> NewsMainContetList = new List<ForexChartNewsMainContent>();
-
-                        List<ForexChartFundamentalNewsSection> _ForexChart_fundamentalandtechnicaltabsection_fundamentalnewssections = await _Context.ForexChartFundamentalNewsSections.Where(x => x.forexchartid == data.id).ToListAsync();
-                        _Context.ForexChartFundamentalNewsSections.RemoveRange(_ForexChart_fundamentalandtechnicaltabsection_fundamentalnewssections);
-
-                        List<ForexChartNewsMainContent> _ForexChart_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontents = await _Context.ForexChartNewsMainContents.Where(x => x.forexchartid == data.id).ToListAsync();
-                        _Context.ForexChartNewsMainContents.RemoveRange(_ForexChart_fundamentalandtechnicaltabsection_fundamentalnewssection_newsmaincontents);
-
-
-                        foreach (ForexChartFundamentalNewsSectionDto news in model.fundamentalandtechnicaltabsection.fundamentalnewssectionlist)
-                        {
-                            ForexChartFundamentalNewsSection newssection = new ForexChartFundamentalNewsSection()
-                            {
-                                id = Guid.NewGuid(),
-                                forexchartid = data.id,
-                                maintitle = news.maintitle,
-                                script = news.script
-                            };
-
-                            foreach (ForexChartNewsMainContentDto newsmaincontent in news.newsmaincontentlist)
-                            {
-                                NewsMainContetList.Add(new ForexChartNewsMainContent()
-                                {
-                                    id = Guid.NewGuid(),
-                                    forexchartid = data.id,
-                                    fundamentalnewssectionid = newssection.id,
-                                    description = newsmaincontent.description,
-                                    descriptionfilecontenttype = newsmaincontent.descriptionfilecontenttype,
-                                    descriptionfilename = newsmaincontent.descriptionfilename,
-                                    descriptionfilepath = newsmaincontent.descriptionfilepath,
-                                    descriptionfileurl = newsmaincontent.descriptionfileurl,
-                                    link = newsmaincontent.link,
-                                    title = newsmaincontent.title
-                                });
-                            }
-                            NewsSectioList.Add(newssection);
-                        }
-
-                        await _Context.ForexChartFundamentalNewsSections.AddRangeAsync(NewsSectioList);
-                        await _Context.ForexChartNewsMainContents.AddRangeAsync(NewsMainContetList);
-                    }
-
-                    if (model.fundamentalandtechnicaltabsection.technicaltablist != null && model.fundamentalandtechnicaltabsection.technicaltablist.Count > 0)
-                    {
-                        List<ForexChartTechnicalTab> _ForexChart_Fundamentalandtechnicaltabsection_TechnicalTabses = await _Context.ForexChartTechnicalTabs.Where(x => x.forexchartid == data.id).ToListAsync();
-                        _Context.ForexChartTechnicalTabs.RemoveRange(_ForexChart_Fundamentalandtechnicaltabsection_TechnicalTabses);
-
-                        List<ForexChartTechnicalBreakingNews> _ForexChart_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewses = await _Context.ForexChartTechnicalBreakingNewss.Where(x => x.forexchartid == data.id).ToListAsync();
-                        _Context.ForexChartTechnicalBreakingNewss.RemoveRange(_ForexChart_FundamentalandTechnicalTabSection_TechnicalTabs_TechnicalBreakingNewses);
-
-
-                        List<ForexChartTechnicalTab> technicaltabList = new List<ForexChartTechnicalTab>();
-                        List<ForexChartTechnicalBreakingNews> technicalbreakList = new List<ForexChartTechnicalBreakingNews>();
-                        foreach (ForexChartTechnicalTabDto tab in model.fundamentalandtechnicaltabsection.technicaltablist)
-                        {
-                            ForexChartTechnicalTab newtab = new ForexChartTechnicalTab()
-                            {
-                                id = Guid.NewGuid(),
-                                forexchartid = data.id,
-                                tabtitle = tab.tabtitle,
-                                script = tab.script
-                            };
-
-                            foreach (ForexChartTechnicalBreakingNewsDto newsmaincontent in tab.newsmaincontentlist)
-                            {
-                                technicalbreakList.Add(new ForexChartTechnicalBreakingNews()
-                                {
-                                    id = Guid.NewGuid(),
-                                    forexchartid = data.id,
-                                    technicaltabid = (Guid)newtab.id,
-                                    description = newsmaincontent.description,
-                                    descriptionfilecontenttype = newsmaincontent.descriptionfilecontenttype,
-                                    descriptionfilename = newsmaincontent.descriptionfilename,
-                                    descriptionfilepath = newsmaincontent.descriptionfilepath,
-                                    descriptionfileurl = newsmaincontent.descriptionfileurl,
-                                    link = newsmaincontent.link,
-                                    title = newsmaincontent.title
-                                });
-                            }
-                            technicaltabList.Add(newtab);
-                        }
-
-                        await _Context.ForexChartTechnicalTabs.AddRangeAsync(technicaltabList);
-                        await _Context.ForexChartTechnicalBreakingNewss.AddRangeAsync(technicalbreakList);
-                    }
-
-
-                    if (model.fundamentalandtechnicaltabsection.pdfsectionlist != null && model.fundamentalandtechnicaltabsection.pdfsectionlist.Count > 0)
-                    {
-                        List<ForexChartPDFSection> _ForexChart_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections = await _Context.ForexChartPDFSections.Where(x => x.forexchartid == data.id).ToListAsync();
-                        _Context.ForexChartPDFSections.RemoveRange(_ForexChart_FundamentalandTechnicalTabSection_RelatedResorces_PDFSections);
-
-                        List<ForexChartPDFSection> PDFSectionlist = new List<ForexChartPDFSection>();
-                        foreach (ForexChartPDFSectionDto pdf in model.fundamentalandtechnicaltabsection.pdfsectionlist)
-                        {
-                            PDFSectionlist.Add(new ForexChartPDFSection()
-                            {
-                                id = Guid.NewGuid(),
-                                forexchartid = data.id,
-                                author = pdf.author,
-                                pdfshortcodeid = pdf.pdfshortcodeid,
-                                pdftitle = pdf.pdftitle,
-                                shortdescription = pdf.shortdescription
-                            });
-                        }
-                        if (PDFSectionlist.Count > 0)
-                            await _Context.ForexChartPDFSections.AddRangeAsync(PDFSectionlist);
-                    }
-
-                    if (model.fundamentalandtechnicaltabsection.urlsectionlist != null && model.fundamentalandtechnicaltabsection.urlsectionlist.Count > 0)
-                    {
-                        List<ForexChartURLSection> _ForexChart_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionsawait = await _Context.ForexChartURLSections.Where(x => x.forexchartid == data.id).ToListAsync();
-                        _Context.ForexChartURLSections.RemoveRange(_ForexChart_FundamentalandTechnicalTabSection_RelatedResorces_URLSectionsawait);
-
-
-                        List<ForexChartURLSection> UrlSectionlist = new List<ForexChartURLSection>();
-                        foreach (ForexChartURLSectionDto pdf in model.fundamentalandtechnicaltabsection.urlsectionlist)
-                        {
-                            UrlSectionlist.Add(new ForexChartURLSection()
-                            {
-                                id = Guid.NewGuid(),
-                                forexchartid = data.id,
-                                url = pdf.url,
-                                urltitle = pdf.urltitle
-                            });
-                        }
-                        if (UrlSectionlist.Count > 0)
-                            await _Context.ForexChartURLSections.AddRangeAsync(UrlSectionlist);
-                    }
-
+                    await _Context.StrategyMainLessonContents.AddRangeAsync(mainlessoncontents);
                 }
 
                 await _Context.SaveChangesAsync();
@@ -906,6 +445,88 @@ namespace NextTradeAPIs.Services
                 await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
             }
             return message;
+        }
+
+        public async Task<SystemMessageModel> GetStrategyContentTypes(UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                List<StrategyContentTypeDto> datas = await _Context.StrategyContentTypes.Select(x => new StrategyContentTypeDto()
+                {
+                    id = x.id,
+                    name = x.name
+                }).ToListAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<SystemMessageModel> SaveFile(byte[] filecontent, Guid strategyid, long userid, string FileName, string sitePath, string hosturl)
+        {
+            string filegroupname = "marketpulsefile";
+            try
+            {
+                if (filecontent != null)
+                {
+                    string _filePath = sitePath + "\\" + filegroupname + "\\" + strategyid.ToString().Replace("-", "") + "\\";
+                    if (!Directory.Exists(_filePath))
+                    {
+                        DirectoryInfo directory = new DirectoryInfo(_filePath);
+                        DirectorySecurity security = directory.GetAccessControl();
+
+                        security.AddAccessRule(new FileSystemAccessRule(@"Everyone",
+                                                FileSystemRights.Modify,
+                                                AccessControlType.Allow));
+
+                        directory.SetAccessControl(security);
+                        Directory.CreateDirectory(_filePath);
+                    }
+                    
+
+                    _filePath += FileName;
+                    string fileurl = hosturl + "/" + filegroupname + "/" + strategyid.ToString().Replace("-", "") + "/" + FileName;
+
+                    if (!File.Exists(_filePath))
+                    {
+                        File.WriteAllBytes(_filePath, filecontent);
+                    }
+                    FileActionDto dto = new FileActionDto()
+                    {
+                        filepath = _filePath,
+                        fileurl = fileurl
+                    };
+                    return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = dto };
+                }
+                else
+                {
+                    return new SystemMessageModel() { MessageCode = -501, MessageDescription = "File Error", MessageData = null };
+                }
+            }
+            catch (Exception ex) { return new SystemMessageModel() { MessageCode = -501, MessageDescription = "File saving Error", MessageData = ex.Message }; }
+        }
+
+        public async Task<SystemMessageModel> DeleteFile(string filename)
+        {
+            try
+            {
+                if (File.Exists(filename))
+                    File.Delete(filename);
+
+                return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = null };
+            }
+            catch (Exception ex) { return new SystemMessageModel() { MessageCode = -501, MessageDescription = "File saving Error", MessageData = ex.Message }; }
         }
 
     }
