@@ -130,6 +130,11 @@ public class User
     public bool? hobbyoftradingfulltime { get; set; }
     public int? EmployeeLevel { get; set; }
     public int? partnertypeId { get; set; }
+    public string? website { get; set; }
+    public string? language { get; set; }
+    public bool? sendNotification { get; set; }
+    public int? roleId { get; set; }
+	public int? forumRoleId { get; set; }
 
     #region [ relations ]
     public virtual UserType UserType { get; set; }

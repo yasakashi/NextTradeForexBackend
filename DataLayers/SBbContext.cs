@@ -67,8 +67,10 @@ namespace DataLayers
         public DbSet<ForumMessageCategory> ForumMessageCategorys { get; set; }
         public DbSet<ForumMessageReaction> ForumMessageReactions { get; set; }
         public DbSet<CommunityGroupsMessage> CommunityGroupsMessages { get; set; }
+        public DbSet<ForumRole> ForumRoles { get; set; }
 
         #endregion [ ForumMessage ]
+
         public DbSet<AnalysisType> AnalysisTypes { get; set; }
         public DbSet<PositionType> PositionTypes { get; set; }
         public DbSet<MarketCycle> MarketCycles { get; set; }

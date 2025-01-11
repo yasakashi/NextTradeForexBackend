@@ -29,11 +29,19 @@ public class UserModel
     public string fname { get; set; }
     public string lname { get; set; }
     public string nationalcode { get; set; }
+    public string email { get; set; }
     public bool iskyc { get; set; }
     public bool ispaid { get; set; }
     public bool IsActive { get; set; }
     public long? ParentUserId { get; set; }
     public long UserTypeId { get; set; }
+    public string? UserTypeName { get; set; }
+    public DateTime? registerDate { get; set; }
+    public int? activeSubscriber { get; set; }
+    public int? posts { get; set; }
+    public int? forumRoleId { get; set; }
+
+    public string? forumRoleName { get; set; }
     public string? financialinstrumentIds { get; set; }
     public string? forexexperiencelevelId { get; set; }
     public string? trainingmethodIds { get; set; }
@@ -150,6 +158,10 @@ public class UserRegisterModel
     public List<int>? targettrainerIds { get; set; }
     public int? interestforexId { get; set; }
     public bool? hobbyoftradingfulltime { get; set; }
+    public bool? sendNotification { get; set; }
+    public string? website { get; set; }
+    public string? language { get; set; }
+    public int? forumRoleId { get; set; }
 }
 
 public class UserReferralModel

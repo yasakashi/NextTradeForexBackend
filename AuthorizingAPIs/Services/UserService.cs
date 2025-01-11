@@ -251,6 +251,7 @@ namespace NextTradeAPIs.Services
                     cityId = model.cityId,
                     countryId = model.countryId,
                     stateId = model.stateId
+
                 };
                 _Context.People.Add(person);
 
@@ -278,7 +279,11 @@ namespace NextTradeAPIs.Services
                     trainingmethodIds = (model.trainingmethodIds == null) ? null : string.Join(",", (List<int>)model.trainingmethodIds),
                     targettrainerIds = (model.targettrainerIds == null) ? null : string.Join(",", (List<int>)model.targettrainerIds),
                     interestforexId = model.interestforexId,
-                    hobbyoftradingfulltime = model.hobbyoftradingfulltime
+                    hobbyoftradingfulltime = model.hobbyoftradingfulltime,
+                    website = model.website,
+                    language = model.language,
+                    sendNotification = model.sendNotification,
+                    forumRoleId = model.forumRoleId
                 };
 
                 _Context.Users.Add(data);
@@ -597,7 +602,7 @@ namespace NextTradeAPIs.Services
                 if (Math.Floor(pagecountd) > 0)
                     pagecount++;
 
-                datas = await query.Select(x => new UserModel()
+                datas = await query.Include(x=>x.UserType).Select(x => new UserModel()
                 {
                     userid = x.UserId,
                     username = x.Username,
@@ -606,8 +611,83 @@ namespace NextTradeAPIs.Services
                     UserTypeId = x.UserTypeId,
                     IsActive = x.IsActive,
                     ispaid = x.ispaied,
+                    email = x.Email,
                     pagecount = pagecount
                 }).ToListAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas, Meta = new { pagecount = pagecount } };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<SystemMessageModel> GetAllUsers(UserSearchModel filter, UserModel userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            List<UserModel> datas = null;
+            long SerrvieCode = 120000;
+
+            try
+            {
+                IQueryable<User> query = _Context.Users;
+
+                if (!string.IsNullOrEmpty(filter.username))
+                    query = query.Where(x => x.Username == filter.username);
+
+                if (!string.IsNullOrEmpty(filter.mobile))
+                    query = query.Where(x => x.Mobile == filter.mobile);
+
+
+                if (!string.IsNullOrEmpty(filter.fname))
+                    query = query.Where(x => x.Fname.StartsWith(filter.fname));
+
+                if (!string.IsNullOrEmpty(filter.lname))
+                    query = query.Where(x => x.Lname.StartsWith(filter.lname));
+
+                int pageIndex = (filter.pageindex == null || filter.pageindex == 0) ? 1 : (int)filter.pageindex;
+                int PageRowCount = (filter.rowcount == null || filter.rowcount == 0) ? 50 : (int)filter.rowcount;
+
+                int totaldata = query.Count();
+                if (totaldata <= 0) totaldata = 1;
+                decimal pagecountd = ((decimal)totaldata / (decimal)PageRowCount);
+                int pagecount = (totaldata / PageRowCount);
+                pagecount = (pagecount <= 0) ? 1 : pagecount;
+                if (Math.Floor(pagecountd) > 0)
+                    pagecount++;
+
+                datas = await query.Include(x => x.UserType).Select(x => new UserModel()
+                {
+                    userid = x.UserId,
+                    username = x.Username,
+                    fname = x.Fname,
+                    lname = x.Lname,
+                    UserTypeId = x.UserTypeId,
+                    UserTypeName = x.UserType.Name,
+                    IsActive = x.IsActive,
+                    ispaid = x.ispaied,
+                    email = x.Email,
+                    forumRoleId = x.forumRoleId,
+                    registerDate = x.registerDate,
+                    pagecount = pagecount
+                }).ToListAsync();
+
+                foreach (UserModel item in datas)
+                {
+                    string querystrnig = $"EXECUTE dbo.spGetUserReferalList @Username='?'".Replace("?", item.username);
+
+                    var referal = await _Context.Database.SqlQueryRaw<UserReferralModel>(querystrnig).ToListAsync();
+
+                    item.activeSubscriber = referal.Count();
+
+                    item.posts = await _Context.ForumMessages.Where(x => x.creatoruserid == item.userid).CountAsync();
+                }
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas, Meta = new { pagecount = pagecount } };
             }
@@ -684,7 +764,13 @@ namespace NextTradeAPIs.Services
                             interestforexname = (user.interestforex != null) ? user.interestforex.name : "",
                             hobbyoftradingfulltime = user.hobbyoftradingfulltime,
                             forexexperiencelevelId = user.forexexperiencelevelId,
-                            forexexperiencelevelname = (user.forexexperiencelevel != null) ? user.forexexperiencelevel.name : ""
+                            forexexperiencelevelname = (user.forexexperiencelevel != null) ? user.forexexperiencelevel.name : "",
+                            website = user.website,
+                            language = user.language,
+                            sendNotification = user.sendNotification,
+                            forumRoleId = user.forumRoleId,
+                            usertypeid = user.UserTypeId,
+                            usertypename = user.UserType.Name
                         };
                         List<FinancialInstrumentDto> financialinstruments = null;
                         if (!string.IsNullOrEmpty(user.financialinstrumentIds))
@@ -1364,7 +1450,7 @@ namespace NextTradeAPIs.Services
                     query = query.Where(x => x.Lname.StartsWith(filter.lname));
 
                 if (!string.IsNullOrEmpty(filter.name))
-                    query = query.Where(x => x.Lname.Contains(filter.name)|| x.Fname.Contains(filter.name));
+                    query = query.Where(x => x.Lname.Contains(filter.name) || x.Fname.Contains(filter.name));
 
 
                 if (filter.countryId != null)
@@ -1451,7 +1537,7 @@ namespace NextTradeAPIs.Services
                     data.financialinstruments = await _Context.UserFinancialInstruments.Where(x => x.userId == data.userid).Include(x => x.financialinstrument).Select(x => new FinancialInstrumentDto() { Id = x.financialinstrumentId, name = x.financialinstrument.name }).ToListAsync();
                 }
 
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas , Meta=new { pagecount = pagecount} };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas, Meta = new { pagecount = pagecount } };
             }
             catch (Exception ex)
             {
