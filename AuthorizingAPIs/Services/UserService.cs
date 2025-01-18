@@ -769,7 +769,7 @@ namespace NextTradeAPIs.Services
                             language = user.language,
                             sendNotification = user.sendNotification,
                             forumRoleId = user.forumRoleId,
-                            usertypeid = user.UserTypeId,
+                            usertypeId = user.UserTypeId,
                             usertypename = user.UserType.Name
                         };
                         List<FinancialInstrumentDto> financialinstruments = null;

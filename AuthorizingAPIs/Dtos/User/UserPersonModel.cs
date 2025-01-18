@@ -44,7 +44,7 @@ namespace Entities.Dtos
         public int? stateId { get; set; }
         public int? cityId { get; set; }
         public string? countryname { get; set; }
-        public int? usertypeId { get; set; }
+        public long? usertypeId { get; set; }
         public string? usertypename { get; set; }
         public string? statename { get; set; }
         public string? cityname { get; set; }
