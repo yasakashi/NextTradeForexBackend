@@ -3,6 +3,7 @@ using Entities.DBEntities;
 using Entities.Dtos;
 using Entities.Dtos;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
@@ -20,6 +21,7 @@ namespace NextTradeAPIs.Controllers
     {
         AuthorizationService _authorizationService;
         private IHttpContextAccessor _HttpContextAccessor;
+        IWebHostEnvironment _webHostEnvironment;
         UserServices _userServices;
         SystemLogServices _systemLogServices;
         BlockedIPServices _blockedIPService;
@@ -27,7 +29,8 @@ namespace NextTradeAPIs.Controllers
 
         public TicktingController(AuthorizationService authorizationService,
                                        IHttpContextAccessor httpContextAccessor,
-                                       SystemLogServices systemLogServices,
+                                        IWebHostEnvironment webHostEnvironment,
+                                        SystemLogServices systemLogServices,
                                        BlockedIPServices blockedIPServices,
                                        TicketServices ticketServices,
                                        BaseInformationServices baseInformationServices,
@@ -39,6 +42,7 @@ namespace NextTradeAPIs.Controllers
             _systemLogServices = systemLogServices;
             _blockedIPService = blockedIPServices;
             _ticketService = ticketServices;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         [HttpPost]
@@ -90,7 +94,7 @@ namespace NextTradeAPIs.Controllers
 
                 UserModel userlogin = message.MessageData as UserModel;
 
-                message = await _ticketService.CreateTicket(model,userlogin, processId, clientip, hosturl);
+                message = await _ticketService.CreateTicket(model, userlogin, processId, clientip, hosturl);
 
                 if (message.MessageCode < 0)
                     return BadRequest(message);
@@ -209,7 +213,7 @@ namespace NextTradeAPIs.Controllers
         public async Task<IActionResult> GetTicketFile(Guid id)
         {
             Ticket file = await _ticketService.GetTicketFile(id);
-            
+
             if (file.fileattachment == null)
             {
                 return NotFound();
@@ -268,6 +272,71 @@ namespace NextTradeAPIs.Controllers
                 UserModel userlogin = message.MessageData as UserModel;
 
                 message = await _ticketService.GetTicket(model, userlogin, processId, clientip, hosturl);
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                string log = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, LogTypes.TokenError);
+                return Unauthorized();
+                //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("/api/adminpanel/support/getalltickets")]
+        public async Task<IActionResult> GetAllTicketInfos(TicketDto model)
+        {
+            StackTrace stackTrace = new StackTrace();
+            SystemMessageModel message;
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string authHeader = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            UserModel user = null;
+            LoginLog loginLog = null;
+
+            long ApiCode = 2000;
+
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                message = await _authorizationService.CheckToken(_bearer_token, processId);
+
+                if (message.MessageCode < 0)
+                    return Unauthorized(message);
+
+                UserModel userlogin = message.MessageData as UserModel;
+
+                message = await _ticketService.GetTicketReport(model, userlogin, processId, clientip, hosturl);
 
                 if (message.MessageCode < 0)
                     return BadRequest(message);
@@ -399,6 +468,99 @@ namespace NextTradeAPIs.Controllers
                     return Unauthorized(message);
 
                 UserModel userlogin = message.MessageData as UserModel;
+
+                message = await _ticketService.AnswerTicket(model, userlogin, processId, clientip, hosturl);
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                string log = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, LogTypes.TokenError);
+                return Unauthorized();
+                //return BadRequest(new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("/api/adminpanel/support/replyticket")]
+        public async Task<IActionResult> AnswerAdminTicketAnswer([FromForm] TicketAnswerDto model)
+        {
+            StackTrace stackTrace = new StackTrace();
+            SystemMessageModel message;
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string authHeader = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            UserModel user = null;
+            LoginLog loginLog = null;
+
+            long ApiCode = 2000;
+
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+                var sitePath = _webHostEnvironment.WebRootPath;
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                message = await _authorizationService.CheckToken(_bearer_token, processId);
+
+                if (message.MessageCode < 0)
+                    return Unauthorized(message);
+
+                UserModel userlogin = message.MessageData as UserModel;
+
+                if (model.fileanswer != null)
+                {
+
+                    if (model.fileanswer.FileName == null || model.fileanswer.FileName.Length == 0)
+                    {
+                        // return Content("File not selected");
+                    }
+
+                    using (var ms = new MemoryStream())
+                    {
+                        model.attachmentcontexttype = model.fileanswer.ContentType;
+                        model.fileattachmentname = model.fileanswer.FileName;
+
+                        model.fileanswer.CopyTo(ms);
+                        message = await _ticketService.SaveFile(ms.ToArray(), (Guid)model.Id, userlogin.userid, model.fileanswer.FileName, sitePath, hosturl);
+                    }
+                    if (message.MessageCode < 0)
+                        return BadRequest(message);
+
+                    FileActionDto _fileinfo = message.MessageData as FileActionDto;
+                    model.attachmentfileurl = _fileinfo.filepath;
+                    model.attachmentfilepath = _fileinfo.fileurl;
+
+                    if (message.MessageCode < 0)
+                        return BadRequest(message);
+                }
 
                 message = await _ticketService.AnswerTicket(model, userlogin, processId, clientip, hosturl);
 

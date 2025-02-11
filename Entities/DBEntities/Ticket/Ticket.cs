@@ -24,8 +24,10 @@ public class Ticket
     public string? responsedescription { get; set; }
     public long? responseuserid { get; set; }
     public byte[]? fileattachment { get; set; }
+    public string? attachmentfileurl { get; set; }
     public string? attachmentcontexttype { get; set; }
     public string? fileattachmentname { get; set; }
+    public string? attachmentfilepath { get; set; }
 
     public virtual Priority priority { get; set; }
     public virtual User creatoruser { get; set; }

@@ -259,7 +259,10 @@ namespace NextTradeAPIs.Services
                 }
 
                 User user = await _Context.Users.FindAsync(loginLog.UserId);
-                UserModel usermodel = new UserModel() { loginlogid = new Guid(LoginLogId), organizename = "", userid = user.UserId, username = user.Username , UserTypeId = user.UserTypeId, fname = user.Fname, lname = user.Lname};
+                Wallet wallet = await _Context.Wallets.Where(x=>x.userId == user.UserId).FirstOrDefaultAsync();
+                UserModel usermodel = new UserModel() { loginlogid = new Guid(LoginLogId), organizename = "", userid = user.UserId, username = user.Username , UserTypeId = user.UserTypeId, fname = user.Fname, lname = user.Lname
+                ,walletbalance = (wallet != null)?wallet.walletbalance:0,isuserroyality = await CheckUserHasRoyality(user.UserId,processId,clientip)
+                };
 
                 //usermodel.userservicelist = await GetUserServiceAccessIds(user.ID);
 
@@ -272,6 +275,34 @@ namespace NextTradeAPIs.Services
                 await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
                 return message;
             }
+        }
+        public async Task<bool> CheckUserHasRoyality(long userid, string processId, string clientip)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+            List<UserReferralaAmountDto> UserMoney = new List<UserReferralaAmountDto>();
+            List<UserReferralModel> datas = null;
+            bool IsUserRoyality = false;
+            try
+            {
+                bool IsUserReyality = false;
+
+                string querystrnig = $"EXECUTE dbo.spISUserRoyality @userid=" + userid.ToString();
+
+                datas = await _Context.Database.SqlQueryRaw<UserReferralModel>(querystrnig).ToListAsync();
+
+                IsUserRoyality = datas != null && datas.Count > 0;
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+                IsUserRoyality= false;
+            }
+            return IsUserRoyality;
         }
 
         /*

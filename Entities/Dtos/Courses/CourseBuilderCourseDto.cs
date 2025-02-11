@@ -79,4 +79,15 @@ namespace Entities.Dtos
         public bool? ispaid { get; set; }
     }
 
+
+    public class CourseBuilderMemberFilterDto : BaseFilterDto
+    {
+        public Guid? Id { get; set; }
+        public long? userId { get; set; }
+        public Guid? courseId { get; set; }
+        public string? courseName { get; set; }
+        public DateTime? fromregisterdatetime { get; set; }
+        public DateTime? toregisterdatetime { get; set; }
+    }
+
 }

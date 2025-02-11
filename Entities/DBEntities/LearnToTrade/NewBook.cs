@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Entities.DBEntities
 {
     [Table("tblNewBooks")]
-    public class NewBook
+    public class Book
     {
         [Key]
         public Guid id { get; set; }
@@ -69,7 +69,7 @@ namespace Entities.DBEntities
         public Guid id { get; set; }
         public Guid newbookid { get; set; }
         public long categoryid { get; set; }
-        public virtual NewBook newbook { get; set; }
+        public virtual Book newbook { get; set; }
         public virtual Category category { get; set; }
     }
 
@@ -84,6 +84,6 @@ namespace Entities.DBEntities
         public string? pageimageurl { get; set; }
         public string? pageimagecontenttype { get; set; }
 
-        public virtual NewBook newbook { get; set; }
+        public virtual Book newbook { get; set; }
     }
 }

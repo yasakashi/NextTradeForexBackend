@@ -33,7 +33,7 @@ namespace NextTradeAPIs.Services
 
             try
             {
-                IQueryable<NewBook> query = _Context.NewBooks;
+                IQueryable<Book> query = _Context.NewBooks;
 
                 if (model.title != null)
                     query = query.Where(x => x.title.Contains(model.title));
@@ -137,7 +137,7 @@ namespace NextTradeAPIs.Services
         }
 
 
-        public async Task<SystemMessageModel> AddNewNewBook(NewBookDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        public async Task<SystemMessageModel> AddNewNewBook(ADBookDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
             SystemMessageModel message;
             StackTrace stackTrace = new StackTrace();
@@ -146,7 +146,7 @@ namespace NextTradeAPIs.Services
 
             try
             {
-                NewBook data = new NewBook()
+                Book data = new Book()
                 {
                     id = (Guid)model.id,
                     title = model.title,
@@ -232,7 +232,7 @@ namespace NextTradeAPIs.Services
             {
                 if (model.id == null)
                     return new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 101) * -1), MessageDescription = "Data is wrong", MessageData = model };
-                NewBook data = await _Context.NewBooks.FindAsync(model.id);
+                Book data = await _Context.NewBooks.FindAsync(model.id);
 
                 if (data == null)
                     return new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 101) * -2), MessageDescription = "Data is wrong", MessageData = model };
@@ -260,7 +260,7 @@ namespace NextTradeAPIs.Services
             return message;
         }
 
-        public async Task<SystemMessageModel> EditNewBook(NewBookDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        public async Task<SystemMessageModel> EditNewBook(ADBookDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
             SystemMessageModel message;
             StackTrace stackTrace = new StackTrace();
@@ -271,7 +271,7 @@ namespace NextTradeAPIs.Services
             {
                 if (model.id == null)
                     return new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 101) * -1), MessageDescription = "Data is wrong", MessageData = model };
-                NewBook data = await _Context.NewBooks.FindAsync(model.id);
+                Book data = await _Context.NewBooks.FindAsync(model.id);
 
                 if (data == null)
                     return new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 101) * -2), MessageDescription = "Data is wrong", MessageData = model };
@@ -370,7 +370,7 @@ namespace NextTradeAPIs.Services
             return message;
         }
 
-        public async Task<SystemMessageModel> SaveFile(byte[] filecontent, NewBookDto model, long userid, string FileName, string sitePath, string hosturl)
+        public async Task<SystemMessageModel> SaveFile(byte[] filecontent, ADBookDto model, long userid, string FileName, string sitePath, string hosturl)
         {
             string filegroupname = "NewBookfile";
             try

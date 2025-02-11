@@ -43,7 +43,7 @@ namespace NextTradeAPIs.Services
 
                 if (model.isanswerd != null)
                 {
-                    if((bool)model.isanswerd)
+                    if ((bool)model.isanswerd)
                         query = query.Where(x => x.responsedatetime != null);
                     else
                         query = query.Where(x => x.responsedatetime == null);
@@ -64,22 +64,26 @@ namespace NextTradeAPIs.Services
                                     {
                                         Id = x.Id,
                                         creatoruserId = x.creatoruserId,
-                                        isanswerd = (x.responseuserid!= null)?true:false,
+                                        isanswerd = (x.responseuserid != null) ? true : false,
                                         registerdatetime = x.registerdatetime,
                                         responsedatetime = x.responsedatetime,
                                         priorityId = x.priorityId,
                                         creatorusername = x.creatoruser.Username,
-                                        responseusername = (x.responseuser!= null)? x.responseuser.Username:"",
+                                        responseusername = (x.responseuser != null) ? x.responseuser.Username : "",
                                         priorityname = x.priority.name,
                                         responseuserid = x.responseuserid,
-                                        responsedescription= x.responsedescription??"",
-                                        subject=x.subject,
+                                        responsedescription = x.responsedescription ?? "",
+                                        subject = x.subject,
                                         textbody = x.textbody,
+                                        attachmentcontexttype = x.attachmentcontexttype,
+                                        fileattachmentname = x.fileattachmentname,
+                                        attachmentfileurl = x.attachmentfileurl,
+                                        attachmentfilepath = x.attachmentfilepath,
                                         pageindex = pageIndex,
-                                        rowcount= PageRowCount
+                                        rowcount = PageRowCount
                                     }).ToListAsync();
 
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data, Meta = new { pageindex = pageIndex, rowcount = PageRowCount } };
             }
             catch (Exception ex)
             {
@@ -177,7 +181,7 @@ namespace NextTradeAPIs.Services
                 Ticket data = await _Context.Tickets.FindAsync(new Guid(model.Id.ToString()));
                 data.fileattachment = model.attachment;
                 data.attachmentcontexttype = model.fileextention;
-                
+
 
                 _Context.Tickets.Update(data);
                 await _Context.SaveChangesAsync();
@@ -214,7 +218,39 @@ namespace NextTradeAPIs.Services
                 return null;
             }
         }
-      
+
+        public async Task<SystemMessageModel> AnswerTicket(TicketAnswerDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 129000;
+
+            try
+            {
+                Ticket data = await _Context.Tickets.FindAsync(model.Id);
+
+                data.responsedatetime = DateTime.Now;
+                data.responseuserid = userlogin.userid;
+                data.responsedescription = model.responsedescription;
+                data.attachmentcontexttype = model.attachmentcontexttype;
+                data.attachmentfilepath = model.attachmentfilepath;
+                data.attachmentfileurl = model.attachmentfileurl;
+                data.fileattachmentname = model.fileattachmentname;
+
+                _Context.Tickets.Update(data);
+                await _Context.SaveChangesAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
         public async Task<SystemMessageModel> AnswerTicket(TicketDto model, UserModel? userlogin, string processId, string clientip, string hosturl)
         {
             SystemMessageModel message;
@@ -229,7 +265,14 @@ namespace NextTradeAPIs.Services
                 data.responsedatetime = DateTime.Now;
                 data.responseuserid = userlogin.userid;
                 data.responsedescription = model.responsedescription;
-                    
+                if (!string.IsNullOrEmpty(model.attachmentcontexttype))
+                    data.attachmentcontexttype = model.attachmentcontexttype;
+                if (!string.IsNullOrEmpty(model.attachmentfilepath))
+                    data.attachmentfilepath = model.attachmentfilepath;
+                if (!string.IsNullOrEmpty(model.attachmentfileurl))
+                    data.attachmentfileurl = model.attachmentfileurl;
+                if (!string.IsNullOrEmpty(model.fileattachmentname))
+                    data.fileattachmentname = model.fileattachmentname;
 
                 _Context.Tickets.Update(data);
                 await _Context.SaveChangesAsync();
@@ -243,6 +286,78 @@ namespace NextTradeAPIs.Services
                 await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
             }
             return message;
+        }
+
+        public async Task<SystemMessageModel> GetTicketReport(TicketDto filter, UserModel? userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            List<TicketReportDto> datas = null;
+            long SerrvieCode = 120000;
+
+            string username = string.Empty;
+            try
+            {
+
+
+                string querystrnig = $"EXECUTE dbo.spGetAllTicketInfo ";
+                datas = await _Context.Database.SqlQueryRaw<TicketReportDto>(querystrnig).ToListAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<SystemMessageModel> SaveFile(byte[] filecontent, Guid id, long userid, string FileName, string sitePath, string hosturl)
+        {
+            string filegroupname = "ticket";
+            try
+            {
+                if (filecontent != null)
+                {
+                    string _filePath = sitePath + "\\" + filegroupname + "\\" + id.ToString().Replace("-", "") + "\\";
+                    if (!Directory.Exists(_filePath))
+                        Directory.CreateDirectory(_filePath);
+
+                    _filePath += FileName;
+                    string fileurl = hosturl + "/" + filegroupname + "/" + id.ToString().Replace("-", "") + "/" + FileName;
+
+                    if (!File.Exists(_filePath))
+                    {
+                        File.WriteAllBytes(_filePath, filecontent);
+                    }
+                    FileActionDto dto = new FileActionDto()
+                    {
+                        filepath = _filePath,
+                        fileurl = fileurl
+                    };
+                    return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = dto };
+                }
+                else
+                {
+                    return new SystemMessageModel() { MessageCode = -501, MessageDescription = "File Error", MessageData = null };
+                }
+            }
+            catch (Exception ex) { return new SystemMessageModel() { MessageCode = -501, MessageDescription = "File saving Error", MessageData = ex.Message }; }
+        }
+
+        public async Task<SystemMessageModel> DeleteFile(string filename)
+        {
+            try
+            {
+                if (File.Exists(filename))
+                    File.Delete(filename);
+
+                return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = null };
+            }
+            catch (Exception ex) { return new SystemMessageModel() { MessageCode = -501, MessageDescription = "File saving Error", MessageData = ex.Message }; }
         }
 
     }

@@ -598,5 +598,49 @@ namespace NextTradeAPIs.Services
             return message;
         }
 
+        public async Task<SystemMessageModel> SaveFile(byte[] filecontent, SiteMediaFileDto model, long userid, string FileName, string sitePath, string hosturl)
+        {
+            string filegroupname = "sitemediafile";
+            try
+            {
+                if (filecontent != null)
+                {
+                    string _filePath = sitePath + "\\" + filegroupname + "\\" + model.id.ToString().Replace("-", "") + "\\";
+                    if (!Directory.Exists(_filePath))
+                        Directory.CreateDirectory(_filePath);
+
+                    _filePath += FileName;
+                    string fileurl = hosturl + "/" + filegroupname + "/" + model.id.ToString().Replace("-", "") + "/" + FileName;
+
+                    if (!File.Exists(_filePath))
+                    {
+                        File.WriteAllBytes(_filePath, filecontent);
+                    }
+                    FileActionDto dto = new FileActionDto()
+                    {
+                        filepath = _filePath,
+                        fileurl = fileurl
+                    };
+                    return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = dto };
+                }
+                else
+                {
+                    return new SystemMessageModel() { MessageCode = -501, MessageDescription = "File Error", MessageData = null };
+                }
+            }
+            catch (Exception ex) { return new SystemMessageModel() { MessageCode = -501, MessageDescription = "File saving Error", MessageData = ex.Message }; }
+        }
+
+        public async Task<SystemMessageModel> DeleteFile(string filename)
+        {
+            try
+            {
+                if (File.Exists(filename))
+                    File.Delete(filename);
+
+                return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = null };
+            }
+            catch (Exception ex) { return new SystemMessageModel() { MessageCode = -501, MessageDescription = "File saving Error", MessageData = ex.Message }; }
+        }
     }
 }

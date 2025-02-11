@@ -60,6 +60,8 @@ public class Person
     [MaxLength(2000, ErrorMessage = "{0} نمی تواند بیشتر از {1} کاراکتر باشد .")]
     [Encrypted]
     public string? Mobile { get; set; }
+
+    public string? nickname { get; set; }
     [Encrypted]
     public string? taxcode { get; set; }
     /// <summary>

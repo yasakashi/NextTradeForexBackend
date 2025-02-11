@@ -184,6 +184,13 @@ builder.Services.AddTransient<LearnToTradeTopicServices, LearnToTradeTopicServic
 builder.Services.AddTransient<NewBookServices, NewBookServices>();
 builder.Services.AddTransient<LearnToTradeVideoServices, LearnToTradeVideoServices>();
 
+
+builder.Services.AddTransient<BaseReportServices, BaseReportServices>();
+builder.Services.AddTransient<ADBookServices, ADBookServices>();
+builder.Services.AddTransient<ADPodcastServices, ADPodcastServices>();
+builder.Services.AddTransient<TutorTagServices, TutorTagServices>();
+builder.Services.AddTransient<AnnouncementServices, AnnouncementServices>();
+
 #endregion
 
 builder.Services.AddSwaggerGen();

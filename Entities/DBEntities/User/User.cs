@@ -111,6 +111,7 @@ public class User
     /// </summary>
     [Display(Name = "عکس یا لگوی کاربر")]
     public byte[]? UserPic { get; set; }
+    public string? userpicurl { get; set; }
 
     /// <summary>
     /// شناسه اطلاعات شخص
@@ -131,6 +132,7 @@ public class User
     public int? EmployeeLevel { get; set; }
     public int? partnertypeId { get; set; }
     public string? website { get; set; }
+    public string? displayPublicName { get; set; }
     public string? language { get; set; }
     public bool? sendNotification { get; set; }
     public int? roleId { get; set; }
@@ -138,6 +140,7 @@ public class User
 
     #region [ relations ]
     public virtual UserType UserType { get; set; }
+    public virtual ForumRole forumRole { get; set; }
     public virtual ForexExperienceLevel forexexperiencelevel { get; set; }
     public virtual InterestForex interestforex { get; set; }
     public virtual Person Person { get; set; }

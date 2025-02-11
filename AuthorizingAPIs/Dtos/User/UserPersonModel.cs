@@ -46,6 +46,7 @@ namespace Entities.Dtos
         public string? countryname { get; set; }
         public long? usertypeId { get; set; }
         public string? usertypename { get; set; }
+        public string? userpicurl { get; set; }
         public string? statename { get; set; }
         public string? cityname { get; set; }
         public string? website { get; set; }

@@ -50,7 +50,8 @@ public class UserModel
     public bool? hobbyoftradingfulltime { get; set; }
     public int? EmployeeLevel { get; set; }
     public int? pagecount { get; set; }
-
+    public decimal? walletbalance { get; set; }
+    public bool? isuserroyality { get; set; }
     public List<TrainingMethodDto>? usertrainingmethods { get; set; }
     public List<FinancialInstrumentDto>? userfinancialinstruments { get; set; }
     public List<CourseLevelTypeDto>? usertargettrainers { get; set; }
@@ -175,4 +176,23 @@ public class UserReferralModel
     public bool? IsActive { get; set; }
     public long? UserTypeId { get; set; }
     public long? ParentUserId { get; set; }
+    public string? email { get; set; }
+    public string? referalcode { get; set; }
+}
+
+public class AdminUserModel
+{
+    public string username { get; set; }
+    public string email { get; set; }
+    public string fname { get; set; }
+    public string lname { get; set; }
+    public string? website { get; set; }
+    public string? bio { get; set; }
+    public string? mobile { get; set; }
+    public string? language { get; set; }
+    public string password { get; set; }
+    public bool? sendNotification { get; set; }
+    public long usertypeid { get; set; }
+    public int? forumRoleId { get; set; }
+    public string? jobtitle { get; set; }
 }

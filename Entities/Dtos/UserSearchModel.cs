@@ -19,5 +19,7 @@ namespace Entities.Dtos
         public string? mobile { get; set; }
         public string? nationalcode { get; set; }
         public bool? isactive { get; set; }
+        public long? usertypeid { get; set; }
+        public int? forumRoleId { get; set; }   
     }
 }

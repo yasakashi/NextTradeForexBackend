@@ -15,6 +15,7 @@ using System.Net;
 using System.Reflection.Emit;
 using System.Text;
 using Entities.DBEntities;
+using Microsoft.AspNetCore.Hosting;
 
 namespace NextTradeAPIs.Controllers
 {
@@ -33,9 +34,12 @@ namespace NextTradeAPIs.Controllers
         BaseInformationServices _baseInformationService;
         SystemLogServices _systemLogServices;
         PeopleServices _peopleService;
+        IWebHostEnvironment _webHostEnvironment;
+
 
         public UserController(AuthorizationService authorizationService,
                                        IHttpContextAccessor httpContextAccessor,
+                                       IWebHostEnvironment env,
                                        SystemLogServices systemLogServices,
                                        CategoriesServices userTypeServices,
                                        PeopleServices peopleServices,
@@ -49,6 +53,7 @@ namespace NextTradeAPIs.Controllers
             _peopleService = peopleServices;
             _userTypeService = userTypeServices;
             _baseInformationService = baseInformationServices;
+            _webHostEnvironment = env;
         }
 
 
@@ -116,6 +121,146 @@ namespace NextTradeAPIs.Controllers
         }
 
 
+        [HttpPost]
+        [Route("/api/adminpanel/profile/editprofile")]
+        public async Task<IActionResult> UpdateUserProfile( UserProfileDto model)
+        {
+            StackTrace stackTrace = new StackTrace();
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string _bearer_token = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            SystemMessageModel message = new SystemMessageModel();
+            long ApiCode = 1000;
+
+            try
+            {
+                _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'ApiCode':{ApiCode},'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}','LogDescription':'{JsonConvert.SerializeObject(model)}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                //message = await _authorizationService.CheckToken(_bearer_token);
+
+                //if (message.MessageCode < 0)
+                //    return Unauthorized(message);
+
+                UserModel userlogin = message.MessageData as UserModel;
+
+                message = await _userServices.UpdateUserProfile(model, userlogin, processId, clientip, hosturl);
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string log = $"'ApiCode':{ApiCode},'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, (long)LogTypes.TokenError);
+                return BadRequest(message);
+            }
+        }
+        
+        [HttpPost]
+        [Route("/api/user/profilepic")]
+        public async Task<IActionResult> UpdateUserProfilePic([FromForm] UserProfilePictureDto model)
+        {
+            StackTrace stackTrace = new StackTrace();
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string _bearer_token = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            SystemMessageModel message = new SystemMessageModel();
+            long ApiCode = 1000;
+
+            try
+            {
+                _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'ApiCode':{ApiCode},'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}','LogDescription':'{JsonConvert.SerializeObject(model)}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                //message = await _authorizationService.CheckToken(_bearer_token);
+
+                //if (message.MessageCode < 0)
+                //    return Unauthorized(message);
+
+                UserModel userlogin = message.MessageData as UserModel;
+
+
+                var sitePath = _webHostEnvironment.WebRootPath;
+
+                if (model.profilepic != null)
+                {
+
+                    if (model.profilepic.FileName == null || model.profilepic.FileName.Length == 0)
+                    {
+                        // return Content("File not selected");
+                    }
+
+                    using (var ms = new MemoryStream())
+                    {
+                        model.profilepiccontenttype = model.profilepic.ContentType;
+                        model.profilepicname = model.profilepic.FileName;
+
+                        model.profilepic.CopyTo(ms);
+                        message = await _userServices.SaveFile(ms.ToArray(), model, sitePath, hosturl);
+                    }
+                    if (message.MessageCode < 0)
+                        return BadRequest(message);
+                }
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string log = $"'ApiCode':{ApiCode},'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, (long)LogTypes.TokenError);
+                return BadRequest(message);
+            }
+        }
 
         [HttpPost]
         [Route("/api/users/create")]
@@ -163,6 +308,68 @@ namespace NextTradeAPIs.Controllers
                 UserModel userlogin = message.MessageData as UserModel;
 
                 message = await _userServices.SaveUser(model, userlogin, processId, clientip, hosturl, _bearer_token);
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string log = $"'ApiCode':{ApiCode},'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, (long)LogTypes.TokenError);
+                return BadRequest(message);
+            }
+        }
+
+        [HttpPost]
+        [Route("/api/adminpanel/users/addnewuser")]
+        public async Task<IActionResult> CreateUsers(AdminUserModel model)
+        {
+            StackTrace stackTrace = new StackTrace();
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string _bearer_token = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            SystemMessageModel message = new SystemMessageModel();
+            long ApiCode = 1000;
+
+            try
+            {
+                _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'ApiCode':{ApiCode},'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}','LogDescription':'{JsonConvert.SerializeObject(model)}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                //message = await _authorizationService.CheckToken(_bearer_token);
+
+                //if (message.MessageCode < 0)
+                //    return Unauthorized(message);
+
+                UserModel userlogin = message.MessageData as UserModel;
+
+                message = await _userServices.CreateUser(model, userlogin, processId, clientip, hosturl, _bearer_token);
 
                 if (message.MessageCode < 0)
                     return BadRequest(message);
@@ -313,7 +520,6 @@ namespace NextTradeAPIs.Controllers
                 return BadRequest(message);
             }
         }
-
 
         [HttpPost]
         [Route("/api/users/searchperson")]
@@ -1376,6 +1582,195 @@ namespace NextTradeAPIs.Controllers
         }
 
 
+        [HttpPost]
+        [HttpDelete]
+        [Route("/api/adminpanel/users/removeuser")]
+        public async Task<IActionResult> RemoveUser(UserSearchModel model)
+        {
+            StackTrace stackTrace = new StackTrace();
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string _bearer_token = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            SystemMessageModel message = new SystemMessageModel();
+            long ApiCode = 11000;
+
+            try
+            {
+                _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}','LogDescription':'{JsonConvert.SerializeObject(model)}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                message = await _authorizationService.CheckToken(_bearer_token);
+
+                if (message.MessageCode < 0)
+                    return Unauthorized(message);
+
+                UserModel userlogin = message.MessageData as UserModel;
+
+                message = await _userServices.DeleteUsers(model, userlogin, processId, clientip, hosturl);
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string log = $"'ApiCode':{ApiCode},'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, (long)LogTypes.TokenError);
+                return BadRequest(message);
+            }
+        }
+
+
+        [HttpPost]
+        [HttpPut]
+        [Route("/api/adminpanel/users/changeuserrole")]
+        public async Task<IActionResult> UpdateUserRole(UserSearchModel model)
+        {
+            StackTrace stackTrace = new StackTrace();
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string _bearer_token = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            SystemMessageModel message = new SystemMessageModel();
+            long ApiCode = 11000;
+
+            try
+            {
+                _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}','LogDescription':'{JsonConvert.SerializeObject(model)}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                message = await _authorizationService.CheckToken(_bearer_token);
+
+                if (message.MessageCode < 0)
+                    return Unauthorized(message);
+
+                UserModel userlogin = message.MessageData as UserModel;
+
+                message = await _userServices.UpdateUserRole(model, userlogin, processId, clientip, hosturl);
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string log = $"'ApiCode':{ApiCode},'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, (long)LogTypes.TokenError);
+                return BadRequest(message);
+            }
+        }
+
+        [HttpPost]
+        [HttpPut]
+        [Route("/api/adminpanel/users/changeuserforumrole")]
+        public async Task<IActionResult> UpdateUserForumRole(UserSearchModel model)
+        {
+            StackTrace stackTrace = new StackTrace();
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string _bearer_token = string.Empty;
+            string clientip = string.Empty;
+            string hosturl = string.Empty;
+            string hostname = string.Empty;
+            SystemMessageModel message = new SystemMessageModel();
+            long ApiCode = 11000;
+
+            try
+            {
+                _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+                try
+                {
+                    hostname = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).HostName;
+                }
+                catch
+                {
+                    hostname = HttpContext.Connection.RemoteIpAddress.ToString();
+                }
+
+                string clientmac = NetworkFunctions.GetClientMAC(clientip);
+
+                string clinetosinfo = _HttpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+
+                string requestlog = $"'tokne':'{_bearer_token}','clientip':'{clientip}','hosturl':'{hosturl}','hostname':'{hostname}','LogDescription':'{JsonConvert.SerializeObject(model)}'";
+
+
+                _systemLogServices.InsertLogs(requestlog, processId, clientip, hosturl, (long)LogTypes.ApiRequest);
+
+                message = await _authorizationService.CheckToken(_bearer_token);
+
+                if (message.MessageCode < 0)
+                    return Unauthorized(message);
+
+                UserModel userlogin = message.MessageData as UserModel;
+
+                message = await _userServices.UpdateUserForumRole(model, userlogin, processId, clientip, hosturl);
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string log = $"'ApiCode':{ApiCode},'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(log, processId, clientip, hosturl, (long)LogTypes.TokenError);
+                return BadRequest(message);
+            }
+        }
 
     }
 }

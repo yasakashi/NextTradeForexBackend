@@ -22,6 +22,7 @@ using DocumentFormat.OpenXml.Office2010.Excel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Data.SqlClient;
+using Microsoft.IdentityModel.Tokens;
 
 namespace NextTradeAPIs.Services
 {
@@ -292,6 +293,9 @@ namespace NextTradeAPIs.Services
 
                 model.userid = data.UserId;
 
+                Wallet wallet = new Wallet() { userId = data.UserId, blockamount=0,walletbalance = 0};
+                _Context.Wallets.Add(wallet);
+
                 foreach (int financialinstrumentid in (List<int>)model.financialinstrumentIds)
                 {
                     _Context.UserFinancialInstruments.Add(new UserFinancialInstrument() { financialinstrumentId = financialinstrumentid, userId = data.UserId });
@@ -304,6 +308,102 @@ namespace NextTradeAPIs.Services
                 {
                     _Context.UserTargetTrainers.Add(new UserTargetTrainer { targettrainerId = targettrainerid, userId = data.UserId });
                 }
+                await _Context.SaveChangesAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+        public async Task<SystemMessageModel> CreateUser(AdminUserModel model, UserModel userloginmodel, string processId, string clientip, string hosturl, string token)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 114000;
+
+            try
+            {
+                if (await UserExist(model.username, processId))
+                    return new SystemMessageModel() { MessageCode = -512, MessageDescription = "کاربر تکراری است", MessageData = model };
+
+                Person person = new Person()
+                {
+                    BirthDate = null,
+                    PersonTypeId = (long)PersonTypes.RealPerson ,
+                    FName = model.fname,
+                    LName = model.lname,
+                    Sex =  1,
+                    Fathername = string.Empty,
+                    MarriedStatusId = null,
+                    Companyname = string.Empty,
+                    taxcode = string.Empty,
+                    FamilyCount = 0,
+                    Address = string.Empty,
+                    legaladdress = string.Empty,
+                    telephone = string.Empty,
+                    postalcode = string.Empty,
+                    legalNationalCode = string.Empty,
+                    Mobile = model.mobile,
+                    cityId = null,
+                    countryId = null,
+                    stateId = null
+
+                };
+                _Context.People.Add(person);
+
+                await _Context.SaveChangesAsync();
+
+
+                User data = new User()
+                {
+                    ParentUserId = 1,
+                    Username = model.username,
+                    Password = model.password,
+                    Email = model.email,
+                    Fname = model.fname,
+                    Lname = model.lname,
+                    IsActive = true,
+                    IsDelete = false,
+                    IsAccepted = false,
+                    ispaied = false,
+                    registerDate = DateTime.Now,
+                    PersonId = person.PersonId,
+                    Mobile = model.mobile,
+                    UserTypeId = (model.usertypeid != null) ? model.usertypeid : (long)UserTypes.Student,
+                    financialinstrumentIds = null,
+                    forexexperiencelevelId = null,
+                    trainingmethodIds = null,
+                    targettrainerIds = null,
+                    interestforexId = null,
+                    hobbyoftradingfulltime =null,
+                    website = model.website,
+                    language = model.language,
+                    sendNotification = model.sendNotification,
+                    forumRoleId = model.forumRoleId
+                };
+
+                _Context.Users.Add(data);
+
+                await _Context.SaveChangesAsync();
+
+                PersonCompleteInfo completeInfo = new PersonCompleteInfo()
+                {
+                    personId = person.PersonId,
+                    profilebio = model.bio,
+                    jobtitle = model.jobtitle
+                };
+
+                _Context.PersonCompleteInfos.Add(completeInfo);
+
+                Wallet wallet = new Wallet() { userId = data.UserId, blockamount = 0, walletbalance = 0 };
+                _Context.Wallets.Add(wallet);
+
                 await _Context.SaveChangesAsync();
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model };
@@ -577,6 +677,8 @@ namespace NextTradeAPIs.Services
             try
             {
                 IQueryable<User> query = _Context.Users;
+                query = query.Where(x => !x.IsDelete);
+
 
                 if (!string.IsNullOrEmpty(filter.username))
                     query = query.Where(x => x.Username == filter.username);
@@ -584,6 +686,11 @@ namespace NextTradeAPIs.Services
                 if (!string.IsNullOrEmpty(filter.mobile))
                     query = query.Where(x => x.Mobile == filter.mobile);
 
+                if (filter.usertypeid != null)
+                    query = query.Where(x => x.UserTypeId == filter.usertypeid);
+
+                if (filter.forumRoleId != null)
+                    query = query.Where(x => x.forumRoleId == filter.forumRoleId);
 
                 if (!string.IsNullOrEmpty(filter.fname))
                     query = query.Where(x => x.Fname.StartsWith(filter.fname));
@@ -637,6 +744,13 @@ namespace NextTradeAPIs.Services
             try
             {
                 IQueryable<User> query = _Context.Users;
+                query = query.Where(x => !x.IsDelete);
+
+                if (filter.usertypeid != null)
+                    query = query.Where(x => x.UserTypeId == filter.usertypeid);
+
+                if (filter.forumRoleId != null)
+                    query = query.Where(x => x.forumRoleId == filter.forumRoleId);
 
                 if (!string.IsNullOrEmpty(filter.username))
                     query = query.Where(x => x.Username == filter.username);
@@ -689,7 +803,8 @@ namespace NextTradeAPIs.Services
                     item.posts = await _Context.ForumMessages.Where(x => x.creatoruserid == item.userid).CountAsync();
                 }
 
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas, Meta = new { pagecount = pagecount } };
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", 
+                    MessageData = datas, Meta = new { pagecount = pagecount } };
             }
             catch (Exception ex)
             {
@@ -770,7 +885,8 @@ namespace NextTradeAPIs.Services
                             sendNotification = user.sendNotification,
                             forumRoleId = user.forumRoleId,
                             usertypeId = user.UserTypeId,
-                            usertypename = user.UserType.Name
+                            usertypename = user.UserType.Name,
+                            userpicurl = user.userpicurl??""
                         };
                         List<FinancialInstrumentDto> financialinstruments = null;
                         if (!string.IsNullOrEmpty(user.financialinstrumentIds))
@@ -1606,6 +1722,256 @@ namespace NextTradeAPIs.Services
                 await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
             }
             return message;
+        }
+
+        public async Task<SystemMessageModel> DeleteUsers(UserSearchModel filter, UserModel userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            User datas = null;
+            long SerrvieCode = 120000;
+
+            try
+            {
+                IQueryable<User> query = _Context.Users;
+
+                bool HasPeronFilter = false;
+
+                if (filter.forumRoleId != null)
+                    query = query.Where(x => x.forumRoleId == filter.forumRoleId);
+
+                if (filter.userid != null)
+                    query = query.Where(x => x.UserId == filter.userid);
+
+                if (filter.usertypeid != null)
+                    query = query.Where(x => x.UserTypeId == filter.usertypeid);
+
+
+                datas = await query.FirstOrDefaultAsync();
+
+                datas.IsDelete = true;
+
+                _Context.Users.Update(datas);
+                await _Context.SaveChangesAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas, Meta = null };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<SystemMessageModel> UpdateUserRole(UserSearchModel filter, UserModel userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            User datas = null;
+            long SerrvieCode = 120000;
+
+            try
+            {
+                IQueryable<User> query = _Context.Users;
+
+                bool HasPeronFilter = false;
+
+                if (filter.forumRoleId != null)
+                    query = query.Where(x => x.forumRoleId == filter.forumRoleId);
+
+                if (filter.userid != null)
+                    query = query.Where(x => x.UserId == filter.userid);
+
+
+                datas = await query.FirstOrDefaultAsync();
+
+                datas.UserTypeId = (long)filter.usertypeid;
+
+                _Context.Users.Update(datas);
+                await _Context.SaveChangesAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas, Meta = null };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+        public async Task<SystemMessageModel> UpdateUserForumRole(UserSearchModel filter, UserModel userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            User datas = null;
+            long SerrvieCode = 120000;
+
+            try
+            {
+                IQueryable<User> query = _Context.Users;
+
+                bool HasPeronFilter = false;
+
+                if (filter.userid != null)
+                    query = query.Where(x => x.UserId == filter.userid);
+
+
+                datas = await query.FirstOrDefaultAsync();
+
+                datas.forumRoleId = (int)filter.forumRoleId;
+
+                _Context.Users.Update(datas);
+                await _Context.SaveChangesAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = datas, Meta = null };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<SystemMessageModel> UpdateUserProfile(UserProfileDto model, UserModel userlogin, string processId, string clientip, string hosturl)
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 120000;
+
+            try
+            {
+                User user = await _Context.Users.FindAsync(model.userid);
+                Person person = await _Context.People.FindAsync(user.PersonId);
+                PersonCompleteInfo personinfo = await _Context.PersonCompleteInfos.FindAsync(user.PersonId);
+
+                if (personinfo == null)
+                {
+                    personinfo = new PersonCompleteInfo() { personId = person.PersonId };
+                    _Context.PersonCompleteInfos.Add(personinfo);
+                    await _Context.SaveChangesAsync();
+                }
+
+
+                if (!string.IsNullOrEmpty(model.fname))
+                user.Fname = person.FName = model.fname;
+
+                if (!string.IsNullOrEmpty(model.lname))
+                    user.Lname = person.LName = model.lname;
+
+                if (!string.IsNullOrEmpty(model.email))
+                    user.Email =  model.email;
+
+                if (!string.IsNullOrEmpty(model.mobile))
+                    user.Mobile  = person.Mobile = model.mobile;
+
+                if (!string.IsNullOrEmpty(model.language))
+                    user.language =  model.language;
+
+                if (!string.IsNullOrEmpty(model.website))
+                    user.website = model.website;
+
+                if (!string.IsNullOrEmpty(model.nickname))
+                    person.nickname = model.nickname;
+                
+                if (!string.IsNullOrEmpty(model.displayPublicName))
+                    user.displayPublicName = model.displayPublicName;
+
+                if (!string.IsNullOrEmpty(model.biographicalInfo))
+                    personinfo.biographicalInfo = model.biographicalInfo;
+
+                if (!string.IsNullOrEmpty(model.jobTitle))
+                    personinfo.jobtitle = model.jobTitle;
+
+                if (!string.IsNullOrEmpty(model.profileBio))
+                    personinfo.profilebio = model.profileBio;
+
+                if (!string.IsNullOrEmpty(model.timezone))
+                    personinfo.timezone = model.timezone;
+
+                if (!string.IsNullOrEmpty(model.hobbyOfTrading))
+                    personinfo.hobbyOfTrading = model.hobbyOfTrading;
+                
+                if (model.forexexperiencelevelId != null)
+                    user.forexexperiencelevelId = model.forexexperiencelevelId;
+                if (model.forexexperiencelevelId != null)
+                    user.forexexperiencelevelId = model.forexexperiencelevelId;
+
+                
+                _Context.Users.Update(user);
+                _Context.People.Update(person);
+                _Context.PersonCompleteInfos.Update(personinfo);
+
+                await _Context.SaveChangesAsync();
+
+                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model, Meta = null };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+            }
+            return message;
+        }
+
+        public async Task<SystemMessageModel> SaveFile(byte[] filecontent, UserProfilePictureDto model, string sitePath, string hosturl)
+        {
+            string filegroupname = "userprofile";
+            try
+            {
+                if (filecontent != null)
+                {
+
+                    User user = await _Context.Users.FindAsync(model.userid);
+                    string FileName = user.Username + "." + model.profilepicname.Split('.').Last();
+
+                    string _filePath = sitePath + "\\" + filegroupname + "\\" + model.userid.ToString() + "\\";
+                    if (!Directory.Exists(_filePath))
+                        Directory.CreateDirectory(_filePath);
+
+                    _filePath += FileName;
+                    string fileurl = hosturl + "/" + filegroupname + "/" + model.userid.ToString() + "/" + FileName;
+
+                    if (File.Exists(_filePath))
+                    {
+                        File.Delete(_filePath);
+                    }
+                    File.WriteAllBytes(_filePath, filecontent);
+                    user.UserPic = filecontent;
+                    user.userpicurl = fileurl;
+
+                    _Context.Users.Update(user);
+                    await _Context.SaveChangesAsync();
+
+                    return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = user.userpicurl };
+                }
+                else
+                {
+                    return new SystemMessageModel() { MessageCode = -501, MessageDescription = "File Error", MessageData = null };
+                }
+            }
+            catch (Exception ex) { return new SystemMessageModel() { MessageCode = -501, MessageDescription = "File saving Error", MessageData = ex.Message }; }
+        }
+
+        public async Task<SystemMessageModel> DeleteFile(string filename)
+        {
+            try
+            {
+                if (File.Exists(filename))
+                    File.Delete(filename);
+
+                return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = null };
+            }
+            catch (Exception ex) { return new SystemMessageModel() { MessageCode = -501, MessageDescription = "File saving Error", MessageData = ex.Message }; }
         }
 
     }

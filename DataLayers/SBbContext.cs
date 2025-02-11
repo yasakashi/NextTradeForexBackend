@@ -44,6 +44,7 @@ namespace DataLayers
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<Person> People { get; set; }
+        public DbSet<PersonCompleteInfo> PersonCompleteInfos { get; set; }
         public DbSet<CommunityGroup> CommunityGroups { get; set; }
         public DbSet<SignalChannel> SignalChannels { get; set; }
 
@@ -78,6 +79,18 @@ namespace DataLayers
         public DbSet<EntryPointType> EntryPoints { get; set; }
         public DbSet<SignalFileAttachment> SignalFileAttachments { get; set; }
         public DbSet<Signal> Signals { get; set; }
+
+        #region  [ Admin Panel ]
+
+        public DbSet<AdminPanel_Tools_Book> Tools_Books { get; set; }
+        public DbSet<BookPageImage> BookPageImages { get; set; }
+        public DbSet<BookCategory> BookCategories { get; set; }
+        public DbSet<ADPodcast> ADPodcasts { get; set; }
+        public DbSet<ADPodcastCategory> ADPodcastCategories { get; set; }
+        public DbSet<TutorTag> TutorTags { get; set; }
+        public DbSet<Announcement> Announcements { get; set; }
+        
+        #endregion [ Admin Panel ]
 
         #region [ Course ]
 
@@ -140,7 +153,7 @@ namespace DataLayers
         public DbSet<AutoEnableSound> AutoEnableSounds { get; set; }
         public DbSet<EnableDownload> EnableDownloads { get; set; }
         public DbSet<LearnToTradeTopic> LearnToTradeTopics { get; set; }
-        public DbSet<NewBook> NewBooks { get; set; }
+        public DbSet<Book> NewBooks { get; set; }
 
         public DbSet<NewBookCategory> NewBookCategories { get; set; }
         public DbSet<NewBookPageImage> NewBookPageImages { get; set; }

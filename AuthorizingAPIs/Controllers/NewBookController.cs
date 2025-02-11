@@ -48,7 +48,7 @@ namespace NextTradeAPIs.Controllers
         [HttpPost]
         [Route("/api/learntotrade/addnewbook")]
         [AllowAnonymous]
-        public async Task<IActionResult> InsertNewBook([FromForm] NewBookDto model)
+        public async Task<IActionResult> InsertNewBook([FromForm] ADBookDto model)
         {
             StackTrace stackTrace = new StackTrace();
             SystemMessageModel message;
@@ -392,7 +392,7 @@ namespace NextTradeAPIs.Controllers
         [HttpPut]
         [Route("/api/learntotrade/editbook")]
         [AllowAnonymous]
-        public async Task<IActionResult> UpdateNewBook([FromForm] NewBookDto model)
+        public async Task<IActionResult> UpdateNewBook([FromForm] ADBookDto model)
         {
             StackTrace stackTrace = new StackTrace();
             SystemMessageModel message;
