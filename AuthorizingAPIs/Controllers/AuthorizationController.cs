@@ -277,6 +277,52 @@ namespace NextTradeAPIs
 
         }
 
+        [HttpPost]
+        [Route("/api/adminpanel/userloginhistory")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetUserLoginHistory()
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            string processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            string hosturl = string.Empty;
+            string clientip = string.Empty;
+            long ApiCode = 3000;
+            try
+            {
+                clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+
+                if (string.IsNullOrEmpty(clientip))
+                    clientip = _HttpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+
+                /// بررسی IP 
+                if (await _blockedIPService.IsIPBlocked(clientip, processId, _bearer_token))
+                {
+                    return BadRequest(new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + ApiCode + 501) * -1), MessageDescription = "دسترسی برای شما بسته شده است" });
+                }
+                hosturl = ((Request.IsHttps) ? "https" : "http") + @"://" + Request.Host.ToString();
+
+
+                message = await _authorizationService.GetUserLoginHistory(_bearer_token, processId);
+
+                if (message.MessageCode < 0)
+                    return BadRequest(message);
+                else
+                    return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{ex.Message}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                _systemLogServices.InsertLogs(error, processId, clientip, hosturl, LogTypes.SystemError);
+
+                message = new SystemMessageModel() { MessageCode = -501, MessageDescription = "Error In doing Request", MessageData = $"'ProccessID':'{processId}','ErrorMessage':'{ex.Message}'" };
+                return BadRequest(message);
+            }
+
+        }
 
     }
 }

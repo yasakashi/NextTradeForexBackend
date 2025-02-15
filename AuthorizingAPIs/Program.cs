@@ -190,6 +190,7 @@ builder.Services.AddTransient<ADBookServices, ADBookServices>();
 builder.Services.AddTransient<ADPodcastServices, ADPodcastServices>();
 builder.Services.AddTransient<TutorTagServices, TutorTagServices>();
 builder.Services.AddTransient<AnnouncementServices, AnnouncementServices>();
+builder.Services.AddTransient<FeedBackServices, FeedBackServices>();
 
 #endregion
 

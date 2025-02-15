@@ -305,6 +305,41 @@ namespace NextTradeAPIs.Services
             return IsUserRoyality;
         }
 
+        public async Task<SystemMessageModel> GetUserLoginHistory(string token, string processId = "", string clientip = "")
+        {
+            SystemMessageModel message;
+            StackTrace stackTrace = new StackTrace();
+            if (string.IsNullOrEmpty(processId)) processId = Guid.NewGuid().ToString();
+            string methodpath = stackTrace.GetFrame(0).GetMethod().DeclaringType.FullName + " => " + stackTrace.GetFrame(0).GetMethod().Name;
+            long SerrvieCode = 204000;
+            try
+            {
+                if (string.IsNullOrEmpty(token))
+                {
+                    return new SystemMessageModel() { MessageCode = -401, MessageDescription = "توکن معتبر نمی باشد", MessageData = token };
+                }
+
+                if (!await _jwtHandler.CkeckTokenIsValid(token))
+                {
+                    return new SystemMessageModel() { MessageCode = -401, MessageDescription = "توکن معتبر نمی باشد", MessageData = token };
+                }
+
+                string LoginLogId = await _jwtHandler.GetTokenParameterValue(token, "uid");
+                Guid gLoginLogId = new Guid(LoginLogId);
+
+                List<LoginLog> loginLogs = await _LogContext.LoginLogs.Where(x=> x.LoginLogId == gLoginLogId).ToListAsync();
+
+                return new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = loginLogs };
+            }
+            catch (Exception ex)
+            {
+                message = new SystemMessageModel() { MessageCode = ((ServiceUrlConfig.SystemCode + SerrvieCode + 501) * -1), MessageDescription = "Error In doing Request", MessageData = ex.Message };
+                string error = $"'ErrorLocation':'{methodpath}','ProccessID':'{processId}','ErrorMessage':'{JsonConvert.SerializeObject(message)}','ErrorDescription':'{JsonConvert.SerializeObject(ex)}'";
+                await _systemLogServices.InsertLogs(error, processId, clientip, methodpath, LogTypes.SystemError);
+                return message;
+            }
+        }
+
         /*
 public async Task<List<Service>> GetUserServiceAccessList(int userId)
 {

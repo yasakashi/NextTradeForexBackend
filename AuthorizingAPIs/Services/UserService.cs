@@ -23,6 +23,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Http;
 
 namespace NextTradeAPIs.Services
 {
@@ -293,7 +294,7 @@ namespace NextTradeAPIs.Services
 
                 model.userid = data.UserId;
 
-                Wallet wallet = new Wallet() { userId = data.UserId, blockamount=0,walletbalance = 0};
+                Wallet wallet = new Wallet() { userId = data.UserId, blockamount = 0, walletbalance = 0 };
                 _Context.Wallets.Add(wallet);
 
                 foreach (int financialinstrumentid in (List<int>)model.financialinstrumentIds)
@@ -335,10 +336,10 @@ namespace NextTradeAPIs.Services
                 Person person = new Person()
                 {
                     BirthDate = null,
-                    PersonTypeId = (long)PersonTypes.RealPerson ,
+                    PersonTypeId = (long)PersonTypes.RealPerson,
                     FName = model.fname,
                     LName = model.lname,
-                    Sex =  1,
+                    Sex = 1,
                     Fathername = string.Empty,
                     MarriedStatusId = null,
                     Companyname = string.Empty,
@@ -381,7 +382,7 @@ namespace NextTradeAPIs.Services
                     trainingmethodIds = null,
                     targettrainerIds = null,
                     interestforexId = null,
-                    hobbyoftradingfulltime =null,
+                    hobbyoftradingfulltime = null,
                     website = model.website,
                     language = model.language,
                     sendNotification = model.sendNotification,
@@ -709,7 +710,7 @@ namespace NextTradeAPIs.Services
                 if (Math.Floor(pagecountd) > 0)
                     pagecount++;
 
-                datas = await query.Include(x=>x.UserType).Select(x => new UserModel()
+                datas = await query.Include(x => x.UserType).Select(x => new UserModel()
                 {
                     userid = x.UserId,
                     username = x.Username,
@@ -803,8 +804,13 @@ namespace NextTradeAPIs.Services
                     item.posts = await _Context.ForumMessages.Where(x => x.creatoruserid == item.userid).CountAsync();
                 }
 
-                message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", 
-                    MessageData = datas, Meta = new { pagecount = pagecount } };
+                message = new SystemMessageModel()
+                {
+                    MessageCode = 200,
+                    MessageDescription = "Request Compeleted Successfully",
+                    MessageData = datas,
+                    Meta = new { pagecount = pagecount }
+                };
             }
             catch (Exception ex)
             {
@@ -886,7 +892,7 @@ namespace NextTradeAPIs.Services
                             forumRoleId = user.forumRoleId,
                             usertypeId = user.UserTypeId,
                             usertypename = user.UserType.Name,
-                            userpicurl = user.userpicurl??""
+                            userpicurl = user.userpicurl ?? ""
                         };
                         List<FinancialInstrumentDto> financialinstruments = null;
                         if (!string.IsNullOrEmpty(user.financialinstrumentIds))
@@ -1852,7 +1858,8 @@ namespace NextTradeAPIs.Services
                 User user = await _Context.Users.FindAsync(model.userid);
                 Person person = await _Context.People.FindAsync(user.PersonId);
                 PersonCompleteInfo personinfo = await _Context.PersonCompleteInfos.FindAsync(user.PersonId);
-
+                PersonBillingAddress billingaddress = await _Context.PeopleBillingAddress.FindAsync(user.PersonId);
+                PersonShippingAddress shippingaddress = await _Context.PeopleShippingAddress.FindAsync(user.PersonId);
                 if (personinfo == null)
                 {
                     personinfo = new PersonCompleteInfo() { personId = person.PersonId };
@@ -1860,28 +1867,42 @@ namespace NextTradeAPIs.Services
                     await _Context.SaveChangesAsync();
                 }
 
+                if (billingaddress == null)
+                {
+                    billingaddress = new PersonBillingAddress() { personId = person.PersonId };
+                    _Context.PeopleBillingAddress.Add(billingaddress);
+                    await _Context.SaveChangesAsync();
+                }
+                if (shippingaddress == null)
+                {
+                    shippingaddress = new PersonShippingAddress() { personId = person.PersonId };
+                    _Context.PeopleShippingAddress.Add(shippingaddress);
+                    await _Context.SaveChangesAsync();
+                }
+
+
 
                 if (!string.IsNullOrEmpty(model.fname))
-                user.Fname = person.FName = model.fname;
+                    user.Fname = person.FName = model.fname;
 
                 if (!string.IsNullOrEmpty(model.lname))
                     user.Lname = person.LName = model.lname;
 
                 if (!string.IsNullOrEmpty(model.email))
-                    user.Email =  model.email;
+                    user.Email = model.email;
 
                 if (!string.IsNullOrEmpty(model.mobile))
-                    user.Mobile  = person.Mobile = model.mobile;
+                    user.Mobile = person.Mobile = model.mobile;
 
                 if (!string.IsNullOrEmpty(model.language))
-                    user.language =  model.language;
+                    user.language = model.language;
 
                 if (!string.IsNullOrEmpty(model.website))
                     user.website = model.website;
 
                 if (!string.IsNullOrEmpty(model.nickname))
                     person.nickname = model.nickname;
-                
+
                 if (!string.IsNullOrEmpty(model.displayPublicName))
                     user.displayPublicName = model.displayPublicName;
 
@@ -1899,18 +1920,107 @@ namespace NextTradeAPIs.Services
 
                 if (!string.IsNullOrEmpty(model.hobbyOfTrading))
                     personinfo.hobbyOfTrading = model.hobbyOfTrading;
-                
-                if (model.forexexperiencelevelId != null)
-                    user.forexexperiencelevelId = model.forexexperiencelevelId;
+
                 if (model.forexexperiencelevelId != null)
                     user.forexexperiencelevelId = model.forexexperiencelevelId;
 
-                
+                if (model.cityId != null)
+                    person.cityId = model.cityId;
+
+                if (model.stateId != null)
+                    person.stateId = model.stateId;
+
+                if (model.countryId != null)
+                    person.countryId = model.countryId;
+
+                if (!string.IsNullOrEmpty(model.hobbyOfTrading))
+                    personinfo.hobbyOfTrading = model.hobbyOfTrading;
+
+                if (model.activeTill != null)
+                    personinfo.activeTill = model.activeTill;
+
+                if (model.interestinforexid != null)
+                    personinfo.interestinforexid = model.interestinforexid;
+
+
+                if (model.customerbillingaddress != null)
+                {
+                    if (!string.IsNullOrEmpty(model.customerbillingaddress.fname))
+                        billingaddress.fname = model.customerbillingaddress.fname;
+
+                    if (!string.IsNullOrEmpty(model.customerbillingaddress.lname))
+                        billingaddress.lname = model.customerbillingaddress.lname;
+
+                    if (!string.IsNullOrEmpty(model.customerbillingaddress.company))
+                        billingaddress.company = model.customerbillingaddress.company;
+
+                    if (!string.IsNullOrEmpty(model.customerbillingaddress.address1))
+                        billingaddress.address1 = model.customerbillingaddress.address1;
+
+                    if (!string.IsNullOrEmpty(model.customerbillingaddress.address2))
+                        billingaddress.address2 = model.customerbillingaddress.address2;
+
+                    if (!string.IsNullOrEmpty(model.customerbillingaddress.city))
+                        billingaddress.city = model.customerbillingaddress.city;
+
+                    if (!string.IsNullOrEmpty(model.customerbillingaddress.postCode))
+                        billingaddress.postCode = model.customerbillingaddress.postCode;
+
+                    if (model.customerbillingaddress.countryId != null)
+                        billingaddress.countryId = model.customerbillingaddress.countryId;
+
+                    if (!string.IsNullOrEmpty(model.customerbillingaddress.state))
+                        billingaddress.state = model.customerbillingaddress.state;
+
+                    if (!string.IsNullOrEmpty(model.customerbillingaddress.phone))
+                        billingaddress.phone = model.customerbillingaddress.phone;
+
+                    if (!string.IsNullOrEmpty(model.customerbillingaddress.email))
+                        billingaddress.email = model.customerbillingaddress.email;
+                }
+                if (model.customershippingaddress != null)
+                {
+                    if (!string.IsNullOrEmpty(model.customershippingaddress.fname))
+                        shippingaddress.fname = model.customershippingaddress.fname;
+
+                    if (!string.IsNullOrEmpty(model.customershippingaddress.lname))
+                        shippingaddress.lname = model.customershippingaddress.lname;
+
+                    if (!string.IsNullOrEmpty(model.customershippingaddress.company))
+                        shippingaddress.company = model.customershippingaddress.company;
+
+                    if (!string.IsNullOrEmpty(model.customershippingaddress.address1))
+                        shippingaddress.address1 = model.customershippingaddress.address1;
+
+                    if (!string.IsNullOrEmpty(model.customershippingaddress.address2))
+                        shippingaddress.address2 = model.customershippingaddress.address2;
+
+                    if (!string.IsNullOrEmpty(model.customershippingaddress.city))
+                        shippingaddress.city = model.customershippingaddress.city;
+
+                    if (!string.IsNullOrEmpty(model.customershippingaddress.postCode))
+                        shippingaddress.postCode = model.customershippingaddress.postCode;
+
+                    if (model.customershippingaddress.countryId != null)
+                        shippingaddress.countryId = model.customershippingaddress.countryId;
+
+                    if (!string.IsNullOrEmpty(model.customershippingaddress.state))
+                        shippingaddress.state = model.customershippingaddress.state;
+
+                    if (!string.IsNullOrEmpty(model.customershippingaddress.phone))
+                        shippingaddress.phone = model.customershippingaddress.phone;
+
+                    if (!string.IsNullOrEmpty(model.customershippingaddress.email))
+                        shippingaddress.email = model.customershippingaddress.email;
+                }
+
                 _Context.Users.Update(user);
                 _Context.People.Update(person);
                 _Context.PersonCompleteInfos.Update(personinfo);
-
-                await _Context.SaveChangesAsync();
+                _Context.PeopleBillingAddress.Update(billingaddress);
+                _Context.PeopleShippingAddress.Update(shippingaddress);
+                
+                    await _Context.SaveChangesAsync();
 
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = model, Meta = null };
             }

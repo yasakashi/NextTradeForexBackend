@@ -18,5 +18,44 @@ namespace Entities.DBEntities
         public string? profilebio { get; set; }
         public string? timezone { get; set; }
         public string? hobbyOfTrading { get; set; }
+        public DateTime? activeTill { get; set; }
+        public long? interestinforexid { get; set; }
+
+    }
+
+    [Table("tblPeopleBillingAddress")]
+    public class PersonBillingAddress
+    {
+        [Key]
+        public long personId { get; set; }
+        public string? fname { get; set; }
+        public string? lname { get; set; }
+        public string? company { get; set; }
+        public string? address1 { get; set; }
+        public string? address2 { get; set; }
+        public string? city { get; set; }
+        public string? postCode { get; set; }
+        public int? countryId { get; set; }
+        public string? state { get; set; }
+        public string? phone { get; set; }
+        public string? email { get; set; }
+    }
+
+    [Table("tblPeopleShippingAddress")]
+    public class PersonShippingAddress
+    {
+        [Key]
+        public long personId { get; set; }
+        public string? fname { get; set; }
+        public string? lname { get; set; }
+        public string? company { get; set; }
+        public string? address1 { get; set; }
+        public string? address2 { get; set; }
+        public string? city { get; set; }
+        public string? postCode { get; set; }
+        public int? countryId { get; set; }
+        public string? state { get; set; }
+        public string? phone { get; set; }
+        public string? email { get; set; }
     }
 }

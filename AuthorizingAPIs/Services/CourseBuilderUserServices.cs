@@ -379,7 +379,7 @@ namespace NextTradeAPIs.Services
                             where
                                 (model.fromregisterdatetime == null || course.registerdatetime >= model.fromregisterdatetime) &&
                                 (model.toregisterdatetime == null || course.registerdatetime <= model.toregisterdatetime) &&
-                                course.courseName.Contains(model.courseName)
+                                (string.IsNullOrEmpty( model.courseName)||   course.courseName.Contains(model.courseName))
                             select new { user, course } ;
 
                 var result = query.ToList();
@@ -429,7 +429,6 @@ namespace NextTradeAPIs.Services
                 }
 
                 List<UserCourseMemberDto> data = await query.Skip((pageIndex - 1) * PageRowCount).Take(PageRowCount)
-                                                  .Include(x => x.course.coursestatus)
                                                   .Select(x => new UserCourseMemberDto()
                                                   {
                                                       username = x.user.Username,
@@ -441,14 +440,15 @@ namespace NextTradeAPIs.Services
                                                       emial = x.user.Email,
                                                       registerdatetime = x.course.registerdatetime,
                                                       profilePic = x.user.userpicurl,
-                                                      coursestatusid = x.course.coursestatusid,
-                                                      coursestatusname  =x.course.coursestatus.name
                                                   }).ToListAsync();
 
 
                 foreach (UserCourseMemberDto item in data)
                 {
                     item.totalCourses = _Context.CourseMemebers.Where(x => x.userId == item.userid).Count();
+                    CourseBuilderCourse _course = await _Context.CourseBuilderCourses.Where(x => x.Id == item.courseid).Include(x => x.coursestatus).FirstOrDefaultAsync();
+                    item.coursestatusid = _course.coursestatusid;
+                    item.coursestatusname = _course.coursestatus.name;
                 }
                 message = new SystemMessageModel() { MessageCode = 200, MessageDescription = "Request Compeleted Successfully", MessageData = data, Meta = new { pageIndex = pageIndex, PageRowCount = PageRowCount, totaldata = totaldata, pagecount = pagecount } };
             }

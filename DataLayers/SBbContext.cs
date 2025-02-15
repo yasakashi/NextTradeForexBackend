@@ -35,7 +35,8 @@ namespace DataLayers
         public DbSet<UserFinancialInstrument> UserFinancialInstruments { get; set; }
         public DbSet<UserTrainingmethod> UserTrainingmethods { get; set; }
         public DbSet<UserTargetTrainer> UserTargetTrainers { get; set; }
-
+        public DbSet<PersonBillingAddress> PeopleBillingAddress { get; set; }
+        public DbSet<PersonShippingAddress> PeopleShippingAddress { get; set; }
 
         public DbSet<SiteMessage> SiteMessages { get; set; }
         public DbSet<UserType> UserTypes { get; set; }
@@ -89,7 +90,7 @@ namespace DataLayers
         public DbSet<ADPodcastCategory> ADPodcastCategories { get; set; }
         public DbSet<TutorTag> TutorTags { get; set; }
         public DbSet<Announcement> Announcements { get; set; }
-        
+        public DbSet<FeedBack> FeedBacks { get; set; }
         #endregion [ Admin Panel ]
 
         #region [ Course ]

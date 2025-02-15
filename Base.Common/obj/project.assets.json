@@ -9826,23 +9826,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\y.kashi\\.nuget\\packages\\": {},
+    "C:\\Users\\manna\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\YasaKashi\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj",
+      "projectUniqueName": "D:\\NextTradeForexBackend-main\\Base.Common\\Base.Common.csproj",
       "projectName": "Base.Common",
-      "projectPath": "D:\\YasaKashi\\NextTradeForexBackend\\Base.Common\\Base.Common.csproj",
-      "packagesPath": "C:\\Users\\y.kashi\\.nuget\\packages\\",
-      "outputPath": "D:\\YasaKashi\\NextTradeForexBackend\\Base.Common\\obj\\",
+      "projectPath": "D:\\NextTradeForexBackend-main\\Base.Common\\Base.Common.csproj",
+      "packagesPath": "C:\\Users\\manna\\.nuget\\packages\\",
+      "outputPath": "D:\\NextTradeForexBackend-main\\Base.Common\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\y.kashi\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\manna\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -9868,7 +9868,8 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      }
+      },
+      "SdkAnalysisLevel": "9.0.100"
     },
     "frameworks": {
       "net8.0": {
@@ -9939,7 +9940,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.303/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.103/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
