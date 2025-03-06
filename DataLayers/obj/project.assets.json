@@ -4728,23 +4728,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\manna\\.nuget\\packages\\": {},
+    "C:\\Users\\Yasa\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\NextTradeForexBackend-main\\DataLayers\\DataLayers.csproj",
+      "projectUniqueName": "D:\\CodeProject\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj",
       "projectName": "DataLayers",
-      "projectPath": "D:\\NextTradeForexBackend-main\\DataLayers\\DataLayers.csproj",
-      "packagesPath": "C:\\Users\\manna\\.nuget\\packages\\",
-      "outputPath": "D:\\NextTradeForexBackend-main\\DataLayers\\obj\\",
+      "projectPath": "D:\\CodeProject\\NextTradeForexBackend\\DataLayers\\DataLayers.csproj",
+      "packagesPath": "C:\\Users\\Yasa\\.nuget\\packages\\",
+      "outputPath": "D:\\CodeProject\\NextTradeForexBackend\\DataLayers\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\manna\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Yasa\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -4759,8 +4759,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "D:\\NextTradeForexBackend-main\\Entities\\Entities.csproj": {
-              "projectPath": "D:\\NextTradeForexBackend-main\\Entities\\Entities.csproj"
+            "D:\\CodeProject\\NextTradeForexBackend\\Entities\\Entities.csproj": {
+              "projectPath": "D:\\CodeProject\\NextTradeForexBackend\\Entities\\Entities.csproj"
             }
           }
         }
@@ -4775,7 +4775,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.100"
+      "SdkAnalysisLevel": "9.0.200"
     },
     "frameworks": {
       "net8.0": {
@@ -4834,7 +4834,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.103/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.200/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
