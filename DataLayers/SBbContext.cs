@@ -94,7 +94,7 @@ namespace DataLayers
         #endregion [ Admin Panel ]
 
         #region [ Course ]
-
+        public DbSet<CourseComment> CourseComments { get; set; }
         public DbSet<CourseBuilderCourse> CourseBuilderCourses { get; set; }
         public DbSet<CourseCategory> CourseCategories { get; set; }
         public DbSet<CourseBuilderMeeting> CourseBuilderMeetings { get; set; }

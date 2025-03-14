@@ -176,12 +176,13 @@ builder.Services.AddTransient<MarketPulsStrategyServices, MarketPulsStrategyServ
 
 builder.Services.AddTransient<CourseBuilderServices, CourseBuilderServices>();
 builder.Services.AddTransient<CourseBuilderUserServices, CourseBuilderUserServices>();
+builder.Services.AddTransient<CourseCommentServices, CourseCommentServices>();
 
 
 builder.Services.AddTransient<WebinarServices, WebinarServices>();
 builder.Services.AddTransient<PodcastServices, PodcastServices>();
 builder.Services.AddTransient<LearnToTradeTopicServices, LearnToTradeTopicServices>();
-builder.Services.AddTransient<NewBookServices, NewBookServices>();
+builder.Services.AddTransient<CourseCommentServices, CourseCommentServices>();
 builder.Services.AddTransient<LearnToTradeVideoServices, LearnToTradeVideoServices>();
 
 
